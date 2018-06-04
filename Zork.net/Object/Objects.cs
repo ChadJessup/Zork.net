@@ -9,8 +9,8 @@ namespace Zork.Core.Object
         public List<int> odesc2 = new List<int>(220);
         public List<int> odesco = new List<int>(220);
         public List<int> oactio = new List<int>(220);
-        public List<int> oflag1 = new List<int>(220);
-        public List<int> oflag2 = new List<int>(220);
+        public List<ObjectFlags> oflag1 = new List<ObjectFlags>(220);
+        public List<ObjectFlags2> oflag2 = new List<ObjectFlags2>(220);
         public List<int> ofval = new List<int>(220);
         public List<int> otval = new List<int>(220);
         public List<int> osize = new List<int>(220);

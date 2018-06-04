@@ -20,22 +20,27 @@ namespace Zork.Core.Object
         FLAMBT = 8,
         TOOLBT = 4,
         TURNBT = 2,
-        ONBT   = 1,
+        ONBT = 1,
+    }
+
+    [Flags]
+    public enum ObjectFlags2
+    {
         FINDBT = 32768,
         SLEPBT = 16384,
         SCRDBT = 8192,
-        TIEBT  = 4096,
+        TIEBT = 4096,
         CLMBBT = 2048,
         ACTRBT = 1024,
         WEAPBT = 512,
         FITEBT = 256,
         VILLBT = 128,
         STAGBT = 64,
-        TRYBT  = 32,
+        TRYBT = 32,
         NOCHBT = 16,
         OPENBT = 8,
-        TCHBT  = 4,
-        VEHBT  = 2,
-        SCHBT  = 1,
+        TCHBT = 4,
+        VEHBT = 2,
+        SCHBT = 1,
     }
 }

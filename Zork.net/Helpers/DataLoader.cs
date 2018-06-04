@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Zork.Core.Object;
+using Zork.Core.Room;
 
 namespace Zork.Core.Helpers
 {
     public static class DataLoader
     {
-        private static int DataPosition { get; set; } = 0;
-
         public static Game LoadDataFile(string filename = "dtextc.dat")
         {
             if (!File.Exists(filename))
@@ -16,158 +17,190 @@ namespace Zork.Core.Helpers
             }
 
             var bytes = File.ReadAllBytes(filename);
+            var game = new Game(bytes);
 
-            int i = DataLoader.ReadInt(bytes);
-            int j = DataLoader.ReadInt(bytes);
-            int k = DataLoader.ReadInt(bytes);
+            int i = DataLoader.ReadInt(bytes, game);
+            int j = DataLoader.ReadInt(bytes, game);
+            int k = DataLoader.ReadInt(bytes, game);
 
             if (i != 2 || j != 7)
             {
                 throw new InvalidOperationException("Bad version on data file");
             }
 
-            var game = new Game();
+            game.State.MaxScore = DataLoader.ReadInt(bytes, game);
+            game.Star.strbit = DataLoader.ReadInt(bytes, game);
+            game.State.egmxsc = DataLoader.ReadInt(bytes, game);
 
-            game.State.MaxScore = DataLoader.ReadInt(bytes);
-            game.Star.strbit = DataLoader.ReadInt(bytes);
-            game.State.egmxsc = DataLoader.ReadInt(bytes);
+            Console.WriteLine($"Rooms Position: {game.DataPosition}");
+            game.Rooms.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions1, bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions2, bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomExits, bytes, game);
+            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomActions, bytes, game);
+            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomValues, bytes, game);
+            Console.WriteLine($"After read partial ints Position: {game.DataPosition}");
 
-            Console.WriteLine($"Rooms Position: {DataLoader.DataPosition}");
-            game.Rooms.Count = DataLoader.ReadInt(bytes);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions1, bytes);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions2, bytes);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomExits, bytes);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomActions, bytes);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomValues, bytes);
-            Console.WriteLine($"After read partial ints Position: {DataLoader.DataPosition}");
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomFlags, bytes);
+            var tempFlags = new List<int>();
+            DataLoader.ReadInts(game.Rooms.Count, tempFlags, bytes, game);
+            //game.Rooms.RoomFlags
 
-            Console.WriteLine($"Exits Position: {DataLoader.DataPosition}");
-            game.Exits.Count = DataLoader.ReadInt(bytes);
+            for (int idx = 0; idx < tempFlags.Count; idx++)
+            {
+                game.Rooms.RoomFlags.Add((RoomFlags)tempFlags[idx]);
+            }
+
+            Console.WriteLine($"Exits Position: {game.DataPosition}");
+            game.Exits.Count = DataLoader.ReadInt(bytes, game);
             Console.WriteLine($"Exits: {game.Exits.Count}");
-            DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes);
+            DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
 
-            Console.WriteLine($"Objects Position: {DataLoader.DataPosition}");
-            game.Objects.Count = DataLoader.ReadInt(bytes);
+            Console.WriteLine($"Objects Position: {game.DataPosition}");
+            game.Objects.Count = DataLoader.ReadInt(bytes, game);
             Console.WriteLine($"Objects Count: {game.Objects.Count}");
 
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc1, bytes);
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc2, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.odesco, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oactio, bytes);
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.oflag1, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oflag2, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ofval, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.otval, bytes);
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.osize, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocapac, bytes);
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.oroom, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oadv, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocan, bytes);
-            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oread, bytes);
+            DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc1, bytes, game);
+            DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc2, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.odesco, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oactio, bytes, game);
 
-            Console.WriteLine($"Rooms 2 Position: {DataLoader.DataPosition}");
+            var tempObjFlags = new List<int>();
+            DataLoader.ReadInts(game.Objects.Count, tempObjFlags, bytes, game);
+            for (int idxObj = 0; idxObj < tempObjFlags.Count; idxObj++)
+            {
+                game.Objects.oflag1.Add((ObjectFlags)tempObjFlags[idxObj]);
+            }
 
-            game.Rooms2.Count = DataLoader.ReadInt(bytes);
+            tempObjFlags.Clear();
+            DataLoader.ReadPartialInts(game.Objects.Count, tempObjFlags, bytes, game);
+
+            for (int idx = 0; idx < tempObjFlags.Count; idx++)
+            {
+                game.Objects.oflag2.Add((ObjectFlags2)tempObjFlags[idx]);
+            }
+
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ofval, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.otval, bytes, game);
+            DataLoader.ReadInts(game.Objects.Count, game.Objects.osize, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocapac, bytes, game);
+            DataLoader.ReadInts(game.Objects.Count, game.Objects.oroom, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oadv, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocan, bytes, game);
+            DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oread, bytes, game);
+
+            Console.WriteLine($"Rooms 2 Position: {game.DataPosition}");
+
+            game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
             Console.WriteLine($"Rooms 2 Count: {game.Rooms2.Count}");
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes);
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
 
-
-            game.Clock.Count = DataLoader.ReadInt(bytes);
+            game.Clock.Count = DataLoader.ReadInt(bytes, game);
             Console.WriteLine($"Clock Events Count: {game.Clock.Count}");
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes);
-            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
+            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
 
-            Console.WriteLine($"Villians Position: {DataLoader.DataPosition}");
-            game.Villians.Count = DataLoader.ReadInt(bytes);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vopps, bytes);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes);
+            Console.WriteLine($"Villians Position: {game.DataPosition}");
+            game.Villians.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes, game);
+            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes, game);
+            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vopps, bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes, game);
 
-            game.Adventurers.Count = DataLoader.ReadInt(bytes);
-            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Rooms, bytes);
-            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Scores, bytes);
-            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Vehicles, bytes);
-            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Objects, bytes);
-            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Actions, bytes);
-            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.astren, bytes);
-            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Flags, bytes);
+            game.Adventurers.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Rooms, bytes, game);
+            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Scores, bytes, game);
+            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Vehicles, bytes, game);
+            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Objects, bytes, game);
+            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.Actions, bytes, game);
+            DataLoader.ReadInts(game.Adventurers.Count, game.Adventurers.astren, bytes, game);
+            DataLoader.ReadPartialInts(game.Adventurers.Count, game.Adventurers.Flags, bytes, game);
 
-            game.Star.mbase = DataLoader.ReadInt(bytes);
-            game.Messages.Count = DataLoader.ReadInt(bytes);
-            DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes);
+            game.Star.mbase = DataLoader.ReadInt(bytes, game);
+            game.Messages.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
             // Location of beginning of message text
-            game.Messages.mrloc = DataLoader.DataPosition;
-/*
-                        itime_(&time_1.shour, &time_1.smin, &time_1.ssec);
+            game.Messages.mrloc = game.DataPosition;
 
-                        play_1.winner = aindex_1.player;
-                        last_1.lastit = advs_1.aobj[aindex_1.player - 1];
-                        play_1.here = advs_1.aroom[play_1.winner - 1];
-                        hack_1.thfpos = objcts_1.oroom[oindex_1.thief - 1];
-                        state_1.bloc = objcts_1.oroom[oindex_1.ballo - 1];
-            */
+            // TODO: See if we can just store the DateTime object, not sure how all this is used currently.
+            var now = DateTime.Now;
+            game.Time.shour = now.Hour;
+            game.Time.smin = now.Minute;
+            game.Time.ssec = now.Second;
+
+            game.Player.Winner = (int)AIndices.player;
+            game.Last.lastit = game.Adventurers.Objects[(int)(AIndices.player - 1)];
+            game.Player.Here = game.Adventurers.Rooms[game.Player.Winner - 1];
+
+            game.State.bloc = game.Objects.oroom[(int)(ObjectIndices.ballo - 1)];
+            game.Hack.thfpos = game.Objects.oroom[(int)(ObjectIndices.thief - 1)];
 
             return game;
         }
 
-        private static void ReadPartialInts(int count, List<int> list, byte[] bytes)
+        private static void ReadPartialInts(int count, List<int> list, byte[] bytes, Game game)
         {
+            // fill the list up to count
+            list.AddRange(Enumerable.Repeat(0, count));
+
             while (true)
             {
-                int i;
+                int index;
 
                 if (count < 255)
                 {
-                    i = bytes[DataLoader.DataPosition++];
-                    //Console.Write($"File pos: {DataLoader.DataPosition - 1}, First i: {i} ");
-                    if (i == 255)
+                    index = bytes[game.DataPosition++];
+                    if (index == 255)
                     {
-                      //  Console.WriteLine();
+                        Console.WriteLine($"leaving partial inits position: {game.DataPosition}");
                         return;
                     }
                 }
                 else
                 {
-                    i = ReadInt(bytes);
-                  //  Console.Write($"Second i: {i} ");
-                    if (i == -1)
+                    index = ReadInt(bytes, game);
+                    if (index == -1)
                     {
-                    //    Console.WriteLine();
                         return;
                     }
                 }
 
-                i = ReadInt(bytes);
-                //Console.WriteLine($"Third int: {i} C: {count}");
-                list.Add(i);
+                int value = ReadInt(bytes, game);
+                list[index] = value;
             }
 
         }
 
-        private static void ReadFlags(int count, List<bool> flags, byte[] bytes)
-        {
-
-        }
-
-        private static void ReadInts(int count, List<int> list, byte[] bytes)
+        private static void ReadFlags(int count, List<bool> flags, byte[] bytes, Game game)
         {
             while (count-- != 0)
             {
-                list.Add(DataLoader.ReadInt(bytes));
+                byte value = bytes[game.DataPosition++];
+                if (value != 0 && value != 1)
+                {
+
+                }
+
+                flags.Add(value == 0 ? false : true);
             }
         }
 
-        private static int ReadInt(byte[] bytes)
+        private static void ReadInts(int count, List<int> list, byte[] bytes, Game game)
         {
-            byte ch = bytes[DataLoader.DataPosition++];
-            ch = (byte)(ch > 127 ? ch - 256 : ch);
+            while (count-- != 0)
+            {
+                list.Add(DataLoader.ReadInt(bytes, game));
+            }
+        }
 
-            return ch * 256 + bytes[DataLoader.DataPosition++];
+        private static int ReadInt(byte[] bytes, Game game)
+        {
+            byte ch = bytes[game.DataPosition++];
+            int chInt = (ch > 127 ? ch - 256 : ch);
+
+            return chInt * 256 + bytes[game.DataPosition++];
         }
     }
 }

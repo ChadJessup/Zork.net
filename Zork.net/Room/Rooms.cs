@@ -10,6 +10,6 @@ namespace Zork.Core.Room
         public List<int> RoomExits { get; } = new List<int>(200);
         public List<int> RoomActions { get; } = new List<int>(200);
         public List<int> RoomValues { get; } = new List<int>(200);
-        public List<int> RoomFlags { get; } = new List<int>(200);
+        public List<RoomFlags> RoomFlags { get; } = new List<RoomFlags>(200);
     }
 }
