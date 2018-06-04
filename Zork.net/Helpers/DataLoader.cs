@@ -154,7 +154,6 @@ namespace Zork.Core.Helpers
                     index = bytes[game.DataPosition++];
                     if (index == 255)
                     {
-                        Console.WriteLine($"leaving partial inits position: {game.DataPosition}");
                         return;
                     }
                 }

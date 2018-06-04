@@ -43,4 +43,25 @@ namespace Zork.Core.Object
         VEHBT = 2,
         SCHBT = 1,
     }
+
+    public enum SyntaxObjectFlags
+    {
+        VABIT = 16384,
+        VRBIT = 8192,
+        VTBIT = 4096,
+        VCBIT = 2048,
+        VEBIT = 1024,
+        VFBIT = 512,
+        VPMASK = 511,
+    }
+
+    public enum SyntaxFlags
+    {
+        SDIR = 16384,
+        SIND = 8192,
+        SSTD = 4096,
+        SFLIP = 2048,
+        SDRIV = 1024,
+        SVMASK = 511,
+    }
 }

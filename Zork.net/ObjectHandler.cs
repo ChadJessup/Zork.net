@@ -119,5 +119,86 @@ namespace Zork.Core
             ret_val = true;
             return ret_val;
         }
+
+        /// <summary>
+        /// qhere_ - Test for object in room
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="rm"></param>
+        /// <param name="game"></param>
+        /// <returns></returns>
+        public static bool qhere_(int obj, int rm, Game game)
+        {
+            int i__1;
+            bool ret_val;
+
+            int i;
+
+            ret_val = true;
+            if (game.Objects.oroom[obj - 1] == rm)
+            {
+                return ret_val;
+            }
+            /* 						!IN ROOM? */
+            i__1 = game.Rooms2.Count;
+            for (i = 1; i <= i__1; ++i)
+            {
+                /* 						!NO, SCH ROOM2. */
+                if (game.Rooms2.Rooms[i - 1] == obj && game.Rooms2.RRoom[i - 1] == rm)
+                {
+                    return ret_val;
+                }
+                /* L100: */
+            }
+            ret_val = false;
+            /* 						!NOT PRESENT. */
+            return ret_val;
+        }
+
+        /* WEIGHT- RETURNS SUM OF WEIGHT OF QUALIFYING OBJECTS */
+        public static int weight_(int rm, int cn, int ad, Game game)
+        {
+            /* System generated locals */
+            int ret_val, i__1;
+
+            /* Local variables */
+            int i, j;
+
+            ret_val = 0;
+            i__1 = game.Objects.Count;
+            for (i = 1; i <= i__1; ++i)
+            {
+                /* 						!OMIT BIG FIXED ITEMS. */
+                if (game.Objects.osize[i - 1] >= 10000)
+                {
+                    goto L100;
+                }
+                /* 						!IF FIXED, FORGET IT. */
+                if (ObjectHandler.qhere_(i, rm, game) && rm != 0 || game.Objects.oadv[i - 1] == ad && ad != 0)
+                {
+                    goto L50;
+                }
+
+                j = i;
+                /* 						!SEE IF CONTAINED. */
+                L25:
+                j = game.Objects.ocan[j - 1];
+                /* 						!GET NEXT LEVEL UP. */
+                if (j == 0)
+                {
+                    goto L100;
+                }
+                /* 						!END OF LIST? */
+                if (j != cn)
+                {
+                    goto L25;
+                }
+                L50:
+                ret_val += game.Objects.osize[i - 1];
+                L100:
+                ;
+            }
+            return ret_val;
+        }
     }
 }

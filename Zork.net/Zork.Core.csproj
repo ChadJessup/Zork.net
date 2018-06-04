@@ -14,8 +14,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Villians\" />
-  </ItemGroup>
-
 </Project>

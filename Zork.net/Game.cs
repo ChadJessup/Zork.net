@@ -19,12 +19,17 @@ namespace Zork.Core
         public Screen Screen { get; } = new Screen();
         public Rooms2 Rooms2 { get; } = new Rooms2();
         public Player Player { get; } = new Player();
+        public Syntax Syntax { get; } = new Syntax();
         public Objects Objects { get; } = new Objects();
+        public Orphans Orphans { get; } = new Orphans();
         public Villians Villians { get; } = new Villians();
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
         public ClockEvents Clock { get; } = new ClockEvents();
         public Adventurer Adventurers { get; } = new Adventurer();
+
+        // TODO: Figure out naming later...
+        public ParserVector ParserVector { get; } = new ParserVector();
         public ParserVectors ParserVectors { get; } = new ParserVectors();
 
         public int DataPosition { get; set; }
@@ -43,10 +48,15 @@ namespace Zork.Core
                 this.Player.Winner = (int)AIndices.player;
                 this.Player.TelFlag = false;
 
+                string input = string.Empty;
+
                 if (this.ParserVectors.prscon <= 1)
                 {
-
+                    input = Parser.ReadLine(1);
                 }
+
+                ++this.State.Moves;
+                this.ParserVectors.prswon = Parser.Parse(input, true, this);
             }
         }
     }
