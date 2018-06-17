@@ -3,7 +3,7 @@
 namespace Zork.Core.Object
 {
     [Flags]
-    public enum ObjectFlags
+    public enum ObjectFlags : int
     {
         VISIBT = 32768,
         READBT = 16384,

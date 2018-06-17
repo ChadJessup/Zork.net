@@ -49,4 +49,30 @@
         public bool cpoutf { get; set; }
         public bool cpushf { get; set; }
     }
+
+    public class Switch
+    {
+        public int btief { get; set; }
+        public int binff { get; set; }
+        public int rvmnt { get; set; }
+        public int rvclr { get; set; }
+        public int rvcyc { get; set; }
+        public int rvsnd { get; set; }
+        public int rvgua { get; set; }
+        public int orrug { get; set; }
+        public int orcand { get; set; }
+        public int ormtch { get; set; }
+        public int orlamp { get; set; }
+        public int mdir { get; set; }
+        public int mloc { get; set; }
+        public int poleuf { get; set; }
+        public int quesno { get; set; }
+        public int nqatt { get; set; }
+        public int corrct { get; set; }
+        public int lcell { get; set; }
+        public int pnumb { get; set; }
+        public int acell { get; set; }
+        public int dcell { get; set; }
+        public int cphere { get; set; }
+    }
 }

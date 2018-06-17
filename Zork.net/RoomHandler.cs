@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Zork.Core.Object;
 using Zork.Core.Room;
 
@@ -349,22 +350,17 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool rappl1_(int roomInfo, Game game)
+        public static bool rappl1_(int ri, Game game)
         {
-            /*
-             logical rappl1_(ri)
-integer ri;
-{
-	// System generated locals
-            integer i__1, i__2;
-            logical ret_val;
+            int i__1, i__2;
+            bool ret_val;
 
             // Local variables
-            logical f;
-            integer i;
-            integer j;
+            bool f;
+            int i;
+            int j;
 
-            ret_val = TRUE_;
+            ret_val = true;
             // 						!USUALLY IGNORED.
             if (ri == 0)
             {
@@ -415,43 +411,45 @@ integer ri;
                 case 36: goto L36000;
                 case 37: goto L37000;
             }
-            bug_(1, ri);
+
+            throw new InvalidOperationException("1");
+            //bug_(1, ri);
 
             // R1--	EAST OF HOUSE.  DESCRIPTION DEPENDS ON STATE OF WINDOW
 
             L1000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
             i = 13;
             // 						!ASSUME CLOSED.
-            if ((game.Objects.oflag2[oindex_1.windo - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.windo - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i = 12;
             }
             // 						!IF OPEN, AJAR.
-            MessageHandler.rspsub_(11, i);
+            MessageHandler.rspsub_(11, i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R2--	KITCHEN.  SAME VIEW FROM INSIDE.
 
             L2000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
             i = 13;
             // 						!ASSUME CLOSED.
-            if ((game.Objects.oflag2[oindex_1.windo - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.windo - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i = 12;
             }
             // 						!IF OPEN, AJAR.
-            MessageHandler.rspsub_(14, i);
+            MessageHandler.rspsub_(14, i, game);
             // 						!DESCRIBE.
             return ret_val;
 
@@ -459,7 +457,7 @@ integer ri;
             // 	DOOR TO CYCLOPS ROOM), RUG (MOVED OR NOT), DOOR (OPEN OR CLOSED)
 
             L3000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L3500;
             }
@@ -471,30 +469,30 @@ integer ri;
                 i = 16;
             }
             // 						!IF MAGICF, CYCLOPS HOLE.
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
-            i = game.Flags.orrug + 17;
+            i = game.Switch.orrug + 17;
             // 						!ASSUME INITIAL STATE.
-            if ((game.Objects.oflag2[oindex_1.door - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i += 2;
             }
             // 						!DOOR OPEN?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // 	NOT A LOOK WORD.  REEVALUATE TROPHY CASE.
 
             L3500:
-            if (prsvec_1.prsa != vindex_1.takew && (prsvec_1.prsa != vindex_1.putw ||
-                prsvec_1.prsi != oindex_1.tcase))
+            if (game.ParserVectors.prsa != (int)VIndices.takew && (game.ParserVectors.prsa != (int)VIndices.putw ||
+                game.ParserVectors.prsi != (int)ObjectIndices.tcase))
             {
                 return ret_val;
             }
-            advs_1.ascore[game.Player.winner - 1] = state_1.rwscor;
+            game.Adventurers.Scores[game.Player.Winner - 1] = game.State.rwscor;
             // 						!SCORE TROPHY CASE.
-            i__1 = game.Objects.olnt;
+            i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
                 // 						!RETAIN RAW SCORE AS WELL.
@@ -507,16 +505,17 @@ integer ri;
                 {
                     goto L3600;
                 }
-                if (j != oindex_1.tcase)
+                if (j != (int)ObjectIndices.tcase)
                 {
                     goto L3550;
                 }
                 // 						!DO ALL LEVELS.
-                advs_1.ascore[game.Player.winner - 1] += game.Objects.otval[i - 1];
+                game.Adventurers.Scores[game.Player.Winner - 1] += game.Objects.otval[i - 1];
                 L3600:
                 ;
             }
-            scrupd_(0);
+
+            AdventurerHandler.scrupd_(game, 0);
             // 						!SEE IF ENDGAME TRIG.
             return ret_val;
             // RAPPL1, PAGE 3
@@ -524,41 +523,41 @@ integer ri;
             // R4--	CELLAR.  SHUT DOOR AND BAR IT IF HE JUST WALKED IN.
 
             L4000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L4500;
             }
             // 						!LOOK?
-            rspeak_(21);
+            MessageHandler.Speak(21, game);
             // 						!DESCRIBE CELLAR.
             return ret_val;
 
             L4500:
-            if (prsvec_1.prsa != vindex_1.walkiw)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw)
             {
                 return ret_val;
             }
+
             // 						!WALKIN?
-            if ((game.Objects.oflag2[oindex_1.door - 1] & OPENBT +
-                TCHBT) != OPENBT)
+            if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & (int)ObjectFlags2.OPENBT + ObjectFlags2.TCHBT) != ObjectFlags2.OPENBT)
             {
                 return ret_val;
             }
-            game.Objects.oflag2[oindex_1.door - 1] = (game.Objects.oflag2[oindex_1.door - 1] |
-                TCHBT) & ~OPENBT;
-            rspeak_(22);
+
+            game.Objects.oflag2[(int)ObjectIndices.door - 1] = (game.Objects.oflag2[(int)ObjectIndices.door - 1] | ObjectFlags2.TCHBT) & ~ObjectFlags2.OPENBT;
+            MessageHandler.Speak(22, game);
             // 						!SLAM AND BOLT DOOR.
             return ret_val;
 
             // R5--	MAZE11.  DESCRIBE STATE OF GRATING.
 
             L5000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(23);
+            MessageHandler.Speak(23, game);
             // 						!DESCRIBE.
             i = 24;
             // 						!ASSUME LOCKED.
@@ -567,51 +566,53 @@ integer ri;
                 i = 26;
             }
             // 						!UNLOCKED?
-            if ((game.Objects.oflag2[oindex_1.grate - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.grate - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i = 25;
             }
             // 						!OPEN?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE GRATE.
             return ret_val;
 
             // R6--	CLEARING.  DESCRIBE CLEARING, MOVE LEAVES.
 
             L6000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L6500;
             }
             // 						!LOOK?
-            rspeak_(27);
+            MessageHandler.Speak(27, game);
             // 						!DESCRIBE.
-            if (game.Flags.rvclr == 0)
+            if (game.Switch.rvclr == 0)
             {
                 return ret_val;
             }
             // 						!LEAVES MOVED?
             i = 28;
             // 						!YES, ASSUME GRATE CLOSED.
-            if ((game.Objects.oflag2[oindex_1.grate - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.grate - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i = 29;
             }
             // 						!OPEN?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE GRATE.
             return ret_val;
 
             L6500:
-            if (game.Flags.rvclr != 0 || qhere_(oindex_1.leave, rindex_1.clear) && (
-                prsvec_1.prsa != vindex_1.movew || prsvec_1.prso !=
-                oindex_1.leave))
+            if (game.Switch.rvclr != 0
+                || ObjectHandler.qhere_((int)ObjectIndices.leave, (int)RoomIndices.clear, game)
+                && (game.ParserVectors.prsa != (int)VIndices.movew
+                || game.ParserVectors.prso != (int)ObjectIndices.leave))
             {
                 return ret_val;
             }
-            rspeak_(30);
+
+            MessageHandler.Speak(30, game);
             // 						!MOVE LEAVES, REVEAL GRATE.
-            game.Flags.rvclr = 1;
+            game.Switch.rvclr = 1;
             // 						!INDICATE LEAVES MOVED.
             return ret_val;
             // RAPPL1, PAGE 4
@@ -619,7 +620,7 @@ integer ri;
             // R7--	RESERVOIR SOUTH.  DESCRIPTION DEPENDS ON LOW TIDE FLAG.
 
             L7000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
@@ -631,16 +632,16 @@ integer ri;
                 i = 32;
             }
             // 						!IF LOW TIDE, EMPTY.
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
-            rspeak_(33);
+            MessageHandler.Speak(33, game);
             // 						!DESCRIBE EXITS.
             return ret_val;
 
             // R8--	RESERVOIR.  STATE DEPENDS ON LOW TIDE FLAG.
 
             L8000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
@@ -652,14 +653,14 @@ integer ri;
                 i = 35;
             }
             // 						!IF LOW TIDE, EMTPY.
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R9--	RESERVOIR NORTH.  ALSO DEPENDS ON LOW TIDE FLAG.
 
             L9000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
@@ -670,19 +671,21 @@ integer ri;
             {
                 i = 37;
             }
-            rspeak_(i);
-            rspeak_(38);
+
+            MessageHandler.Speak(i, game);
+            MessageHandler.Speak(38, game);
+
             return ret_val;
 
             // R10--	GLACIER ROOM.  STATE DEPENDS ON MELTED, VANISHED FLAGS.
 
             L10000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(39);
+            MessageHandler.Speak(39, game);
             // 						!BASIC DESCRIPTION.
             i = 0;
             // 						!ASSUME NO CHANGES.
@@ -696,16 +699,16 @@ integer ri;
                 i = 41;
             }
             // 						!COMPLETE MELT?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R11--	FOREST ROOM
 
             L11000:
-            if (prsvec_1.prsa == vindex_1.walkiw)
+            if (game.ParserVectors.prsa == (int)VIndices.walkiw)
             {
-                cevent_1.cflag[cindex_1.cevfor - 1] = TRUE_;
+                game.Clock.Flags[(int)ClockIndices.cevfor - 1] = true;
             }
             // 						!IF WALK IN, BIRDIE.
             return ret_val;
@@ -713,16 +716,16 @@ integer ri;
             // R12--	MIRROR ROOM.  STATE DEPENDS ON MIRROR INTACT.
 
             L12000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(42);
+            MessageHandler.Speak(42, game);
             // 						!DESCRIBE.
             if (game.Flags.mirrmf)
             {
-                rspeak_(43);
+                MessageHandler.Speak(43, game);
             }
             // 						!IF BROKEN, NASTY REMARK.
             return ret_val;
@@ -731,44 +734,43 @@ integer ri;
             // R13--	CAVE2 ROOM.  BLOW OUT CANDLES WITH 50% PROBABILITY.
 
             L13000:
-            if (prsvec_1.prsa != vindex_1.walkiw)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw)
             {
                 return ret_val;
             }
             // 						!WALKIN?
-            if (prob_(50, 50) || game.Objects.oadv[oindex_1.candl - 1] !=
-                game.Player.winner || !((game.Objects.oflag1[oindex_1.candl - 1] &
-                    ONBT) != 0))
+            if (prob_(game, 50, 50) || game.Objects.oadv[(int)ObjectIndices.candl - 1] !=
+                game.Player.Winner || !((game.Objects.oflag1[(int)ObjectIndices.candl - 1] & ObjectFlags.ONBT) != 0))
             {
                 return ret_val;
             }
-            game.Objects.oflag1[oindex_1.candl - 1] &= ~ONBT;
-            rspeak_(47);
+            game.Objects.oflag1[(int)ObjectIndices.candl - 1] &= ~ObjectFlags.ONBT;
+            MessageHandler.Speak(47, game);
             // 						!TELL OF WINDS.
-            cevent_1.cflag[cindex_1.cevcnd - 1] = FALSE_;
+            game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
             // 						!HALT CANDLE COUNTDOWN.
             return ret_val;
 
             // R14--	BOOM ROOM.  BLOW HIM UP IF CARRYING FLAMING OBJECT.
 
             L14000:
-            j = game.Objects.odesc2[oindex_1.candl - 1];
+            j = game.Objects.odesc2[(int)ObjectIndices.candl - 1];
             // 						!ASSUME CANDLE.
-            if (game.Objects.oadv[oindex_1.candl - 1] == game.Player.winner && (
-                game.Objects.oflag1[oindex_1.candl - 1] & ONBT) != 0)
+            if (game.Objects.oadv[(int)ObjectIndices.candl - 1] == game.Player.Winner && (
+                game.Objects.oflag1[(int)ObjectIndices.candl - 1] & ObjectFlags.ONBT) != 0)
             {
                 goto L14100;
             }
-            j = game.Objects.odesc2[oindex_1.torch - 1];
+            j = game.Objects.odesc2[(int)ObjectIndices.torch - 1];
             // 						!ASSUME TORCH.
-            if (game.Objects.oadv[oindex_1.torch - 1] == game.Player.winner && (
-                game.Objects.oflag1[oindex_1.torch - 1] & ONBT) != 0)
+            if (game.Objects.oadv[(int)ObjectIndices.torch - 1] == game.Player.Winner && (
+                game.Objects.oflag1[(int)ObjectIndices.torch - 1] & ObjectFlags.ONBT) != 0)
             {
                 goto L14100;
             }
-            j = game.Objects.odesc2[oindex_1.match - 1];
-            if (game.Objects.oadv[oindex_1.match - 1] == game.Player.winner && (
-                game.Objects.oflag1[oindex_1.match - 1] & ONBT) != 0)
+            j = game.Objects.odesc2[(int)ObjectIndices.match - 1];
+            if (game.Objects.oadv[(int)ObjectIndices.match - 1] == game.Player.Winner && (
+                game.Objects.oflag1[(int)ObjectIndices.match - 1] & ObjectFlags.ONBT) != 0)
             {
                 goto L14100;
             }
@@ -776,52 +778,52 @@ integer ri;
             // 						!SAFE
 
             L14100:
-            if (prsvec_1.prsa != vindex_1.trnonw)
+            if (game.ParserVectors.prsa != (int)VIndices.trnonw)
             {
                 goto L14200;
             }
             // 						!TURN ON?
-            MessageHandler.rspsub_(294, j);
+            MessageHandler.rspsub_(294, j, game);
             // 						!BOOM
             // 						!
-            jigsup_(44);
+            AdventurerHandler.jigsup_(game, 44);
             return ret_val;
 
             L14200:
-            if (prsvec_1.prsa != vindex_1.walkiw)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw)
             {
                 return ret_val;
             }
             // 						!WALKIN?
-            MessageHandler.rspsub_(295, j);
+            MessageHandler.rspsub_(295, j, game);
             // 						!BOOM
             // 						!
-            jigsup_(44);
+            AdventurerHandler.jigsup_(game, 44);
             return ret_val;
 
             // R15--	NO-OBJS.  SEE IF EMPTY HANDED, SCORE LIGHT SHAFT.
 
             L15000:
-            game.Flags.empthf = TRUE_;
+            game.Flags.empthf = true;
             // 						!ASSUME TRUE.
-            i__1 = game.Objects.olnt;
+            i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
                 // 						!SEE IF CARRYING.
-                if (game.Objects.oadv[i - 1] == game.Player.winner)
+                if (game.Objects.oadv[i - 1] == game.Player.Winner)
                 {
-                    game.Flags.empthf = FALSE_;
+                    game.Flags.empthf = false;
                 }
                 // L15100:
             }
 
-            if (game.Player.Here != rindex_1.bshaf || !lit_(game.Player.Here))
+            if (game.Player.Here != (int)RoomIndices.bshaf || !RoomHandler.IsRoomLit(game.Player.Here, game))
             {
                 return ret_val;
             }
-            scrupd_(state_1.ltshft);
+            AdventurerHandler.scrupd_(game, game.State.ltshft);
             // 						!SCORE LIGHT SHAFT.
-            state_1.ltshft = 0;
+            game.State.ltshft = 0;
             // 						!NEVER AGAIN.
             return ret_val;
             // RAPPL1, PAGE 6
@@ -829,74 +831,74 @@ integer ri;
             // R16--	MACHINE ROOM.  DESCRIBE MACHINE.
 
             L16000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
             i = 46;
             // 						!ASSUME LID CLOSED.
-            if ((game.Objects.oflag2[oindex_1.machi - 1] & OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.machi - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 i = 12;
             }
             // 						!IF OPEN, OPEN.
-            MessageHandler.rspsub_(45, i);
+            MessageHandler.rspsub_(45, i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R17--	BAT ROOM.  UNLESS CARRYING GARLIC, FLY AWAY WITH ME...
 
             L17000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L17500;
             }
             // 						!LOOK?
-            rspeak_(48);
+            MessageHandler.Speak(48, game);
             // 						!DESCRIBE ROOM.
-            if (game.Objects.oadv[oindex_1.garli - 1] == game.Player.winner)
+            if (game.Objects.oadv[(int)ObjectIndices.garli - 1] == game.Player.Winner)
             {
-                rspeak_(49);
+                MessageHandler.Speak(49, game);
             }
             // 						!BAT HOLDS NOSE.
             return ret_val;
 
             L17500:
-            if (prsvec_1.prsa != vindex_1.walkiw || game.Objects.oadv[oindex_1.garli - 1]
-                == game.Player.winner)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw || game.Objects.oadv[(int)ObjectIndices.garli - 1]
+                == game.Player.Winner)
             {
                 return ret_val;
             }
-            rspeak_(50);
+            MessageHandler.Speak(50, game);
             // 						!TIME TO FLY, JACK.
-            f = moveto_(bats_1.batdrp[rnd_(9)], game.Player.winner);
+            f = AdventurerHandler.moveto_(bats_1.batdrp[rnd_(9)], game.Player.Winner);
             // 						!SELECT RANDOM DEST.
-            ret_val = FALSE_;
+            ret_val = false;
             // 						!INDICATE NEW DESC NEEDED.
             return ret_val;
 
             // R18--	DOME ROOM.  STATE DEPENDS ON WHETHER ROPE TIED TO RAILING.
 
             L18000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L18500;
             }
             // 						!LOOK?
-            rspeak_(51);
+            MessageHandler.Speak(51, game);
             // 						!DESCRIBE.
             if (game.Flags.domef)
             {
-                rspeak_(52);
+                MessageHandler.Speak(52, game);
             }
             // 						!IF ROPE, DESCRIBE.
             return ret_val;
 
             L18500:
-            if (prsvec_1.prsa == vindex_1.leapw)
+            if (game.ParserVectors.prsa == (int)VIndices.leapw)
             {
-                jigsup_(53);
+                AdventurerHandler.jigsup_(game, 53);
             }
             // 						!DID HE JUMP???
             return ret_val;
@@ -904,16 +906,16 @@ integer ri;
             // R19--	TORCH ROOM.  ALSO DEPENDS ON WHETHER ROPE TIED TO RAILING.
 
             L19000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(54);
+            MessageHandler.Speak(54, game);
             // 						!DESCRIBE.
             if (game.Flags.domef)
             {
-                rspeak_(55);
+                MessageHandler.Speak(55, game);
             }
             // 						!IF ROPE, DESCRIBE.
             return ret_val;
@@ -921,24 +923,24 @@ integer ri;
             // R20--	CAROUSEL ROOM.  SPIN HIM OR KILL HIM.
 
             L20000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L20500;
             }
             // 						!LOOK?
-            rspeak_(56);
+            MessageHandler.Speak(56, game);
             // 						!DESCRIBE.
             if (!game.Flags.caroff)
             {
-                rspeak_(57);
+                MessageHandler.Speak(57, game);
             }
             // 						!IF NOT FLIPPED, SPIN.
             return ret_val;
 
             L20500:
-            if (prsvec_1.prsa == vindex_1.walkiw && game.Flags.carozf)
+            if (game.ParserVectors.prsa == (int)VIndices.walkiw && game.Flags.carozf)
             {
-                jigsup_(58);
+                AdventurerHandler.jigsup_(game, 58);
             }
             // 						!WALKED IN.
             return ret_val;
@@ -947,67 +949,67 @@ integer ri;
             // R21--	LLD ROOM.  HANDLE EXORCISE, DESCRIPTIONS.
 
             L21000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L21500;
             }
             // 						!LOOK?
-            rspeak_(59);
+            MessageHandler.Speak(59, game);
             // 						!DESCRIBE.
             if (!game.Flags.lldf)
             {
-                rspeak_(60);
+                MessageHandler.Speak(60, game);
             }
             // 						!IF NOT VANISHED, GHOSTS.
             return ret_val;
 
             L21500:
-            if (prsvec_1.prsa != vindex_1.exorcw)
+            if (game.ParserVectors.prsa != (int)VIndices.exorcw)
             {
                 return ret_val;
             }
             // 						!EXORCISE?
-            if (game.Objects.oadv[oindex_1.bell - 1] == game.Player.winner && game.Objects.oadv[
-                oindex_1.book - 1] == game.Player.winner && game.Objects.oadv[
-                    oindex_1.candl - 1] == game.Player.winner && (game.Objects.oflag1[
-                        oindex_1.candl - 1] & ONBT) != 0)
+            if (game.Objects.oadv[(int)ObjectIndices.bell - 1] == game.Player.Winner && game.Objects.oadv[
+                (int)ObjectIndices.book - 1] == game.Player.Winner && game.Objects.oadv[
+                    (int)ObjectIndices.candl - 1] == game.Player.Winner && (game.Objects.oflag1[
+                        (int)ObjectIndices.candl - 1] & ObjectFlags.ONBT) != 0)
             {
                 goto L21600;
             }
-            rspeak_(62);
+            MessageHandler.Speak(62, game);
             // 						!NOT EQUIPPED.
             return ret_val;
 
             L21600:
-            if (qhere_(oindex_1.ghost, game.Player.Here))
+            if (ObjectHandler.qhere_((int)ObjectIndices.ghost, game.Player.Here, game))
             {
                 goto L21700;
             }
             // 						!GHOST HERE?
-            jigsup_(61);
+            AdventurerHandler.jigsup_(game, 61);
             // 						!NOPE, EXORCISE YOU.
             return ret_val;
 
             L21700:
-            newsta_(oindex_1.ghost, 63, 0, 0, 0);
+            ObjectHandler.newsta_((int)ObjectIndices.ghost, 63, 0, 0, 0, game);
             // 						!VANISH GHOST.
-            game.Flags.lldf = TRUE_;
+            game.Flags.lldf = true;
             // 						!OPEN GATE.
             return ret_val;
 
             // R22--	LLD2-ROOM.  IS HIS HEAD ON A POLE?
 
             L22000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(64);
+            MessageHandler.Speak(64, game);
             // 						!DESCRIBE.
             if (game.Flags.onpolf)
             {
-                rspeak_(65);
+                MessageHandler.Speak(65, game);
             }
             // 						!ON POLE?
             return ret_val;
@@ -1015,25 +1017,25 @@ integer ri;
             // R23--	DAM ROOM.  DESCRIBE RESERVOIR, PANEL.
 
             L23000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(66);
+            MessageHandler.Speak(66, game);
             // 						!DESCRIBE.
             i = 67;
             if (game.Flags.lwtidf)
             {
                 i = 68;
             }
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE RESERVOIR.
-            rspeak_(69);
+            MessageHandler.Speak(69, game);
             // 						!DESCRIBE PANEL.
             if (game.Flags.gatef)
             {
-                rspeak_(70);
+                MessageHandler.Speak(70, game);
             }
             // 						!BUBBLE IS GLOWING.
             return ret_val;
@@ -1041,27 +1043,28 @@ integer ri;
             // R24--	TREE ROOM
 
             L24000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(660);
+            MessageHandler.Speak(660, game);
             // 						!DESCRIBE.
             i = 661;
             // 						!SET FLAG FOR BELOW.
-            i__1 = game.Objects.olnt;
+            i__1 = game.Objects.Count;
             for (j = 1; j <= i__1; ++j)
             {
                 // 						!DESCRIBE OBJ IN FORE3.
-                if (!qhere_(j, rindex_1.fore3) || j == oindex_1.ftree)
+                if (!ObjectHandler.qhere_(j, (int)RoomIndices.fore3, game) || j == (int)ObjectIndices.ftree)
                 {
                     goto L24200;
                 }
-                rspeak_(i);
+
+                MessageHandler.Speak(i, game);
                 // 						!SET STAGE,
                 i = 0;
-                MessageHandler.rspsub_(502, game.Objects.odesc2[j - 1]);
+                MessageHandler.rspsub_(502, game.Objects.odesc2[j - 1], game);
                 // 						!DESCRIBE.
                 L24200:
                 ;
@@ -1073,21 +1076,21 @@ integer ri;
 
 
             L25000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(606);
+            MessageHandler.Speak(606, game);
             // 						!DESCRIBE.
             i = 607;
             // 						!ASSUME BASIC STATE.
-            if (game.Flags.rvcyc > 0)
+            if (game.Switch.rvcyc > 0)
             {
                 i = 608;
             }
             // 						!>0?  HUNGRY.
-            if (game.Flags.rvcyc < 0)
+            if (game.Switch.rvcyc < 0)
             {
                 i = 609;
             }
@@ -1102,19 +1105,19 @@ integer ri;
                 i = 611;
             }
             // 						!GONE?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
-            if (!game.Flags.cyclof && game.Flags.rvcyc != 0)
+            if (!game.Flags.cyclof && game.Switch.rvcyc != 0)
             {
-                i__1 = abs(game.Flags.rvcyc) + 193;
-                rspeak_(i__1);
+                i__1 = Math.Abs(game.Switch.rvcyc) + 193;
+                MessageHandler.Speak(i__1, game);
             }
             return ret_val;
 
             // R26--	BANK BOX ROOM.
 
             L26000:
-            if (prsvec_1.prsa != vindex_1.walkiw)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw)
             {
                 return ret_val;
             }
@@ -1122,9 +1125,9 @@ integer ri;
             for (i = 1; i <= 8; i += 2)
             {
                 // 						!SCOLRM DEPENDS ON
-                if (screen_1.fromdr == screen_1.scoldr[i - 1])
+                if (game.Screen.fromdr == game.Screen.scoldr[i - 1])
                 {
-                    screen_1.scolrm = screen_1.scoldr[i];
+                    game.Screen.scolrm = game.Screen.scoldr[i];
                 }
                 // L26100:
             }
@@ -1134,48 +1137,47 @@ integer ri;
             // R27--	TREASURE ROOM.
 
             L27000:
-            if (prsvec_1.prsa != vindex_1.walkiw || !hack_1.thfact)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw || !game.Hack.thfact)
             {
                 return ret_val;
             }
-            if (game.Objects.oroom[oindex_1.thief - 1] != game.Player.Here)
+            if (game.Objects.oroom[(int)ObjectIndices.thief - 1] != game.Player.Here)
             {
-                newsta_(oindex_1.thief, 82, game.Player.Here, 0, 0);
+                ObjectHandler.newsta_((int)ObjectIndices.thief, 82, game.Player.Here, 0, 0, game);
             }
-            hack_1.thfpos = game.Player.Here;
+            game.Hack.thfpos = game.Player.Here;
             // 						!RESET SEARCH PATTERN.
-            game.Objects.oflag2[oindex_1.thief - 1] |= FITEBT;
-            if (game.Objects.oroom[oindex_1.chali - 1] == game.Player.Here)
+            game.Objects.oflag2[(int)ObjectIndices.thief - 1] |= ObjectFlags2.FITEBT;
+            if (game.Objects.oroom[(int)ObjectIndices.chali - 1] == game.Player.Here)
             {
-                game.Objects.oflag1[oindex_1.chali - 1] &= ~TAKEBT;
+                game.Objects.oflag1[(int)ObjectIndices.chali - 1] &= ~ObjectFlags.TAKEBT;
             }
 
             // 	VANISH EVERYTHING IN ROOM
 
             j = 0;
             // 						!ASSUME NOTHING TO VANISH.
-            i__1 = game.Objects.olnt;
+            i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
-                if (i == oindex_1.chali || i == oindex_1.thief || !qhere_(i,
-                    game.Player.Here))
+                if (i == (int)ObjectIndices.chali || i == (int)ObjectIndices.thief || !ObjectHandler.qhere_(i, game.Player.Here, game))
                 {
                     goto L27200;
                 }
                 j = 83;
                 // 						!FLAG BYEBYE.
-                game.Objects.oflag1[i - 1] &= ~VISIBT;
+                game.Objects.oflag1[i - 1] &= ~ObjectFlags.VISIBT;
                 L27200:
                 ;
             }
-            rspeak_(j);
+            MessageHandler.Speak(j, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R28--	CLIFF FUNCTION.  SEE IF CARRYING INFLATED BOAT.
 
             L28000:
-            game.Flags.deflaf = game.Objects.oadv[oindex_1.rboat - 1] != game.Player.winner;
+            game.Flags.deflaf = game.Objects.oadv[(int)ObjectIndices.rboat - 1] != game.Player.Winner;
             // 						!TRUE IF NOT CARRYING.
             return ret_val;
             // RAPPL1, PAGE 9
@@ -1183,22 +1185,22 @@ integer ri;
             // R29--	RIVR4 ROOM.  PLAY WITH BUOY.
 
             L29000:
-            if (!game.Flags.buoyf || game.Objects.oadv[oindex_1.buoy - 1] != game.Player.winner)
+            if (!game.Flags.buoyf || game.Objects.oadv[(int)ObjectIndices.buoy - 1] != game.Player.Winner)
             {
                 return ret_val;
             }
-            rspeak_(84);
+            MessageHandler.Speak(84, game);
             // 						!GIVE HINT,
-            game.Flags.buoyf = FALSE_;
+            game.Flags.buoyf = false;
             // 						!THEN DISABLE.
             return ret_val;
 
             // R30--	OVERFALLS.  DOOM.
 
             L30000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
-                jigsup_(85);
+                AdventurerHandler.jigsup_(game, 85);
             }
             // 						!OVER YOU GO.
             return ret_val;
@@ -1206,13 +1208,13 @@ integer ri;
             // R31--	BEACH ROOM.  DIG A HOLE.
 
             L31000:
-            if (prsvec_1.prsa != vindex_1.digw || prsvec_1.prso != oindex_1.shove)
+            if (game.ParserVectors.prsa != (int)VIndices.digw || game.ParserVectors.prso != (int)ObjectIndices.shove)
             {
                 return ret_val;
             }
-            ++game.Flags.rvsnd;
+            ++game.Switch.rvsnd;
             // 						!INCREMENT DIG STATE.
-            switch (game.Flags.rvsnd)
+            switch (game.Switch.rvsnd)
             {
                 case 1: goto L31100;
                 case 2: goto L31100;
@@ -1221,66 +1223,70 @@ integer ri;
                 case 5: goto L31500;
             }
             // 						!PROCESS STATE.
-            bug_(2, game.Flags.rvsnd);
+            //bug_(2, game.Switch.rvsnd);
+            throw new InvalidOperationException("2");
 
             L31100:
-            i__1 = game.Flags.rvsnd + 85;
-            rspeak_(i__1);
+            i__1 = game.Switch.rvsnd + 85;
+            MessageHandler.Speak(i__1, game);
             // 						!1-3... DISCOURAGE HIM.
             return ret_val;
 
             L31400:
             i = 89;
             // 						!ASSUME DISCOVERY.
-            if ((game.Objects.oflag1[oindex_1.statu - 1] & VISIBT) != 0)
+            if ((game.Objects.oflag1[(int)ObjectIndices.statu - 1] & ObjectFlags.VISIBT) != 0)
             {
                 i = 88;
             }
-            rspeak_(i);
-            game.Objects.oflag1[oindex_1.statu - 1] |= VISIBT;
+
+            MessageHandler.Speak(i, game);
+            game.Objects.oflag1[(int)ObjectIndices.statu - 1] |= ObjectFlags.VISIBT;
             return ret_val;
 
             L31500:
-            game.Flags.rvsnd = 0;
+            game.Switch.rvsnd = 0;
             // 						!5... SAND COLLAPSES
-            jigsup_(90);
+            AdventurerHandler.jigsup_(game, 90);
             // 						!AND SO DOES HE.
             return ret_val;
 
             // R32--	TCAVE ROOM.  DIG A HOLE IN GUANO.
 
             L32000:
-            if (prsvec_1.prsa != vindex_1.digw || prsvec_1.prso != oindex_1.shove)
+            if (game.ParserVectors.prsa != (int)VIndices.digw || game.ParserVectors.prso != (int)ObjectIndices.shove)
             {
                 return ret_val;
             }
             i = 91;
             // 						!ASSUME NO GUANO.
-            if (!qhere_(oindex_1.guano, game.Player.Here))
+            if (!ObjectHandler.qhere_((int)ObjectIndices.guano, game.Player.Here, game))
             {
                 goto L32100;
             }
             // 						!IS IT HERE?
             // Computing MIN
-            i__1 = 4, i__2 = game.Flags.rvgua + 1;
-            game.Flags.rvgua = min(i__1, i__2);
+            i__1 = 4;
+            i__2 = game.Switch.rvgua + 1;
+
+            game.Switch.rvgua = Math.Min(i__1, i__2);
             // 						!YES, SET NEW STATE.
-            i = game.Flags.rvgua + 91;
+            i = game.Switch.rvgua + 91;
             // 						!GET NASTY REMARK.
             L32100:
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R33--	FALLS ROOM
 
             L33000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(96);
+            MessageHandler.Speak(96, game);
             // 						!DESCRIBE.
             i = 97;
             // 						!ASSUME NO RAINBOW.
@@ -1289,7 +1295,7 @@ integer ri;
                 i = 98;
             }
             // 						!GOT ONE?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
             // RAPPL1, PAGE 10
@@ -1297,32 +1303,32 @@ integer ri;
             // R34--	LEDGE FUNCTION.  LEDGE CAN COLLAPSE.
 
             L34000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(100);
+            MessageHandler.Speak(100, game);
             // 						!DESCRIBE.
             i = 102;
             // 						!ASSUME SAFE ROOM OK.
-            if ((rooms_1.rflag[rindex_1.msafe - 1] & RMUNG) != 0)
+            if ((game.Rooms.RoomFlags[(int)RoomIndices.msafe - 1] & RoomFlags.RMUNG) != 0)
             {
                 i = 101;
             }
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R35--	SAFE ROOM.  STATE DEPENDS ON WHETHER SAFE BLOWN.
 
             L35000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 return ret_val;
             }
             // 						!LOOK?
-            rspeak_(104);
+            MessageHandler.Speak(104, game);
             // 						!DESCRIBE.
             i = 105;
             // 						!ASSUME OK.
@@ -1331,24 +1337,24 @@ integer ri;
                 i = 106;
             }
             // 						!BLOWN?
-            rspeak_(i);
+            MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
             return ret_val;
 
             // R36--	MAGNET ROOM.  DESCRIBE, CHECK FOR SPINDIZZY DOOM.
 
             L36000:
-            if (prsvec_1.prsa != vindex_1.lookw)
+            if (game.ParserVectors.prsa != (int)VIndices.lookw)
             {
                 goto L36500;
             }
             // 						!LOOK?
-            rspeak_(107);
+            MessageHandler.Speak(107, game);
             // 						!DESCRIBE.
             return ret_val;
 
             L36500:
-            if (prsvec_1.prsa != vindex_1.walkiw || !game.Flags.caroff)
+            if (game.ParserVectors.prsa != (int)VIndices.walkiw || !game.Flags.caroff)
             {
                 return ret_val;
             }
@@ -1358,19 +1364,19 @@ integer ri;
                 goto L36600;
             }
             // 						!ZOOM?
-            rspeak_(108);
+            MessageHandler.Speak(108, game);
             // 						!NO, SPIN HIS COMPASS.
             return ret_val;
 
             L36600:
             i = 58;
             // 						!SPIN HIS INSIDES.
-            if (game.Player.winner != aindex_1.player)
+            if (game.Player.Winner != (int)AIndices.player)
             {
                 i = 99;
             }
             // 						!SPIN ROBOT.
-            jigsup_(i);
+            AdventurerHandler.jigsup_(game, i);
             // 						!DEAD.
             return ret_val;
 
@@ -1379,33 +1385,28 @@ integer ri;
             L37000:
             if (game.Flags.cagesf)
             {
-                f = moveto_(rindex_1.cager, game.Player.winner);
+                f = AdventurerHandler.moveto_(game, (int)RoomIndices.cager, game.Player.Winner);
             }
             // !IF SOLVED, MOVE.
             return ret_val;
-            */
-            return true;
         }
 
-        public static bool rappl2_(int roomInfo, Game game)
+        public static bool rappl2_(int ri, Game game)
         {
-            /*
-            logical rappl2_(ri)
-integer ri;
             {
                 //  Initialized data
 
-                const integer newrms = 38;
+                const int newrms = 38;
 
                 //  System generated locals
-                integer i__1;
-                logical ret_val;
+                int i__1;
+                bool ret_val;
 
                 //  Local variables
-                integer i;
-                integer j;
+                int i;
+                int j;
 
-                ret_val = TRUE_;
+                ret_val = true;
                 switch (ri - newrms + 1)
                 {
                     case 1: goto L38000;
@@ -1432,51 +1433,54 @@ integer ri;
                     case 22: goto L59000;
                     case 23: goto L60000;
                 }
-                bug_(70, ri);
+
+                //bug_(70, ri);
+                throw new InvalidOperationException("70");
+
                 return ret_val;
 
                 //  R38--	MIRROR D ROOM
 
                 L38000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    lookto_(rindex_1.fdoor, rindex_1.mrg, 0, 682, 681);
+                    lookto_(game, (int)RoomIndices.fdoor, (int)RoomIndices.mrg, 0, 682, 681);
                 }
                 return ret_val;
 
                 //  R39--	MIRROR G ROOM
 
                 L39000:
-                if (prsvec_1.prsa == vindex_1.walkiw)
+                if (game.ParserVectors.prsa == (int)VIndices.walkiw)
                 {
-                    jigsup_(685);
+                    AdventurerHandler.jigsup_(game, 685);
                 }
                 return ret_val;
 
                 //  R40--	MIRROR C ROOM
 
                 L40000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    lookto_(rindex_1.mrg, rindex_1.mrb, 683, 0, 681);
+                    lookto_(game, (int)RoomIndices.mrg, (int)RoomIndices.mrb, 683, 0, 681);
                 }
                 return ret_val;
 
                 //  R41--	MIRROR B ROOM
 
                 L41000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    lookto_(rindex_1.mrc, rindex_1.mra, 0, 0, 681);
+                    lookto_(game, (int)RoomIndices.mrc, (int)RoomIndices.mra, 0, 0, 681);
                 }
                 return ret_val;
 
                 //  R42--	MIRROR A ROOM
 
                 L42000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    lookto_(rindex_1.mrb, 0, 0, 684, 681);
+                    lookto_(game, (int)RoomIndices.mrb, 0, 0, 684, 681);
                 }
                 return ret_val;
                 //  RAPPL2, PAGE 3
@@ -1484,7 +1488,7 @@ integer ri;
                 //  R43--	MIRROR C EAST/WEST
 
                 L43000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
                     ewtell_(game.Player.Here, 683);
                 }
@@ -1493,7 +1497,7 @@ integer ri;
                 //  R44--	MIRROR B EAST/WEST
 
                 L44000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
                     ewtell_(game.Player.Here, 686);
                 }
@@ -1502,7 +1506,7 @@ integer ri;
                 //  R45--	MIRROR A EAST/WEST
 
                 L45000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
                     ewtell_(game.Player.Here, 687);
                 }
@@ -1511,12 +1515,12 @@ integer ri;
                 //  R46--	INSIDE MIRROR
 
                 L46000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
-                rspeak_(688);
+                MessageHandler.Speak(688, game);
                 // !DESCRIBE
 
                 //  NOW DESCRIBE POLE STATE.
@@ -1527,18 +1531,18 @@ integer ri;
 
                 i = 689;
                 // !ASSUME CASE 5.
-                if (game.Flags.mdir == 270 && game.Flags.mloc == rindex_1.mrb)
+                if (game.Switch.mdir == 270 && game.Switch.mloc == (int)RoomIndices.mrb)
                 {
-                    i = min(game.Flags.poleuf, 1) + 690;
+                    i = Math.Min(game.Switch.poleuf, 1) + 690;
                 }
-                if (game.Flags.mdir % 180 == 0)
+                if (game.Switch.mdir % 180 == 0)
                 {
-                    i = min(game.Flags.poleuf, 1) + 692;
+                    i = Math.Min(game.Switch.poleuf, 1) + 692;
                 }
-                rspeak_(i);
+                MessageHandler.Speak(i, game);
                 // !DESCRIBE POLE.
-                i__1 = game.Flags.mdir / 45 + 695;
-                MessageHandler.rspsub_(694, i__1);
+                i__1 = game.Switch.mdir / 45 + 695;
+                MessageHandler.rspsub_(694, i__1, game);
                 // !DESCRIBE ARROW.
                 return ret_val;
                 //  RAPPL2, PAGE 4
@@ -1546,17 +1550,17 @@ integer ri;
                 //  R47--	MIRROR EYE ROOM
 
                 L47000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 704;
                 // !ASSUME BEAM STOP.
-                i__1 = game.Objects.olnt;
+                i__1 = game.Objects.Count;
                 for (j = 1; j <= i__1; ++j)
                 {
-                    if (qhere_(j, game.Player.Here) && j != oindex_1.rbeam)
+                    if (ObjectHandler.qhere_(j, game.Player.Here, game) && j != (int)ObjectIndices.rbeam)
                     {
                         goto L47200;
                     }
@@ -1564,48 +1568,48 @@ integer ri;
                 }
                 i = 703;
                 L47200:
-                MessageHandler.rspsub_(i, game.Objects.odesc2[j - 1]);
+                MessageHandler.rspsub_(i, game.Objects.odesc2[j - 1], game);
                 // !DESCRIBE BEAM.
-                lookto_(rindex_1.mra, 0, 0, 0, 0);
+                lookto_(game, (int)RoomIndices.mra, 0, 0, 0, 0);
                 // !LOOK NORTH.
                 return ret_val;
 
                 //  R48--	INSIDE CRYPT
 
                 L48000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 46;
                 // !CRYPT IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.tomb - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.tomb - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                MessageHandler.rspsub_(705, i);
+                MessageHandler.rspsub_(705, i, game);
                 return ret_val;
 
                 //  R49--	SOUTH CORRIDOR
 
                 L49000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
-                rspeak_(706);
+                MessageHandler.Speak(706, game);
                 // !DESCRIBE.
                 i = 46;
                 // !ODOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.odoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.odoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                if (game.Flags.lcell == 4)
+                if (game.Switch.lcell == 4)
                 {
-                    MessageHandler.rspsub_(707, i);
+                    MessageHandler.rspsub_(707, i, game);
                 }
                 // !DESCRIBE ODOOR IF THERE.
                 return ret_val;
@@ -1613,46 +1617,46 @@ integer ri;
                 //  R50--	BEHIND DOOR
 
                 L50000:
-                if (prsvec_1.prsa != vindex_1.walkiw)
+                if (game.ParserVectors.prsa != (int)VIndices.walkiw)
                 {
                     goto L50100;
                 }
                 // !WALK IN?
-                cevent_1.cflag[cindex_1.cevfol - 1] = TRUE_;
+                game.Clock.Flags[(int)ClockIndices.cevfol - 1] = true;
                 // !MASTER FOLLOWS.
-                cevent_1.ctick[cindex_1.cevfol - 1] = -1;
+                game.Clock.Ticks[(int)ClockIndices.cevfol - 1] = -1;
                 return ret_val;
 
                 L50100:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 46;
                 // !QDOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.qdoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                MessageHandler.rspsub_(708, i);
+                MessageHandler.rspsub_(708, i, game);
                 return ret_val;
                 //  RAPPL2, PAGE 5
 
                 //  R51--	FRONT DOOR
 
                 L51000:
-                if (prsvec_1.prsa == vindex_1.walkiw)
+                if (game.ParserVectors.prsa == (int)VIndices.walkiw)
                 {
-                    cevent_1.ctick[cindex_1.cevfol - 1] = 0;
+                    game.Clock.Ticks[(int)ClockIndices.cevfol - 1] = 0;
                 }
                 // !IF EXITS, KILL FOLLOW.
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
-                lookto_(0, rindex_1.mrd, 709, 0, 0);
+                lookto_(game, 0, (int)RoomIndices.mrd, 709, 0, 0);
                 // !DESCRIBE SOUTH.
                 i = 46;
                 // !PANEL IS OPEN/CLOSED.
@@ -1663,64 +1667,67 @@ integer ri;
                 // !OPEN IF INQ STARTED.
                 j = 46;
                 // !QDOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.qdoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     j = 12;
                 }
-                rspsb2_(710, i, j);
+
+                MessageHandler.rspsb2_(710, i, j, game);
+
                 return ret_val;
 
                 //  R52--	NORTH CORRIDOR
 
                 L52000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 46;
-                if ((game.Objects.oflag2[oindex_1.cdoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.cdoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
                 // !CDOOR IS OPEN/CLOSED.
-                MessageHandler.rspsub_(711, i);
+                MessageHandler.rspsub_(711, i, game);
                 return ret_val;
 
                 //  R53--	PARAPET
 
                 L53000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    i__1 = game.Flags.pnumb + 712;
-                    MessageHandler.rspsub_(712, i__1);
+                    i__1 = game.Switch.pnumb + 712;
+                    MessageHandler.rspsub_(712, i__1, game);
                 }
                 return ret_val;
 
                 //  R54--	CELL
 
                 L54000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 721;
                 // !CDOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.cdoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.cdoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 722;
                 }
-                rspeak_(i);
+
+                MessageHandler.Speak(i, game);
                 i = 46;
                 // !ODOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.odoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.odoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                if (game.Flags.lcell == 4)
+                if (game.Switch.lcell == 4)
                 {
-                    MessageHandler.rspsub_(723, i);
+                    MessageHandler.rspsub_(723, i, game);
                 }
                 // 						!DESCRIBE.
                 return ret_val;
@@ -1728,9 +1735,9 @@ integer ri;
                 //  R55--	PRISON CELL
 
                 L55000:
-                if (prsvec_1.prsa == vindex_1.lookw)
+                if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    rspeak_(724);
+                    MessageHandler.Speak(724, game);
                 }
                 // !LOOK?
                 return ret_val;
@@ -1738,55 +1745,56 @@ integer ri;
                 //  R56--	NIRVANA CELL
 
                 L56000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 46;
                 // !ODOOR IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.odoor - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.odoor - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                MessageHandler.rspsub_(725, i);
+                MessageHandler.rspsub_(725, i, game);
                 return ret_val;
                 //  RAPPL2, PAGE 6
 
                 //  R57--	NIRVANA AND END OF GAME
 
                 L57000:
-                if (prsvec_1.prsa != vindex_1.walkiw)
+                if (game.ParserVectors.prsa != (int)VIndices.walkiw)
                 {
                     return ret_val;
                 }
                 // !WALKIN?
-                rspeak_(726);
-                score_(0);
+                MessageHandler.Speak(726, game);
+                AdventurerHandler.score_(game, false);
                 //  moved to exit routine	CLOSE(DBCH)
-                exit_();
+                //exit_();
+                throw new ApplicationException("Exit");
 
                 //  R58--	TOMB ROOM
 
                 L58000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
                 // !LOOK?
                 i = 46;
                 // !TOMB IS OPEN/CLOSED.
-                if ((game.Objects.oflag2[oindex_1.tomb - 1] & OPENBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.tomb - 1] & ObjectFlags2.OPENBT) != 0)
                 {
                     i = 12;
                 }
-                MessageHandler.rspsub_(792, i);
+                MessageHandler.rspsub_(792, i, game);
                 return ret_val;
 
                 //  R59--	PUZZLE SIDE ROOM
 
                 L59000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
@@ -1798,14 +1806,14 @@ integer ri;
                     i = 862;
                 }
                 // !OPEN?
-                rspeak_(i);
+                MessageHandler.Speak(i, game);
                 // !DESCRIBE.
                 return ret_val;
 
                 //  R60--	PUZZLE ROOM
 
                 L60000:
-                if (prsvec_1.prsa != vindex_1.lookw)
+                if (game.ParserVectors.prsa != (int)VIndices.lookw)
                 {
                     return ret_val;
                 }
@@ -1814,21 +1822,240 @@ integer ri;
                 {
                     goto L60100;
                 }
+
                 // !STARTED PUZZLE?
-                rspeak_(868);
+                MessageHandler.Speak(868, game);
                 // !NO, DESCRIBE.
-                if ((game.Objects.oflag2[oindex_1.warni - 1] & TCHBT) != 0)
+                if ((game.Objects.oflag2[(int)ObjectIndices.warni - 1] & ObjectFlags2.TCHBT) != 0)
                 {
-                    rspeak_(869);
+                    MessageHandler.Speak(869, game);
                 }
+
                 return ret_val;
 
                 L60100:
-                cpinfo_(880, game.Flags.cphere);
+                cpinfo_(880, game.Switch.cphere);
                 // !DESCRIBE ROOM.
                 return ret_val;
-                */
-            return true;
+            }
+        }
+
+        public static bool prob_(Game game, int g, int b)
+        {
+            /* System generated locals */
+            bool ret_val;
+
+            /* Local variables */
+            int i;
+
+            i = g;
+            /* 						!ASSUME GOOD LUCK. */
+            if (game.Flags.badlkf)
+            {
+                i = b;
+            }
+            /* 						!IF BAD, TOO BAD. */
+            ret_val = rnd_(100) < i;
+            /* 						!COMPUTE. */
+            return ret_val;
+        }
+
+        /// <summary>
+        /// opncls_ - Process open/close for doors
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="so"></param>
+        /// <param name="sc"></param>
+        /// <returns></returns>
+        public static bool opncls_(int obj, int so, int sc, Game game)
+        {
+            int i__1;
+            bool ret_val;
+
+            ret_val = true;
+            // !ASSUME WINS. */
+            if (game.ParserVectors.prsa == (int)VIndices.closew)
+            {
+                goto L100;
+            }
+
+            // !CLOSE? */
+            if (game.ParserVectors.prsa == (int)VIndices.openw)
+            {
+                goto L50;
+            }
+            // !OPEN? */
+            ret_val = false;
+            // !LOSE */
+            return ret_val;
+
+            L50:
+            if ((game.Objects.oflag2[obj - 1] & ObjectFlags2.OPENBT) != 0)
+            {
+                goto L200;
+            }
+
+            // !OPEN... IS IT? */
+            MessageHandler.Speak(so, game);
+            game.Objects.oflag2[obj - 1] |= ObjectFlags2.OPENBT;
+            return ret_val;
+
+            L100:
+            if (!((game.Objects.oflag2[obj - 1] & ObjectFlags2.OPENBT) != 0))
+            {
+                goto L200;
+            }
+
+            // !CLOSE... IS IT? */
+            MessageHandler.Speak(sc, game);
+            game.Objects.oflag2[obj - 1] &= ~ObjectFlags2.OPENBT;
+            return ret_val;
+
+            L200:
+            i__1 = rnd_(3) + 125;
+            MessageHandler.Speak(i__1, game);
+            // !DUMMY. */
+            return ret_val;
+        }
+
+        /// <summary>
+        /// lookto_ - Describe view in mirror hallway.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="nrm"></param>
+        /// <param name="srm"></param>
+        /// <param name="nt"></param>
+        /// <param name="st"></param>
+        /// <param name="ht"></param>
+        public static void lookto_(Game game, int nrm, int srm, int nt, int st, int ht)
+        {
+            int i__1;
+
+            /* Local variables */
+            int i, m1, dir, mrbf;
+
+            MessageHandler.Speak(game, ht);
+            /* 						!DESCRIBE HALL. */
+            MessageHandler.Speak(game, nt);
+            /* 						!DESCRIBE NORTH VIEW. */
+            MessageHandler.Speak(game, st);
+            /* 						!DESCRIBE SOUTH VIEW. */
+            dir = 0;
+            /* 						!ASSUME NO DIRECTION. */
+            if ((i__1 = game.Switch.mloc - game.Player.Here, Math.Abs(i__1)) != 1)
+            {
+                goto L200;
+            }
+
+            /* 						!MIRROR TO N OR S? */
+            if (game.Switch.mloc == nrm)
+            {
+                dir = 695;
+            }
+            if (game.Switch.mloc == srm)
+            {
+                dir = 699;
+            }
+            /* 						!DIR=N/S. */
+            if (game.Switch.mdir % 180 != 0)
+            {
+                goto L100;
+            }
+            /* 						!MIRROR N-S? */
+            MessageHandler.rspsub_(game, 847, dir);
+            /* 						!YES, HE SEES PANEL */
+            MessageHandler.rspsb2_(game, 848, dir, dir);
+            /* 						!AND NARROW ROOMS. */
+            goto L200;
+
+            L100:
+            m1 = mrhere_(game, game.Player.Here);
+            /* 						!WHICH MIRROR? */
+            mrbf = 0;
+            /* 						!ASSUME INTACT. */
+            if (m1 == 1 && !game.Flags.mr1f || m1 == 2 && !game.Flags.mr2f)
+            {
+                mrbf = 1;
+            }
+
+            i__1 = mrbf + 849;
+            MessageHandler.rspsub_(game, i__1, dir);
+            /* 						!DESCRIBE. */
+            if (m1 == 1 && game.Flags.mropnf)
+            {
+                i__1 = mrbf + 823;
+                MessageHandler.Speak(game, i__1);
+            }
+
+            if (mrbf != 0)
+            {
+                MessageHandler.Speak(game, 851);
+            }
+
+            L200:
+            i = 0;
+            /* 						!ASSUME NO MORE TO DO. */
+            if (nt == 0 && (dir == 0 || dir == 699))
+            {
+                i = 852;
+            }
+            if (st == 0 && (dir == 0 || dir == 695))
+            {
+                i = 853;
+            }
+            if (nt + st + dir == 0)
+            {
+                i = 854;
+            }
+            if (ht != 0)
+            {
+                MessageHandler.Speak(game, i);
+            }
+            /* 						!DESCRIBE HALLS. */
+        }
+
+        /* MRHERE--	IS MIRROR HERE? */
+
+        /* DECLARATIONS */
+
+        public static int mrhere_(Game game, int rm)
+        {
+            /* System generated locals */
+            int ret_val, i__1;
+
+            if (rm < (int)RoomIndices.mrae || rm > (int)RoomIndices.mrdw)
+            {
+                goto L100;
+            }
+
+            /* RM IS AN E-W ROOM, MIRROR MUST BE N-S (MDIR= 0 OR 180) */
+
+            ret_val = 1;
+            /* 						!ASSUME MIRROR 1 HERE. */
+            if ((rm - (int)RoomIndices.mrae) % 2 == game.Switch.mdir / 180)
+            {
+                ret_val = 2;
+            }
+            return ret_val;
+
+            /* RM IS NORTH OR SOUTH OF MIRROR.  IF MIRROR IS N-S OR NOT */
+            /* WITHIN ONE ROOM OF RM, LOSE. */
+
+            L100:
+            ret_val = 0;
+            if ((i__1 = game.Switch.mloc - rm, Math.Abs(i__1)) != 1 || game.Switch.mdir % 180 == 0)
+            {
+                return ret_val;
+            }
+
+            /* RM IS WITHIN ONE OF MLOC, AND MDIR IS E-W */
+
+            ret_val = 1;
+            if (rm < game.Switch.mloc && game.Switch.mdir < 180 || rm > game.Switch.mloc && game.Switch.mdir > 180)
+            {
+                ret_val = 2;
+            }
+            return ret_val;
         }
     }
 }
