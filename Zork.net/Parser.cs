@@ -1758,7 +1758,7 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool vappli_(int ri, Game game)
+        public static bool vappli_(string input, int ri, Game game)
         {
             const int mxnop = 39;
             const int mxsmp = 99;
@@ -1885,7 +1885,7 @@ namespace Zork.Core
             /* SIMPLE VERBS ARE HANDLED EXTERNALLY. */
 
             L100:
-            ret_val = sverbs_(game, ri);
+            ret_val = sverbs_(game, input, ri);
             return ret_val;
             /* VAPPLI, PAGE 3 */
 
@@ -2859,10 +2859,12 @@ namespace Zork.Core
             {
                 goto L66100;
             }
+
             if (!ObjectHandler.objact_(game))
             {
                 MessageHandler.rspsb2_(466, odo2, rmk, game);
             }
+
             return ret_val;
 
             /* V139--	KILL.  GO TO COMMON ATTACK CODE. */
@@ -2897,6 +2899,7 @@ namespace Zork.Core
             {
                 goto L66200;
             }
+
             /* 						!ANYTHING? */
             MessageHandler.Speak(469, game);
             /* 						!NO, JOKE. */
@@ -2912,10 +2915,12 @@ namespace Zork.Core
             {
                 goto L66300;
             }
+
             if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.VICTBT) == 0)
             {
                 MessageHandler.rspsub_(470, odo2, game);
             }
+
             return ret_val;
 
             L66300:
@@ -2925,10 +2930,12 @@ namespace Zork.Core
             {
                 goto L66500;
             }
+
             if ((game.Objects.oflag2[game.ParserVectors.prsi - 1] & ObjectFlags2.WEAPBT) == 0)
             {
                 goto L66400;
             }
+
             melee = 1;
 
             /* 						!ASSUME SWORD. */
@@ -3240,10 +3247,9 @@ namespace Zork.Core
             /* 						!IN SPECIFIED DIR. */
             ret_val = dverb2.walk_(game);
             return ret_val;
-
         }
 
-        public static bool sverbs_(Game game, int ri)
+        public static bool sverbs_(Game game, string input, int ri)
         {
             int mxnop = 39;
             int mxjoke = 64;
@@ -3254,11 +3260,8 @@ namespace Zork.Core
       "CARRES", "TOUCH", "BONES", "BODY", "SKELE", "RUSTYKNIFE",
       "NONE", "NOWHER" };
 
-            /* System generated locals */
             int i__1, i__2;
             bool ret_val;
-
-            /* Local variables */
             bool f;
             char z;
             char z2;
@@ -3290,16 +3293,22 @@ namespace Zork.Core
                 throw new InvalidOperationException();
                 // bug_(7, ri);
             }
+
             /* 						!ZERO IS VERBOTEN. */
-            if (ri <= mxnop) {
+            if (ri <= mxnop)
+            {
                 return ret_val;
             }
+
             /* 						!NOP? */
-            if (ri <= mxjoke) {
+            if (ri <= mxjoke)
+            {
                 goto L100;
             }
+
             /* 						!JOKE? */
-            switch (ri - mxjoke) {
+            switch (ri - mxjoke)
+            {
                 case 1: goto L65000;
                 case 2: goto L66000;
                 case 3: goto L67000;
@@ -3550,9 +3559,11 @@ namespace Zork.Core
             /* 						! */
 
             L11000:
-            if (game.Player.Here != (int)RoomIndices.temp1) {
+            if (game.Player.Here != (int)RoomIndices.temp1)
+            {
                 goto L11050;
             }
+
             /* 						!IN TEMPLE? */
             if (AdventurerHandler.moveto_(game, (int)RoomIndices.treas, game.Player.Winner))
             {
@@ -3608,7 +3619,8 @@ namespace Zork.Core
             L15000:
             AdventurerHandler.score_(game, true);
             /* 						!TELLL SCORE. */
-            if (!dso3.yesno_(game, 343, 0, 0)) {
+            if (!dso3.yesno_(game, 343, 0, 0))
+            {
                 return ret_val;
             }
             /* 						!ASK FOR Y/N DECISION. */
@@ -3619,9 +3631,11 @@ namespace Zork.Core
             /* V85--	FOLLOW (USED IN ENDGAME) */
 
             L16000:
-            if (game.Player.Winner != (int)AIndices.amastr) {
+            if (game.Player.Winner != (int)AIndices.amastr)
+            {
                 return ret_val;
             }
+
             /* 						!TELL MASTER, FOLLOW. */
             MessageHandler.rspeak_(game, 782);
             game.Clock.Ticks[(int)ClockIndices.cevfol - 1] = -1;
@@ -3633,7 +3647,8 @@ namespace Zork.Core
             L17000:
             if (game.Screen.scolrm == 0
                 || game.ParserVectors.prso != (int)ObjectIndices.scol
-                && (game.ParserVectors.prso != (int)ObjectIndices.wnort || game.Player.Here != (int)RoomIndices.bkbox))
+                && (game.ParserVectors.prso != (int)ObjectIndices.wnort
+                || game.Player.Here != (int)RoomIndices.bkbox))
             {
                 goto L17100;
             }
@@ -3670,12 +3685,15 @@ namespace Zork.Core
             }
 
             L17300:
-            if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.TAKEBT) != 0) {
+            if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.TAKEBT) != 0)
+            {
                 goto L17400;
             }
+
             i = 669;
             /* 						!NO, JOKE. */
-            if (game.ParserVectors.prso == (int)ObjectIndices.scol) {
+            if (game.ParserVectors.prso == (int)ObjectIndices.scol)
+            {
                 i = 670;
             }
             /* 						!SPECIAL JOKE FOR SCOL. */
@@ -3840,7 +3858,7 @@ namespace Zork.Core
             }
 
             /* 						!DOWN EXIT? */
-            if (game.curxt_.xtype == xpars_.xno || game.curxt_.xtype == xpars_.xcond && !game.Flags[xflag - 1])
+            if (game.curxt_.xtype == xpars_.xno || game.curxt_.xtype == xpars_.xcond)// && !game.Flags[xflag - 1])
             {
                 goto L22400;
             }
@@ -3960,7 +3978,7 @@ namespace Zork.Core
                 goto L26300;
             }
 
-            for (z = input_1.inbuf + game.ParserVectors.prscon - 1; z != '\0'; ++z)
+            for (z = (char)(input[0] + game.ParserVectors.prscon - 1); z != '\0'; ++z)
             {
                 /* 						!PARSE INPUT */
                 if (z == ',')
@@ -4090,7 +4108,7 @@ namespace Zork.Core
 
                 /* 						!ONLY CHECK PROPER ANS. */
                 z = ansstr[j - 1][0];
-                z2 = input_1.inbuf + game.ParserVectors.prscon - 1;
+                z2 = (char)(input[0] + game.ParserVectors.prscon - 1);
 
                 while (z != '\0')
                 {
@@ -4155,9 +4173,7 @@ namespace Zork.Core
             game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] |= ObjectFlags2.OPENBT;
             return ret_val;
 
-        } /* sverbs_ */
-
-
+        }
     }
 
     public class pv

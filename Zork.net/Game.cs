@@ -95,7 +95,7 @@ namespace Zork.Core
                     goto L900;
                 }
 
-                if (!Parser.vappli_(this.ParserVectors.prsa, this))
+                if (!Parser.vappli_(input, this.ParserVectors.prsa, this))
                 {
                     goto L400;
                 }
@@ -120,7 +120,7 @@ namespace Zork.Core
                 goto L100;
 
                 L900:
-                valuac_(ObjectIndices.valua);
+                dverb1.valuac_(this, (int)ObjectIndices.valua);
                 goto L350;
                 // GAME, PAGE 3
 
@@ -231,7 +231,7 @@ namespace Zork.Core
                 {
                     goto L2900;
                 }
-                if (!Parser.vappli_(this.ParserVectors.prsa, this))
+                if (!Parser.vappli_(input, this.ParserVectors.prsa, this))
                 {
                     goto L2400;
                 }
@@ -246,7 +246,7 @@ namespace Zork.Core
                 // !DONE.
 
                 L2900:
-                valuac_(ObjectIndices.valua);
+                dverb1.valuac_(this, (int)ObjectIndices.valua);
                 // !ALL OR VALUABLES.
                 goto L350;
             }
@@ -262,24 +262,24 @@ namespace Zork.Core
                 MessageHandler.rspeak_(this, 341);
             }
             /* 						!DEFAULT REMARK. */
-            if (this.hack.thfact)
+            if (this.Hack.thfact)
             {
-                thiefd_();
+                actors.thiefd_(this);
             }
             /* 						!THIEF DEMON. */
             if (this.ParserVectors.prswon)
             {
-                fightd_();
+                DemonHandler.fightd_(this);
             }
             /* 						!FIGHT DEMON. */
             if (this.Hack.swdact)
             {
-                swordd_();
+                DemonHandler.swordd_(this);
             }
             /* 						!SWORD DEMON. */
             if (this.ParserVectors.prswon)
             {
-                f = clockd_();
+                f = ClockEvents.clockd_(this);
             }
             /* 						!CLOCK DEMON. */
             if (this.ParserVectors.prswon)
@@ -304,7 +304,7 @@ namespace Zork.Core
 	/* 						!GET VEHICLE. */
 	if (av != 0)
 	{
-		ret_val = oappli_(this.Objects.oactio[av - 1], n);
+		ret_val = ObjectHandler.oappli_(this.Objects.oactio[av - 1], n, this);
     }
 	return ret_val;
 }

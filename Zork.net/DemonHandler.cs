@@ -251,7 +251,7 @@ namespace Zork.Core
             att = dso4.fights_(game, h, true);
             /* 						!GET HIS STRENGTH. */
             oa = att;
-            def = vilstr_(v);
+            def = dso4.vilstr_(game, v);
             /* 						!GET VILL STRENGTH. */
             od = def;
             dweap = 0;
@@ -304,7 +304,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            att = vilstr_(v);
+            att = dso4.vilstr_(game, v);
             /* 						!SET UP ATT, DEF. */
             oa = att;
             def = dso4.fights_(game, h, true);

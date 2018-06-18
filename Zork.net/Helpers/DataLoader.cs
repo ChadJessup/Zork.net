@@ -32,32 +32,25 @@ namespace Zork.Core.Helpers
             game.Star.strbit = DataLoader.ReadInt(bytes, game);
             game.State.egmxsc = DataLoader.ReadInt(bytes, game);
 
-            Console.WriteLine($"Rooms Position: {game.DataPosition}");
             game.Rooms.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions1, bytes, game);
             DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions2, bytes, game);
             DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomExits, bytes, game);
             DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomActions, bytes, game);
             DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomValues, bytes, game);
-            Console.WriteLine($"After read partial ints Position: {game.DataPosition}");
 
             var tempFlags = new List<int>();
             DataLoader.ReadInts(game.Rooms.Count, tempFlags, bytes, game);
-            //game.Rooms.RoomFlags
 
             for (int idx = 0; idx < tempFlags.Count; idx++)
             {
                 game.Rooms.RoomFlags.Add((RoomFlags)tempFlags[idx]);
             }
 
-            Console.WriteLine($"Exits Position: {game.DataPosition}");
             game.Exits.Count = DataLoader.ReadInt(bytes, game);
-            Console.WriteLine($"Exits: {game.Exits.Count}");
             DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
 
-            Console.WriteLine($"Objects Position: {game.DataPosition}");
             game.Objects.Count = DataLoader.ReadInt(bytes, game);
-            Console.WriteLine($"Objects Count: {game.Objects.Count}");
 
             DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc1, bytes, game);
             DataLoader.ReadInts(game.Objects.Count, game.Objects.odesc2, bytes, game);
@@ -88,20 +81,15 @@ namespace Zork.Core.Helpers
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocan, bytes, game);
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oread, bytes, game);
 
-            Console.WriteLine($"Rooms 2 Position: {game.DataPosition}");
-
             game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
-            Console.WriteLine($"Rooms 2 Count: {game.Rooms2.Count}");
             DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
             DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
 
             game.Clock.Count = DataLoader.ReadInt(bytes, game);
-            Console.WriteLine($"Clock Events Count: {game.Clock.Count}");
             DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
             DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
             DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
 
-            Console.WriteLine($"Villians Position: {game.DataPosition}");
             game.Villians.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes, game);
             DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes, game);

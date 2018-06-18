@@ -17,7 +17,7 @@ namespace Zork.Core
         /// <param name="messageNumber"></param>
         /// <param name="s1"></param>
         /// <param name="game"></param>
-        public static void rspsub_(Game game, int messageNumber, int s1) => rspsub_(messageNumber, s1, game);
+        public static void rspsub_(Game game, int messageNumber, int s1 = 0) => rspsub_(messageNumber, s1, game);
         public static void rspsub_(int messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_(messageNumber, s1, 0, true, game);
 
         /// <summary>

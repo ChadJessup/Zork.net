@@ -143,7 +143,7 @@ namespace Zork.Core.Clock
             game.Clock.Ticks[(int)ClockIndices.cevmnt - 1] = 0;
             /* 						!FULL, DISABLE CLOCK. */
             game.Rooms.RoomFlags[(int)RoomIndices.maint - 1] |= RoomFlags.RMUNG;
-            rrand[(int)RoomIndices.maint - 1] = 80;
+            game.Rooms.RoomActions[(int)RoomIndices.maint - 1] = 80;
 
             /* 						!SAY IT IS FULL OF WATER. */
             if (game.Player.Here == (int)RoomIndices.maint)
@@ -448,7 +448,7 @@ namespace Zork.Core.Clock
             /* 						!BRICK ELSEWHERE? */
 
             game.Rooms.RoomFlags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            rrand[game.Player.Here - 1] = 114;
+            game.Rooms.RoomActions[game.Player.Here - 1] = 114;
             /* 						!MUNG ROOM. */
             AdventurerHandler.jigsup_(game, 150);
             /* 						!DEAD. */
@@ -519,7 +519,7 @@ namespace Zork.Core.Clock
 
             L9000:
             game.Rooms.RoomFlags[(int)RoomIndices.ledg4 - 1] |= RoomFlags.RMUNG;
-            rrand[(int)RoomIndices.ledg4 - 1] = 109;
+            game.Rooms.RoomActions[(int)RoomIndices.ledg4 - 1] = 109;
             if (game.Player.Here == (int)RoomIndices.ledg4)
             {
                 goto L9100;
@@ -570,7 +570,7 @@ namespace Zork.Core.Clock
 
             L10000:
             game.Rooms.RoomFlags[game.State.mungrm - 1] |= RoomFlags.RMUNG;
-            rrand[game.State.mungrm - 1] = 114;
+            game.Rooms.RoomActions[game.State.mungrm - 1] = 114;
             if (game.Player.Here == game.State.mungrm)
             {
                 goto L10100;
@@ -635,7 +635,7 @@ namespace Zork.Core.Clock
 
             L14000:
             game.Rooms.RoomFlags[(int)RoomIndices.cager - 1] |= RoomFlags.RMUNG;
-            rrand[(int)RoomIndices.cager - 1] = 147;
+            game.Rooms.RoomActions[(int)RoomIndices.cager - 1] = 147;
             AdventurerHandler.jigsup_(game, 148);
             /* 						!MUNG PLAYER. */
             return;

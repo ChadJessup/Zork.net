@@ -333,7 +333,7 @@ namespace Zork.Core
                 goto L600;
             }
 
-            MessageHandler.Speak(rrand[nr - 1], game);
+            MessageHandler.Speak(game.Rooms.RoomActions[nr - 1], game);
             // !YES, TELL HOW.
             return ret_val;
 

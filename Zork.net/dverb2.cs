@@ -227,9 +227,10 @@ namespace Zork.Core
                 goto L400;
             }
             /* 						!CEXIT... RETURNED ROOM? */
-            if (game.Flags[xflag - 1])
+            // TODO: chadj: figure out how to do this
+            //if (game.Flags[game.curxt_.xobj - 1])
             {
-                goto L400;
+              //  goto L400;
             }
             /* 						!NO, FLAG ON? */
             L200:
@@ -315,9 +316,10 @@ namespace Zork.Core
                 goto L900;
             }
             /* 						!CEXIT... RETURNED ROOM? */
-            if (game.Flags[*xflag - 1])
+            // TODO: chadj figure this out
+            //if (game.Flags[game.curxt_.xobj - 1])
             {
-                goto L900;
+              //  goto L900;
             }
             /* 						!NO, FLAG ON? */
             L600:

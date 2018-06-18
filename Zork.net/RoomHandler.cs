@@ -873,7 +873,7 @@ namespace Zork.Core
             }
             MessageHandler.Speak(50, game);
             // 						!TIME TO FLY, JACK.
-            f = AdventurerHandler.moveto_(bats_1.batdrp[game.rnd_(9)], game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, bats.batdrp[game.rnd_(9)], game.Player.Winner);
             // 						!SELECT RANDOM DEST.
             ret_val = false;
             // 						!INDICATE NEW DESC NEEDED.

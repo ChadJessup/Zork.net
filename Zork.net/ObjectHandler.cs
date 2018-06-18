@@ -765,7 +765,7 @@ namespace Zork.Core
             /* 						!ONWARD. */
             dso7.cpinfo_(game, i, nxt);
             /* 						!DESCRIBE. */
-            princr_(1, game.Player.Here);
+            RoomHandler.PrintRoomContents(true, game.Player.Here, game);
             /* 						!PRINT ROOMS CONTENTS. */
             game.Rooms.RoomFlags[game.Player.Here - 1] |= RoomFlags.RSEEN;
             return ret_val;
@@ -1561,7 +1561,7 @@ namespace Zork.Core
             /* O103--	TROLL, DONE EXTERNALLY. */
 
             L11000:
-            ret_val = trollp_(arg);
+            ret_val = villns.trollp_(game, arg);
             /* 						!TROLL PROCESSOR. */
             return ret_val;
 
@@ -1710,14 +1710,14 @@ namespace Zork.Core
             /* O109--	CYCLOPS, PROCESSED EXTERNALLY. */
 
             L22000:
-            ret_val = cyclop_(arg);
+            ret_val = villns.cyclop_(game, arg);
             /* 						!CYCLOPS */
             return ret_val;
 
             /* O110--	THIEF, PROCESSED EXTERNALLY */
 
             L25000:
-            ret_val = thiefp_(arg);
+            ret_val = villns.thiefp_(game, arg);
             return ret_val;
 
             /* O111--	WINDOW */
@@ -1761,7 +1761,7 @@ namespace Zork.Core
             L35000:
             MessageHandler.Speak(50, game);
             /* 						!TIME TO FLY, JACK. */
-            f = AdventurerHandler.moveto_(game, bats_1.batdrp[game.rnd_(9)], game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, bats.batdrp[game.rnd_(9)], game.Player.Winner);
             /* 						!SELECT RANDOM DEST. */
             f = RoomHandler.RoomDescription(0, game);
             return ret_val;
@@ -1876,7 +1876,7 @@ namespace Zork.Core
             newsta_(ObjectIndices.spher, 0, 0, 0, 0, game);
             /* 						!YOURE DEAD. */
             game.Rooms.RoomFlags[(int)RoomIndices.cager - 1] |= RoomFlags.RMUNG;
-            rrand[RoomIndices.cager - 1] = 147;
+            game.Rooms.RoomActions[(int)RoomIndices.cager - 1] = 147;
             AdventurerHandler.jigsup_(game, 148);
             /* 						!MUNG PLAYER. */
             return ret_val;
@@ -1974,7 +1974,7 @@ namespace Zork.Core
             /* 						!KILL FLASK. */
             L49100:
             game.Rooms.RoomFlags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            rrand[game.Player.Here - 1] = 271;
+            game.Rooms.RoomActions[game.Player.Here - 1] = 271;
             AdventurerHandler.jigsup_(game, 272);
             /* 						!POISONED. */
             return ret_val;
@@ -2100,7 +2100,7 @@ namespace Zork.Core
             newsta_(ObjectIndices.orice, 0, 0, 0, 0, game);
             /* 						!VANISH ORANGE ICE. */
             game.Rooms.RoomFlags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            rrand[game.Player.Here - 1] = 281;
+            game.Rooms.RoomActions[game.Player.Here - 1] = 281;
             AdventurerHandler.jigsup_(game, 282);
             /* 						!VANISH ADVENTURER. */
             return ret_val;
