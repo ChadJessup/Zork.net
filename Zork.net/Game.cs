@@ -1,4 +1,5 @@
-﻿using Zork.Core.Clock;
+﻿using System;
+using Zork.Core.Clock;
 using Zork.Core.Helpers;
 using Zork.Core.Object;
 using Zork.Core.Room;
@@ -14,6 +15,7 @@ namespace Zork.Core
         public Last Last { get; } = new Last();
         public Hack Hack { get; } = new Hack();
         public Flags Flags { get; } = new Flags();
+        public Random Random { get; } = new Random(DateTime.Now.Millisecond);
         public Exits Exits { get; } = new Exits();
         public Rooms Rooms { get; } = new Rooms();
         public Switch Switch { get; } = new Switch();
@@ -30,6 +32,8 @@ namespace Zork.Core
         public ClockEvents Clock { get; } = new ClockEvents();
         public Adventurer Adventurers { get; } = new Adventurer();
 
+        public hyper_ hyper_ { get; } = new hyper_();
+
         // TODO: Figure out naming later...
         //public ParserVector ParserVector { get; } = new ParserVector();
         public ParserVectors ParserVectors { get; } = new ParserVectors();
@@ -44,6 +48,8 @@ namespace Zork.Core
         public int astag { get; set; } = 32768;
 
         public static Game Initialize() => DataLoader.LoadDataFile();
+
+        public int rnd_(int maxVal) => this.Random.Next(maxVal);
 
         public void Play()
         {
@@ -73,12 +79,10 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                /*
                  if (xvehic_(1))
                  {
                     goto L400;
                  }
-               */
 
                 if (this.ParserVectors.prsa == (int)VIndices.tellw)
                 {
@@ -149,7 +153,7 @@ namespace Zork.Core
                 {
                     goto L1400;
                 }
-                if (findxt_(this.ParserVectors.prso, this.Player.Here))
+                if (dso3.findxt_(this, this.ParserVectors.prso, this.Player.Here))
                 {
                     goto L300;
                 }
@@ -247,6 +251,68 @@ namespace Zork.Core
                 goto L350;
             }
         }
+
+        /* XENDMV-	EXECUTE END OF MOVE FUNCTIONS. */
+        public void xendmv_(bool flag)
+        {
+            bool f;
+
+            if (!(flag))
+            {
+                MessageHandler.rspeak_(this, 341);
+            }
+            /* 						!DEFAULT REMARK. */
+            if (this.hack.thfact)
+            {
+                thiefd_();
+            }
+            /* 						!THIEF DEMON. */
+            if (this.ParserVectors.prswon)
+            {
+                fightd_();
+            }
+            /* 						!FIGHT DEMON. */
+            if (this.Hack.swdact)
+            {
+                swordd_();
+            }
+            /* 						!SWORD DEMON. */
+            if (this.ParserVectors.prswon)
+            {
+                f = clockd_();
+            }
+            /* 						!CLOCK DEMON. */
+            if (this.ParserVectors.prswon)
+            {
+                f = xvehic_(2);
+            }
+            /* 						!VEHICLE READOUT. */
+        }
+
+        /* XVEHIC- EXECUTE VEHICLE FUNCTION */
+
+        /* DECLARATIONS */
+
+        public bool xvehic_(int n)
+{
+	bool ret_val;
+        int av;
+
+        ret_val = false;
+	/* 						!ASSUME LOSES. */
+	av = this.Adventurers.Vehicles[this.Player.Winner - 1];
+	/* 						!GET VEHICLE. */
+	if (av != 0)
+	{
+		ret_val = oappli_(this.Objects.oactio[av - 1], n);
+    }
+	return ret_val;
+}
+    }
+
+    public class hyper_
+    {
+        public int hfactr { get; set; } = 500;
     }
 
     public class curxt_

@@ -125,12 +125,12 @@ namespace Zork.Core
 
             // always exit for plopbot's purposes
             goto L1000;
-            //    if (game.State.deaths >= 2) {
+            //    if (game.State.Deaths >= 2) {
             //	goto L1000;
             //    }
 
             // !DEAD TWICE? KICK HIM OFF.
-            if (!yesno_(10, 9, 8))
+            if (!dso3.yesno_(game, 10, 9, 8))
             {
                 goto L1100;
             }
@@ -448,7 +448,7 @@ namespace Zork.Core
         }
 
         /// <summary>
-        /// scrupd_ - Update winner's score.
+        /// scrupd_ - Update Winner's score.
         /// </summary>
         /// <param name="game"></param>
         /// <param name="n"></param>

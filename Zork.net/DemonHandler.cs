@@ -56,7 +56,8 @@ namespace Zork.Core
                     goto L2025;
                 }
 
-                game.Objects.ocapac[obj - 1] = (i__2 = game.Objects.ocapac[obj - 1], Math.Abs(i__2));
+                i__2 = game.Objects.ocapac[obj - 1];
+                game.Objects.ocapac[obj - 1] = Math.Abs(i__2);
                 game.Villians.vprob[i - 1] = 0;
                 if (ra == 0)
                 {
@@ -125,7 +126,8 @@ namespace Zork.Core
                 game.ParserVectors.prsa = (int)VIndices.inxw;
                 /* 						!WAKE HIM UP. */
                 f = ObjectHandler.oappli_(ra, 0, game);
-                game.Objects.ocapac[obj - 1] = (i__2 = game.Objects.ocapac[obj - 1], Math.Abs(i__2));
+                i__2 = game.Objects.ocapac[obj - 1];
+                game.Objects.ocapac[obj - 1] = Math.Abs(i__2);
                 L2400:
                 ;
             }
@@ -172,7 +174,7 @@ namespace Zork.Core
                 /* 						!IF HERO DEAD, EXIT. */
                 if (res == rout)
                 {
-                    output = rnd_(3) + 2;
+                    output = game.rnd_(3) + 2;
                 }
                 /* 						!IF HERO OUT, SET FLG. */
                 L2700:
@@ -311,8 +313,8 @@ namespace Zork.Core
             }
             /* 						!DONT ALLOW DEAD DEF. */
             od = dso4.fights_(game, h, false);
-            dweap = (i__1 = fwim_(0, ObjectFlags2.WEAPBT, 0, 0, h, 1),
-                    Math.Abs(i__1));
+            i__1 = Parser.fwim_(0, (int)ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            dweap = Math.Abs(i__1);
             /* 						!FIND A WEAPON. */
             /* BLOW, PAGE 4 */
 
@@ -366,7 +368,7 @@ namespace Zork.Core
             tbl = def3r[att - 1];
 
             L2500:
-            res = rvectr[tbl + rnd_(10) - 1];
+            res = rvectr[tbl + game.rnd_(10) - 1];
             /* 						!GET RESULT. */
             if (output == 0)
             {
@@ -398,7 +400,7 @@ namespace Zork.Core
             }
 
             i__1 = mi / 1000;
-            i = mi % 1000 + rnd_(i__1) + game.Star.mbase + 1;
+            i = mi % 1000 + game.rnd_(i__1) + game.Star.mbase + 1;
             j = dv;
             if (!(hflg) && dweap != 0)
             {
@@ -473,9 +475,10 @@ namespace Zork.Core
             if (hflg) {
                 goto L4000;
             }
+
             /* 						!IF HERO, DONE. */
-            dweap = (i__1 = fwim_(0, ObjectFlags2.WEAPBT, 0, 0, h, 1),
-                Math.Abs(i__1));
+            i__1 = Parser.fwim_(0, (int)ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            dweap = Math.Abs(i__1);
             /* 						!GET NEW. */
             if (dweap != 0) {
                 MessageHandler.rspsub_(605, game.Objects.odesc2[dweap - 1], game);
@@ -571,7 +574,7 @@ namespace Zork.Core
             for (i = (int)XSearch.xmin; i__2 < 0 ? i >= i__1 : i <= i__1; i += i__2)
             {
                 /* 						!NO, SEARCH ROOMS. */
-                if (!findxt_(i, game.Player.Here))
+                if (!dso3.findxt_(game, i, game.Player.Here))
                 {
                     goto L200;
                 }

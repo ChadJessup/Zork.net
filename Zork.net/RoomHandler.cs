@@ -7,6 +7,7 @@ namespace Zork.Core
 {
     public static class RoomHandler
     {
+        public static bool RoomDescription(Game game, int verbosity) => RoomDescription(verbosity, game);
         public static bool RoomDescription(int verbosity, Game game)
         {
             int full = verbosity;
@@ -872,7 +873,7 @@ namespace Zork.Core
             }
             MessageHandler.Speak(50, game);
             // 						!TIME TO FLY, JACK.
-            f = AdventurerHandler.moveto_(bats_1.batdrp[rnd_(9)], game.Player.Winner);
+            f = AdventurerHandler.moveto_(bats_1.batdrp[game.rnd_(9)], game.Player.Winner);
             // 						!SELECT RANDOM DEST.
             ret_val = false;
             // 						!INDICATE NEW DESC NEEDED.
@@ -1490,7 +1491,7 @@ namespace Zork.Core
                 L43000:
                 if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    ewtell_(game.Player.Here, 683);
+                    ewtell_(game, game.Player.Here, 683);
                 }
                 return ret_val;
 
@@ -1499,7 +1500,7 @@ namespace Zork.Core
                 L44000:
                 if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    ewtell_(game.Player.Here, 686);
+                    ewtell_(game, game.Player.Here, 686);
                 }
                 return ret_val;
 
@@ -1508,7 +1509,7 @@ namespace Zork.Core
                 L45000:
                 if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    ewtell_(game.Player.Here, 687);
+                    ewtell_(game, game.Player.Here, 687);
                 }
                 return ret_val;
 
@@ -1834,7 +1835,7 @@ namespace Zork.Core
                 return ret_val;
 
                 L60100:
-                cpinfo_(880, game.Switch.cphere);
+                dso7.cpinfo_(game, 880, game.Switch.cphere);
                 // !DESCRIBE ROOM.
                 return ret_val;
             }
@@ -1855,7 +1856,7 @@ namespace Zork.Core
                 i = b;
             }
             /* 						!IF BAD, TOO BAD. */
-            ret_val = rnd_(100) < i;
+            ret_val = game.rnd_(100) < i;
             /* 						!COMPUTE. */
             return ret_val;
         }
@@ -1912,10 +1913,46 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            i__1 = rnd_(3) + 125;
+            i__1 = game.rnd_(3) + 125;
             MessageHandler.Speak(i__1, game);
             // !DUMMY. */
             return ret_val;
+        }
+
+        /// <summary>
+        /// ewtell_ - Describe E/W Narrow Rooms
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="rm"></param>
+        /// <param name="st"></param>
+        public static void ewtell_(Game game, int rm, int st)
+        {
+            int i__1;
+
+            /* Local variables */
+            int i;
+            bool m1;
+
+            /* NOTE THAT WE ARE EAST OR WEST OF MIRROR, AND */
+            /* MIRROR MUST BE N-S. */
+
+            m1 = game.Switch.mdir + (rm - (int)RoomIndices.mrae) % 2 * 180 == 180;
+            i = (rm - (int)RoomIndices.mrae) % 2 + 819;
+            /* 						!GET BASIC E/W STRING. */
+            if (m1 && !game.Flags.mr1f || !m1 && !game.Flags.mr2f)
+            {
+                i += 2;
+            }
+
+            MessageHandler.rspeak_(game, i);
+            if (m1 && game.Flags.mropnf)
+            {
+                i__1 = (i - 819) / 2 + 823;
+                MessageHandler.rspeak_(game, i__1);
+            }
+
+            MessageHandler.rspeak_(game, 825);
+            MessageHandler.rspeak_(game, st);
         }
 
         /// <summary>
@@ -1930,8 +1967,6 @@ namespace Zork.Core
         public static void lookto_(Game game, int nrm, int srm, int nt, int st, int ht)
         {
             int i__1;
-
-            /* Local variables */
             int i, m1, dir, mrbf;
 
             MessageHandler.Speak(game, ht);
@@ -1942,7 +1977,8 @@ namespace Zork.Core
             /* 						!DESCRIBE SOUTH VIEW. */
             dir = 0;
             /* 						!ASSUME NO DIRECTION. */
-            if ((i__1 = game.Switch.mloc - game.Player.Here, Math.Abs(i__1)) != 1)
+            i__1 = game.Switch.mloc - game.Player.Here;
+            if (Math.Abs(i__1) != 1)
             {
                 goto L200;
             }
@@ -2043,7 +2079,8 @@ namespace Zork.Core
 
             L100:
             ret_val = 0;
-            if ((i__1 = game.Switch.mloc - rm, Math.Abs(i__1)) != 1 || game.Switch.mdir % 180 == 0)
+            i__1 = game.Switch.mloc - rm;
+            if (Math.Abs(i__1) != 1 || game.Switch.mdir % 180 == 0)
             {
                 return ret_val;
             }

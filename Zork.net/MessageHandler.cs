@@ -9,6 +9,7 @@ namespace Zork.Core
         public static void Speak(int messageNumber, Game game) => MessageHandler.rspsb2nl_(messageNumber, 0, 0, true, game);
 
         public static void more_output(string output) => Console.Write(output);
+        public static void more_input() { }
 
         /// <summary>
         /// OUTPUT RANDOM MESSAGE WITH SUBSTITUTABLE ARGUMENT

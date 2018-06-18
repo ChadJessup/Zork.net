@@ -32,19 +32,19 @@ namespace Zork.Core
             //do_uio(1, &vers_1.vmin, sizeof(int));
             //do_uio(1, &vers_1.vedit, sizeof(int));
             //
-            //do_uio(1, &game.Player.winner, sizeof(int));
+            //do_uio(1, &game.Player.Winner, sizeof(int));
             //do_uio(1, &game.Player.Here, sizeof(int));
             //do_uio(1, &game.Hack.thfpos, sizeof(int));
-            //do_uio(1, &game.Player.telflg, sizeof(bool));
+            //do_uio(1, &game.Player.TelFlag, sizeof(bool));
             //do_uio(1, &game.Hack.thfflg, sizeof(bool));
             //do_uio(1, &game.Hack.thfact, sizeof(bool));
             //do_uio(1, &game.Hack.swdact, sizeof(bool));
             //do_uio(1, &game.Hack.swdsta, sizeof(int));
-            //do_uio(64, &puzzle_1.cpvec[0], sizeof(int));
+            //do_uio(64, &PuzzleHandler.cpvec[0], sizeof(int));
             //
             //do_uio(1, &i, sizeof(int));
             //do_uio(1, &game.State.moves, sizeof(int));
-            //do_uio(1, &game.State.deaths, sizeof(int));
+            //do_uio(1, &game.State.Deaths, sizeof(int));
             //do_uio(1, &game.State.rwscor, sizeof(int));
             //do_uio(1, &game.State.egscor, sizeof(int));
             //do_uio(1, &game.State.mxload, sizeof(int));
@@ -52,9 +52,9 @@ namespace Zork.Core
             //do_uio(1, &game.State.bloc, sizeof(int));
             //do_uio(1, &game.State.mungrm, sizeof(int));
             //do_uio(1, &game.State.hs, sizeof(int));
-            //do_uio(1, &screen_1.fromdr, sizeof(int));
-            //do_uio(1, &screen_1.scolrm, sizeof(int));
-            //do_uio(1, &screen_1.scolac, sizeof(int));
+            //do_uio(1, &game.Screen.fromdr, sizeof(int));
+            //do_uio(1, &game.Screen.scolrm, sizeof(int));
+            //do_uio(1, &game.Screen.scolac, sizeof(int));
             //
             //do_uio(220, &game.Objects.odesc1[0], sizeof(int));
             //do_uio(220, &game.Objects.odesc2[0], sizeof(int));
@@ -69,7 +69,7 @@ namespace Zork.Core
             //do_uio(220, &game.Objects.ocan[0], sizeof(int));
             //
             //do_uio(200, &game.Rooms.rval[0], sizeof(int));
-            //do_uio(200, &game.Rooms.rflag[0], sizeof(int));
+            //do_uio(200, &game.Rooms.RoomFlags[0], sizeof(int));
             //
             //do_uio(4, &game.Adventurers.aroom[0], sizeof(int));
             //do_uio(4, &game.Adventurers.ascore[0], sizeof(int));
@@ -77,10 +77,10 @@ namespace Zork.Core
             //do_uio(4, &game.Adventurers.astren[0], sizeof(int));
             //do_uio(4, &game.Adventurers.aflag[0], sizeof(int));
             //
-            //do_uio(46, &flags[0], sizeof(bool));
+            //do_uio(46, &game.Flags[0], sizeof(bool));
             //do_uio(22, &switch_[0], sizeof(int));
             //do_uio(4, &game.Villians.vprob[0], sizeof(int));
-            //do_uio(25, &game.Clock.cflag[0], sizeof(bool));
+            //do_uio(25, &game.Clock.Flags[0], sizeof(bool));
             //do_uio(25, &game.Clock.Ticks[0], sizeof(int));
 
             //if (fclose(e) == EOF)
@@ -124,19 +124,19 @@ namespace Zork.Core
             //    goto L200;
             }
 
-            //do_uio(1, game.Player.winner, sizeof(int));
+            //do_uio(1, game.Player.Winner, sizeof(int));
             //do_uio(1, game.Player.Here, sizeof(int));
             //do_uio(1, game.Hack.thfpos, sizeof(int));
-            //do_uio(1, game.Player.telflg, sizeof(bool));
+            //do_uio(1, game.Player.TelFlag, sizeof(bool));
             //do_uio(1, game.Hack.thfflg, sizeof(bool));
             //do_uio(1, game.Hack.thfact, sizeof(bool));
             //do_uio(1, game.Hack.swdact, sizeof(bool));
             //do_uio(1, game.Hack.swdsta, sizeof(int));
-            //do_uio(64, puzzle_1.cpvec[0], sizeof(int));
+            //do_uio(64, PuzzleHandler.cpvec[0], sizeof(int));
             //
             //do_uio(1, time_1.pltime, sizeof(int));
             //do_uio(1, game.State.moves, sizeof(int));
-            //do_uio(1, game.State.deaths, sizeof(int));
+            //do_uio(1, game.State.Deaths, sizeof(int));
             //do_uio(1, game.State.rwscor, sizeof(int));
             //do_uio(1, game.State.egscor, sizeof(int));
             //do_uio(1, game.State.mxload, sizeof(int));
@@ -144,9 +144,9 @@ namespace Zork.Core
             //do_uio(1, game.State.bloc, sizeof(int));
             //do_uio(1, game.State.mungrm, sizeof(int));
             //do_uio(1, game.State.hs, sizeof(int));
-            //do_uio(1, screen_1.fromdr, sizeof(int));
-            //do_uio(1, screen_1.scolrm, sizeof(int));
-            //do_uio(1, screen_1.scolac, sizeof(int));
+            //do_uio(1, game.Screen.fromdr, sizeof(int));
+            //do_uio(1, game.Screen.scolrm, sizeof(int));
+            //do_uio(1, game.Screen.scolac, sizeof(int));
             //
             //do_uio(220, game.Objects.odesc1[0], sizeof(int));
             //do_uio(220, game.Objects.odesc2[0], sizeof(int));
@@ -161,7 +161,7 @@ namespace Zork.Core
             //do_uio(220, game.Objects.ocan[0], sizeof(int));
             //
             //do_uio(200, game.Rooms.rval[0], sizeof(int));
-            //do_uio(200, game.Rooms.rflag[0], sizeof(int));
+            //do_uio(200, game.Rooms.RoomFlags[0], sizeof(int));
 
             //do_uio(4, game.Adventurers.aroom[0], sizeof(int));
             //do_uio(4, game.Adventurers.ascore[0], sizeof(int));
@@ -169,10 +169,10 @@ namespace Zork.Core
             //do_uio(4, game.Adventurers.astren[0], sizeof(int));
             //do_uio(4, game.Adventurers.aflag[0], sizeof(int));
             //
-            //do_uio(46, flags[0], sizeof(bool));
+            //do_uio(46, game.Flags[0], sizeof(bool));
             //do_uio(22, switch_[0], sizeof(int));
             //do_uio(4, game.Villians.vprob[0], sizeof(int));
-            //do_uio(25, game.Clock.cflag[0], sizeof(bool));
+            //do_uio(25, game.Clock.Flags[0], sizeof(bool));
             //do_uio(25, game.Clock.Ticks[0], sizeof(int));
 
             //(void)fclose(e);
@@ -199,11 +199,12 @@ namespace Zork.Core
 
             ret_val = true;
             /* 						!ASSUME WINS. */
-            if (game.Player.Winner != (int)AIndices.player || lit_(game.Player.Here) || RoomHandler.prob_(game, 25, 25))
+            if (game.Player.Winner != (int)AIndices.player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
             }
-            if (!findxt_(game.ParserVectors.prso, game.Player.Here))
+
+            if (!dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L450;
             }
@@ -226,7 +227,7 @@ namespace Zork.Core
                 goto L400;
             }
             /* 						!CEXIT... RETURNED ROOM? */
-            if (flags[*xflag - 1])
+            if (game.Flags[xflag - 1])
             {
                 goto L400;
             }
@@ -254,7 +255,7 @@ namespace Zork.Core
             return ret_val;
 
             L400:
-            if (lit_(game.curxt_.xroom1))
+            if (RoomHandler.IsRoomLit(game.curxt_.xroom1, game))
             {
                 goto L900;
             }
@@ -268,7 +269,7 @@ namespace Zork.Core
             /* ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE). */
 
             L500:
-            if (findxt_(game.ParserVectors.prso, game.Player.Here))
+            if (dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L550;
             }
@@ -314,7 +315,7 @@ namespace Zork.Core
                 goto L900;
             }
             /* 						!CEXIT... RETURNED ROOM? */
-            if (flags[*xflag - 1])
+            if (game.Flags[*xflag - 1])
             {
                 goto L900;
             }
@@ -353,7 +354,7 @@ namespace Zork.Core
             return ret_val;
 
             L900:
-            ret_val = moveto_(game.curxt_.xroom1, game.Player.Winner);
+            ret_val = AdventurerHandler.moveto_(game, game.curxt_.xroom1, game.Player.Winner);
             /* 						!MOVE TO ROOM. */
             if (ret_val)
             {
@@ -418,9 +419,9 @@ namespace Zork.Core
             MessageHandler.rspeak_(game, 121);
             /* 						!SPIN THE COMPASS. */
             L5000:
-            i = xpars_1.xelnt[xpars_1.xcond - 1] * rnd_(8);
+            i = xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8);
             /* 						!CHOOSE RANDOM EXIT. */
-            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms.RoomExits[game.Player.Here - 1] + i - 1] & xpars_1.xrmask;
+            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms.RoomExits[game.Player.Here - 1] + i - 1] & xpars_.xrmask;
             ret_val = game.curxt_.xroom1;
             /* 						!RETURN EXIT. */
             return ret_val;
@@ -542,7 +543,7 @@ namespace Zork.Core
             /* C9-	FROBOZZ FLAG (MIRIN) */
 
             L9000:
-            if (mrhere_(game.Player.Here) != 1)
+            if (RoomHandler.mrhere_(game, game.Player.Here) != 1)
             {
                 goto L9100;
             }
@@ -659,7 +660,7 @@ namespace Zork.Core
             /* 						!AT EXIT? */
             game.curxt_.xstrng = 881;
             /* 						!ASSUME NO LADDER. */
-            if (puzzle_1.cpvec[game.Switch.cphere] != -2) {
+            if (PuzzleHandler.cpvec[game.Switch.cphere] != -2) {
                 return ret_val;
             }
             /* 						!LADDER HERE? */
@@ -681,7 +682,7 @@ namespace Zork.Core
             L14200:
             for (i = 1; i <= 16; i += 2) {
                 /* 						!LOCATE EXIT. */
-                if (game.ParserVectors.prso == puzzle_1.cpdr[i - 1]) {
+                if (game.ParserVectors.prso == PuzzleHandler.cpdr[i - 1]) {
                     goto L14400;
                 }
                 /* L14300: */
@@ -690,7 +691,7 @@ namespace Zork.Core
             /* 						!NO SUCH EXIT. */
 
             L14400:
-            j = puzzle_1.cpdr[i];
+            j = PuzzleHandler.cpdr[i];
             /* 						!GET DIRECTIONAL OFFSET. */
             nxt = game.Switch.cphere + j;
             /* 						!GET NEXT STATE. */
@@ -699,13 +700,13 @@ namespace Zork.Core
             if (j < 0) {
                 k = -8;
             }
-            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (puzzle_1.cpvec[game.Switch.cphere + k - 1] == 0 || puzzle_1.cpvec[nxt - k - 1] == 0)) && puzzle_1.cpvec[nxt - 1] == 0) {
+            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (PuzzleHandler.cpvec[game.Switch.cphere + k - 1] == 0 || PuzzleHandler.cpvec[nxt - k - 1] == 0)) && PuzzleHandler.cpvec[nxt - 1] == 0) {
                 goto L14500;
             }
             return ret_val;
 
             L14500:
-            cpgoto_(nxt);
+            dso7.cpgoto_(game, nxt);
             /* 						!MOVE TO STATE. */
             game.curxt_.xroom1 = (int)RoomIndices.cpuzz;
             /* 						!STAY IN ROOM. */

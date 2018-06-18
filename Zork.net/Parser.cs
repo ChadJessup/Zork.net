@@ -130,7 +130,7 @@ namespace Zork.Core
 
             int i;
             char j;
-            int k, j1, j2, cp;
+            int k = 0, j1, j2, cp;
 
             // Parameter adjustments
             // --outbuf;
@@ -589,7 +589,7 @@ namespace Zork.Core
         /// <param name="nocare"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static int fwim_(int f1, int f2, int rm, int con, int adv, bool nocare, Game game)
+        public static int fwim_(int f1, int f2, int rm, int con, int adv, bool nocare, Game game)
         {
             int ret_val, i__1, i__2;
 
@@ -1791,7 +1791,7 @@ namespace Zork.Core
                 odi2 = game.Objects.odesc2[game.ParserVectors.prsi - 1];
             }
             av = game.Adventurers.Vehicles[game.Player.Winner - 1];
-            rmk = rnd_(6) + 372;
+            rmk = game.rnd_(6) + 372;
             /* 						!REMARK FOR HACK-HACKS. */
 
             if (ri == 0)
@@ -1885,7 +1885,7 @@ namespace Zork.Core
             /* SIMPLE VERBS ARE HANDLED EXTERNALLY. */
 
             L100:
-            ret_val = sverbs_(ri);
+            ret_val = sverbs_(game, ri);
             return ret_val;
             /* VAPPLI, PAGE 3 */
 
@@ -2635,7 +2635,7 @@ namespace Zork.Core
             /* V132--	TAKE.  HANDLED EXTERNALLY. */
 
             L53000:
-            ret_val = take_(1);
+            ret_val = dverb1.take_(game, true);
             return ret_val;
 
             /* V133--	INVENTORY.  PROCESSED EXTERNALLY. */
@@ -2938,7 +2938,7 @@ namespace Zork.Core
             }
 
             /* 						!MUST BE KNIFE. */
-            i = blow_(AIndices.player, game.ParserVectors.prso, melee, 1, 0);
+            i = DemonHandler.blow_(game, (int)AIndices.player, game.ParserVectors.prso, melee, true, 0);
             /* 						!STRIKE BLOW. */
             return ret_val;
 
@@ -2966,7 +2966,7 @@ namespace Zork.Core
             /* V144--	PUT.  PROCESSED EXTERNALLY. */
 
             L70000:
-            ret_val = put_(1);
+            ret_val = dverb1.put_(game, true);
             return ret_val;
 
             /* V145,V146,V147,V148--	DROP/GIVE/POUR/THROW */
@@ -2975,7 +2975,7 @@ namespace Zork.Core
             L72000:
             L73000:
             L74000:
-            ret_val = drop_(0);
+            ret_val = dverb1.drop_(game, false);
             return ret_val;
 
             /* V149--	SAVE */
@@ -3020,7 +3020,7 @@ namespace Zork.Core
             }
 
             /* 						!ANY OBJ? */
-            i__1 = rnd_(4) + 346;
+            i__1 = game.rnd_(4) + 346;
             MessageHandler.Speak(i__1, game);
             /* 						!NO, VANILLA HELLO. */
             return ret_val;
@@ -3205,7 +3205,7 @@ namespace Zork.Core
             }
             /* 						!UNLESS CLIMB DN. */
             f = (game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.CLMBBT) != 0;
-            if (f && findxt_(i, game.Player.Here))
+            if (f && dso3.findxt_(game, i, game.Player.Here))
             {
                 goto L87500;
             }
@@ -3242,6 +3242,921 @@ namespace Zork.Core
             return ret_val;
 
         }
+
+        public static bool sverbs_(Game game, int ri)
+        {
+            int mxnop = 39;
+            int mxjoke = 64;
+            int [] jokes = new int [] { 4, 5, 3, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 5314, 5319, 324, 325, 883, 884, 120, 120, 0, 0, 0, 0 };
+            int [] answer = new int [] { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 7, 7 };
+            string[] ansstr = new string[]
+           { "TEMPLE", "FOREST", "30003", "FLASK", "RUB", "FONDLE",
+      "CARRES", "TOUCH", "BONES", "BODY", "SKELE", "RUSTYKNIFE",
+      "NONE", "NOWHER" };
+
+            /* System generated locals */
+            int i__1, i__2;
+            bool ret_val;
+
+            /* Local variables */
+            bool f;
+            char z;
+            char z2;
+            int i, j;
+            int k;
+            int l;
+            char [] ch = new char[1 * 6];
+            int cp, wp;
+            char [] pp1 = new char[1 * 6];
+            char [] pp2 = new char[1 * 6];
+            int odi2 = 0;
+            int odo2 = 0;
+
+            ret_val = true;
+            /* 						!ASSUME WINS. */
+            if (game.ParserVectors.prso != 0)
+            {
+                odo2 = game.Objects.odesc2[game.ParserVectors.prso - 1];
+            }
+
+            /* 						!SET UP DESCRIPTORS. */
+            if (game.ParserVectors.prsi != 0)
+            {
+                odi2 = game.Objects.odesc2[game.ParserVectors.prsi - 1];
+            }
+
+            if (ri == 0)
+            {
+                throw new InvalidOperationException();
+                // bug_(7, ri);
+            }
+            /* 						!ZERO IS VERBOTEN. */
+            if (ri <= mxnop) {
+                return ret_val;
+            }
+            /* 						!NOP? */
+            if (ri <= mxjoke) {
+                goto L100;
+            }
+            /* 						!JOKE? */
+            switch (ri - mxjoke) {
+                case 1: goto L65000;
+                case 2: goto L66000;
+                case 3: goto L67000;
+                case 4: goto L68000;
+                case 5: goto L69000;
+                case 6: goto L1000;
+                case 7: goto L2000;
+                case 8: goto L3000;
+                case 9: goto L4000;
+                case 10: goto L5000;
+                case 11: goto L6000;
+                case 12: goto L7000;
+                case 13: goto L8000;
+                case 14: goto L9000;
+                case 15: goto L10000;
+                case 16: goto L11000;
+                case 17: goto L12000;
+                case 18: goto L13000;
+                case 19: goto L14000;
+                case 20: goto L15000;
+                case 21: goto L16000;
+                case 22: goto L17000;
+                case 23: goto L18000;
+                case 24: goto L19000;
+                case 25: goto L20000;
+                case 26: goto L21000;
+                case 27: goto L22000;
+                case 28: goto L23000;
+                case 29: goto L24000;
+                case 30: goto L25000;
+                case 31: goto L26000;
+                case 32: goto L27000;
+            }
+
+            throw new InvalidOperationException();
+            //bug_(7, ri);
+
+            /* ALL VERB PROCESSORS RETURN HERE TO DECLARE FAILURE. */
+
+            /* L10: */
+            ret_val = false;
+            /* 						!LOSE. */
+            return ret_val;
+
+            /* JOKE PROCESSOR. */
+            /* FIND PROPER ENTRY IN JOKES, USE IT TO SELECT STRING TO PRINT. */
+
+            L100:
+            i = jokes[ri - mxnop - 1];
+            /* 						!GET TABLE ENTRY. */
+            j = i / 1000;
+            /* 						!ISOLATE # STRINGS. */
+            if (j != 0) {
+                i = i % 1000 + game.rnd_(j);
+            }
+            /* 						!IF RANDOM, CHOOSE. */
+            MessageHandler.rspeak_(game, i);
+            /* 						!PRINT JOKE. */
+            return ret_val;
+            /* SVERBS, PAGE 2A */
+
+            /* V65--	ROOM */
+
+            L65000:
+            ret_val = RoomHandler.RoomDescription(game, 2);
+            /* 						!DESCRIBE ROOM ONLY. */
+            return ret_val;
+
+            /* V66--	OBJECTS */
+
+            L66000:
+            ret_val = RoomHandler.RoomDescription(game, 1);
+            /* 						!DESCRIBE OBJ ONLY. */
+            if (!game.Player.TelFlag)
+            {
+                MessageHandler.rspeak_(game, 138);
+            }
+            /* 						!NO OBJECTS. */
+            return ret_val;
+
+            /* V67--	RNAME */
+
+            L67000:
+            i__1 = game.Rooms.RoomDescriptions2[game.Player.Here - 1];
+            MessageHandler.rspeak_(game, i__1);
+            /* 						!SHORT ROOM NAME. */
+            return ret_val;
+
+            /* V68--	RESERVED */
+
+            L68000:
+            return ret_val;
+
+            /* V69--	RESERVED */
+
+            L69000:
+            return ret_val;
+            /* SVERBS, PAGE 3 */
+
+            /* V70--	BRIEF.  SET FLAG. */
+
+            L1000:
+            game.Flags.brieff = true;
+            /* 						!BRIEF DESCRIPTIONS. */
+            game.Flags.superf = false;
+            MessageHandler.rspeak_(game, 326);
+            return ret_val;
+
+            /* V71--	VERBOSE.  CLEAR FLAGS. */
+
+            L2000:
+            game.Flags.brieff = false;
+            /* 						!LONG DESCRIPTIONS. */
+            game.Flags.superf = false;
+            MessageHandler.rspeak_(game, 327);
+            return ret_val;
+
+            /* V72--	SUPERBRIEF.  SET FLAG. */
+
+            L3000:
+            game.Flags.superf = true;
+            MessageHandler.rspeak_(game, 328);
+            return ret_val;
+
+            /* V73-- STAY (USED IN ENDGAME). */
+
+            L4000:
+            if (game.Player.Winner != (int)AIndices.amastr) {
+                goto L4100;
+            }
+            /* 						!TELL MASTER, STAY. */
+            MessageHandler.rspeak_(game, 781);
+            /* 						!HE DOES. */
+            game.Clock.Ticks[(int)ClockIndices.cevfol - 1] = 0;
+            /* 						!NOT FOLLOWING. */
+            return ret_val;
+
+            L4100:
+            if (game.Player.Winner == (int)AIndices.player)
+            {
+                MessageHandler.rspeak_(game, 664);
+            }
+            /* 						!JOKE. */
+            return ret_val;
+
+            /* V74--	VERSION.  PRINT INFO. */
+
+            L5000:
+            MessageHandler.more_output(string.Empty);
+//            Console.WriteLine("V%1d.%1d%c\n", vers_1.vmaj, vers_1.vmin, vers_1.vedit);
+            game.Player.TelFlag = true;
+            return ret_val;
+
+            /* V75--	SWIM.  ALWAYS A JOKE. */
+
+            L6000:
+            i = 330;
+            /* 						!ASSUME WATER. */
+            if ((game.Rooms.RoomFlags[game.Player.Here - 1] & (int)RoomFlags.RWATER + RoomFlags.RFILL) == 0)
+            {
+                i = game.rnd_(3) + 331;
+            }
+
+            MessageHandler.rspeak_(game, i);
+            return ret_val;
+
+            /* V76--	GERONIMO.  IF IN BARREL, FATAL, ELSE JOKE. */
+
+            L7000:
+            if (game.Player.Here == (int)RoomIndices.mbarr)
+            {
+                goto L7100;
+            }
+            /* 						!IN BARREL? */
+            MessageHandler.rspeak_(game, 334);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L7100:
+            AdventurerHandler.jigsup_(game, 335);
+            /* 						!OVER FALLS. */
+            return ret_val;
+
+            /* V77--	SINBAD ET AL.  CHASE CYCLOPS, ELSE JOKE. */
+
+            L8000:
+            if (game.Player.Here == (int)RoomIndices.mcycl && ObjectHandler.qhere_(game, (int)ObjectIndices.cyclo, game.Player.Here))
+            {
+                goto L8100;
+            }
+
+            MessageHandler.rspeak_(game, 336);
+            /* 						!NOT HERE, JOKE. */
+            return ret_val;
+
+            L8100:
+            ObjectHandler.newsta_(game, (int)ObjectIndices.cyclo, 337, 0, 0, 0);
+            /* 						!CYCLOPS FLEES. */
+            game.Flags.cyclof = true;
+            /* 						!SET ALL FLAGS. */
+            game.Flags.magicf = true;
+            game.Objects.oflag2[(int)ObjectIndices.cyclo - 1] &= ~ObjectFlags2.FITEBT;
+            return ret_val;
+
+            /* V78--	WELL.  OPEN DOOR, ELSE JOKE. */
+
+            L9000:
+            if (game.Flags.riddlf || game.Player.Here != (int)RoomIndices.riddl)
+            {
+                goto L9100;
+            }
+            /* 						!IN RIDDLE ROOM? */
+            game.Flags.riddlf = true;
+            /* 						!YES, SOLVED IT. */
+            MessageHandler.rspeak_(game, 338);
+            return ret_val;
+
+            L9100:
+            MessageHandler.rspeak_(game, 339);
+            /* 						!WELL, WHAT? */
+            return ret_val;
+
+            /* V79--	PRAY.  IF IN TEMP2, POOF */
+            /* 						! */
+
+            L10000:
+            if (game.Player.Here != (int)RoomIndices.temp2)
+            {
+                goto L10050;
+            }
+            /* 						!IN TEMPLE? */
+            if (AdventurerHandler.moveto_(game, (int)RoomIndices.fore1, game.Player.Winner))
+            {
+                goto L10100;
+            }
+            /* 						!FORE1 STILL THERE? */
+            L10050:
+            MessageHandler.rspeak_(game, 340);
+            /* 						!JOKE. */
+            return ret_val;
+
+            L10100:
+            f = RoomHandler.RoomDescription(3, game);
+            /* 						!MOVED, DESCRIBE. */
+            return ret_val;
+
+            /* V80--	TREASURE.  IF IN TEMP1, POOF */
+            /* 						! */
+
+            L11000:
+            if (game.Player.Here != (int)RoomIndices.temp1) {
+                goto L11050;
+            }
+            /* 						!IN TEMPLE? */
+            if (AdventurerHandler.moveto_(game, (int)RoomIndices.treas, game.Player.Winner))
+            {
+                goto L10100;
+            }
+            /* 						!TREASURE ROOM THERE? */
+            L11050:
+            MessageHandler.rspeak_(game, 341);
+            /* 						!NOTHING HAPPENS. */
+            return ret_val;
+
+            /* V81--	TEMPLE.  IF IN TREAS, POOF */
+            /* 						! */
+
+            L12000:
+            if (game.Player.Here != (int)RoomIndices.treas)
+            {
+                goto L12050;
+            }
+
+            /* 						!IN TREASURE? */
+            if (AdventurerHandler.moveto_(game, (int)RoomIndices.temp1, game.Player.Winner))
+            {
+                goto L10100;
+            }
+            /* 						!TEMP1 STILL THERE? */
+            L12050:
+            MessageHandler.rspeak_(game, 341);
+            /* 						!NOTHING HAPPENS. */
+            return ret_val;
+
+            /* V82--	BLAST.  USUALLY A JOKE. */
+
+            L13000:
+            i = 342;
+            /* 						!DONT UNDERSTAND. */
+            if (game.ParserVectors.prso == (int)ObjectIndices.safe)
+            {
+                i = 252;
+            }
+            /* 						!JOKE FOR SAFE. */
+            MessageHandler.rspeak_(game, i);
+            return ret_val;
+
+            /* V83--	SCORE.  PRINT SCORE. */
+
+            L14000:
+            AdventurerHandler.score_(game, false);
+            return ret_val;
+
+            /* V84--	QUIT.  FINISH OUT THE GAME. */
+
+            L15000:
+            AdventurerHandler.score_(game, true);
+            /* 						!TELLL SCORE. */
+            if (!dso3.yesno_(game, 343, 0, 0)) {
+                return ret_val;
+            }
+            /* 						!ASK FOR Y/N DECISION. */
+            //exit_();
+            /* 						!BYE. */
+            /* SVERBS, PAGE 4 */
+
+            /* V85--	FOLLOW (USED IN ENDGAME) */
+
+            L16000:
+            if (game.Player.Winner != (int)AIndices.amastr) {
+                return ret_val;
+            }
+            /* 						!TELL MASTER, FOLLOW. */
+            MessageHandler.rspeak_(game, 782);
+            game.Clock.Ticks[(int)ClockIndices.cevfol - 1] = -1;
+            /* 						!STARTS FOLLOWING. */
+            return ret_val;
+
+            /* V86--	WALK THROUGH */
+
+            L17000:
+            if (game.Screen.scolrm == 0
+                || game.ParserVectors.prso != (int)ObjectIndices.scol
+                && (game.ParserVectors.prso != (int)ObjectIndices.wnort || game.Player.Here != (int)RoomIndices.bkbox))
+            {
+                goto L17100;
+            }
+
+            game.Screen.scolac = game.Screen.scolrm;
+            /* 						!WALKED THRU SCOL. */
+            game.ParserVectors.prso = 0;
+            /* 						!FAKE OUT FROMDR. */
+            game.Clock.Ticks[(int)ClockIndices.cevscl - 1] = 6;
+            /* 						!START ALARM. */
+            MessageHandler.rspeak_(game, 668);
+            /* 						!DISORIENT HIM. */
+            f = AdventurerHandler.moveto_(game, game.Screen.scolrm, game.Player.Winner);
+            /* 						!INTO ROOM. */
+            f = RoomHandler.RoomDescription(game, 3);
+            /* 						!DESCRIBE. */
+            return ret_val;
+
+            L17100:
+            if (game.Player.Here != game.Screen.scolac)
+            {
+                goto L17300;
+            }
+
+            /* 						!ON OTHER SIDE OF SCOL? */
+            for (i = 1; i <= 12; i += 3)
+            {
+                /* 						!WALK THRU PROPER WALL? */
+                if (game.Screen.scolwl[i - 1] == game.Player.Here && game.Screen.scolwl[i] == game.ParserVectors.prso)
+                {
+                    goto L17500;
+                }
+                /* L17200: */
+            }
+
+            L17300:
+            if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.TAKEBT) != 0) {
+                goto L17400;
+            }
+            i = 669;
+            /* 						!NO, JOKE. */
+            if (game.ParserVectors.prso == (int)ObjectIndices.scol) {
+                i = 670;
+            }
+            /* 						!SPECIAL JOKE FOR SCOL. */
+            MessageHandler.rspsub_(game, i, odo2);
+            return ret_val;
+
+            L17400:
+            i = 671;
+            /* 						!JOKE. */
+            if (game.Objects.oroom[game.ParserVectors.prso - 1] != 0) {
+                i = game.rnd_(5) + 552;
+            }
+            /* 						!SPECIAL JOKES IF CARRY. */
+            MessageHandler.rspeak_(game, i);
+            return ret_val;
+
+            L17500:
+            game.ParserVectors.prso = game.Screen.scolwl[i + 1];
+            /* 						!THRU SCOL WALL... */
+            for (i = 1; i <= 8; i += 2)
+            {
+                /* 						!FIND MATCHING ROOM. */
+                if (game.ParserVectors.prso == game.Screen.scoldr[i - 1])
+                {
+                    game.Screen.scolrm = game.Screen.scoldr[i];
+                }
+                /* L17600: */
+            }
+            /* 						!DECLARE NEW SCOLRM. */
+            game.Clock.Ticks[(int)ClockIndices.cevscl - 1] = 0;
+            /* 						!CANCEL ALARM. */
+            MessageHandler.rspeak_(game, 668);
+            /* 						!DISORIENT HIM. */
+            f = AdventurerHandler.moveto_(game, (int)RoomIndices.bkbox, game.Player.Winner);
+            /* 						!BACK IN BOX ROOM. */
+            f = RoomHandler.RoomDescription(game, 3);
+            return ret_val;
+
+            /* V87--	RING.  A JOKE. */
+
+            L18000:
+            i = 359;
+            /* 						!CANT RING. */
+            if (game.ParserVectors.prso == (int)ObjectIndices.bell) {
+                i = 360;
+            }
+            /* 						!DING, DONG. */
+            MessageHandler.rspeak_(game, i);
+            /* 						!JOKE. */
+            return ret_val;
+
+            /* V88--	BRUSH.  JOKE WITH OBSCURE TRAP. */
+
+            L19000:
+            if (game.ParserVectors.prso == (int)ObjectIndices.teeth) {
+                goto L19100;
+            }
+            /* 						!BRUSH TEETH? */
+            MessageHandler.rspeak_(game, 362);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L19100:
+            if (game.ParserVectors.prsi != 0) {
+                goto L19200;
+            }
+            /* 						!WITH SOMETHING? */
+            MessageHandler.rspeak_(game, 363);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L19200:
+            if (game.ParserVectors.prsi == (int)ObjectIndices.putty && game.Objects.oadv[(int)ObjectIndices.putty - 1] == game.Player.Winner)
+            {
+                goto L19300;
+            }
+
+            MessageHandler.rspsub_(game, 364, odi2);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L19300:
+            AdventurerHandler.jigsup_(game, 365);
+            /* 						!YES, DEAD */
+            /* 						! */
+            /* 						! */
+            /* 						! */
+            /* 						! */
+            /* 						! */
+            return ret_val;
+            /* SVERBS, PAGE 5 */
+
+            /* V89--	DIG.  UNLESS SHOVEL, A JOKE. */
+
+            L20000:
+            if (game.ParserVectors.prso == (int)ObjectIndices.shove)
+            {
+                return ret_val;
+            }
+
+            /* 						!SHOVEL? */
+            i = 392;
+            /* 						!ASSUME TOOL. */
+            if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.TOOLBT) == 0)
+            {
+                i = 393;
+            }
+            MessageHandler.rspsub_(game, i, odo2);
+            return ret_val;
+
+            /* V90--	TIME.  PRINT OUT DURATION OF GAME. */
+
+            L21000:
+            //gttime_(k);
+            /* 						!GET PLAY TIME. */
+            k = DateTime.Now.Second;
+            i = k / 60;
+            j = k % 60;
+
+            MessageHandler.more_output(string.Empty);
+            Console.Write("You have been playing Dungeon for ");
+            if (i >= 1) {
+                Console.Write("%d hour", i);
+                if (i >= 2)
+                    Console.Write("s");
+                Console.Write(" and ");
+            }
+            Console.Write("%d minute", j);
+            if (j != 1)
+                Console.Write("s");
+            Console.Write(".\n");
+            game.Player.TelFlag = true;
+            return ret_val;
+
+
+            /* V91--	LEAP.  USUALLY A JOKE, WITH A CATCH. */
+
+            L22000:
+            if (game.ParserVectors.prso == 0) {
+                goto L22200;
+            }
+            /* 						!OVER SOMETHING? */
+            if (ObjectHandler.qhere_(game, game.ParserVectors.prso, game.Player.Here)) {
+                goto L22100;
+            }
+            /* 						!HERE? */
+            MessageHandler.rspeak_(game, 447);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L22100:
+            if ((game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.VILLBT) == 0) {
+                goto L22300;
+            }
+            MessageHandler.rspsub_(game, 448, odo2);
+            /* 						!CANT JUMP VILLAIN. */
+            return ret_val;
+
+            L22200:
+            if (!dso3.findxt_(game, (int)XSearch.xdown, game.Player.Here)) {
+                goto L22300;
+            }
+
+            /* 						!DOWN EXIT? */
+            if (game.curxt_.xtype == xpars_.xno || game.curxt_.xtype == xpars_.xcond && !game.Flags[xflag - 1])
+            {
+                goto L22400;
+            }
+
+            L22300:
+            i__1 = game.rnd_(5) + 314;
+            MessageHandler.rspeak_(game, i__1);
+            /* 						!WHEEEE */
+            /* 						! */
+            return ret_val;
+
+            L22400:
+            i__1 = game.rnd_(4) + 449;
+            AdventurerHandler.jigsup_(game, i__1);
+            /* 						!FATAL LEAP. */
+            return ret_val;
+            /* SVERBS, PAGE 6 */
+
+            /* V92--	LOCK. */
+
+            L23000:
+            if (game.ParserVectors.prso == (int)ObjectIndices.grate && game.Player.Here == (int)RoomIndices.mgrat) {
+                goto L23200;
+            }
+            L23100:
+            MessageHandler.rspeak_(game, 464);
+            /* 						!NOT LOCK GRATE. */
+            return ret_val;
+
+            L23200:
+            game.Flags.grunlf = false;
+            /* 						!GRATE NOW LOCKED. */
+            MessageHandler.rspeak_(game, 214);
+            game.Exits.Travel[game.Rooms.RoomExits[game.Player.Here - 1]] = 214;
+            /* 						!CHANGE EXIT STATUS. */
+            return ret_val;
+
+            /* V93--	UNLOCK */
+
+            L24000:
+            if (game.ParserVectors.prso != (int)ObjectIndices.grate || game.Player.Here != (int)RoomIndices.mgrat) {
+                goto L23100;
+            }
+            if (game.ParserVectors.prsi == (int)ObjectIndices.keys) {
+                goto L24200;
+            }
+            /* 						!GOT KEYS? */
+            MessageHandler.rspsub_(game, 465, odi2);
+            /* 						!NO, JOKE. */
+            return ret_val;
+
+            L24200:
+            game.Flags.grunlf = true;
+            /* 						!UNLOCK GRATE. */
+            MessageHandler.rspeak_(game, 217);
+            game.Exits.Travel[game.Rooms.RoomExits[game.Player.Here - 1]] = 217;
+            /* 						!CHANGE EXIT STATUS. */
+            return ret_val;
+
+            /* V94--	DIAGNOSE. */
+
+            L25000:
+            i = dso4.fights_(game, game.Player.Winner, false);
+            /* 						!GET FIGHTS STRENGTH. */
+            j = game.Adventurers.astren[game.Player.Winner - 1];
+            /* 						!GET HEALTH. */
+            /* Computing MIN */
+            i__1 = i + j;
+            k = Math.Min(i__1, 4);
+            /* 						!GET STATE. */
+            if (!game.Clock.Flags[(int)ClockIndices.cevcur - 1]) {
+                j = 0;
+            }
+            /* 						!IF NO WOUNDS. */
+            /* Computing MIN */
+            i__1 = 4;
+            i__2 = Math.Abs(j);
+            l = Math.Min(i__1, i__2);
+            /* 						!SCALE. */
+            i__1 = l + 473;
+            MessageHandler.rspeak_(game, i__1);
+            /* 						!DESCRIBE HEALTH. */
+            i = (-j - 1) * 30 + game.Clock.Ticks[(int)ClockIndices.cevcur - 1];
+            /* 						!COMPUTE WAIT. */
+
+            if (j != 0) {
+                MessageHandler.more_output(string.Empty);
+                Console.WriteLine("You will be cured after %d moves.\n", i);
+            }
+
+            i__1 = k + 478;
+            MessageHandler.rspeak_(game, i__1);
+            /* 						!HOW MUCH MORE? */
+            if (game.State.Deaths != 0)
+            {
+                i__1 = game.State.Deaths + 482;
+                MessageHandler.rspeak_(game, i__1);
+            }
+            /* 						!HOW MANY DEATHS? */
+            return ret_val;
+            /* SVERBS, PAGE 7 */
+
+            /* V95--	INCANT */
+
+            L26000:
+            for (i = 1; i <= 6; ++i) {
+                /* 						!SET UP PARSE. */
+                pp1[i - 1] = ' ';
+                pp2[i - 1] = ' ';
+                /* L26100: */
+            }
+            wp = 1;
+            /* 						!WORD POINTER. */
+            cp = 1;
+            /* 						!CHAR POINTER. */
+            if (game.ParserVectors.prscon <= 1) {
+                goto L26300;
+            }
+
+            for (z = input_1.inbuf + game.ParserVectors.prscon - 1; z != '\0'; ++z)
+            {
+                /* 						!PARSE INPUT */
+                if (z == ',')
+                    goto L26300;
+                /* 						!END OF PHRASE? */
+                if (z != ' ')
+                    goto L26150;
+                /* 						!SPACE? */
+                if (cp != 1) {
+                    ++wp;
+                }
+                cp = 1;
+                goto L26200;
+                L26150:
+                if (wp == 1) {
+                    pp1[cp - 1] = z;
+                }
+                /* 						!STUFF INTO HOLDER. */
+                if (wp == 2) {
+                    pp2[cp - 1] = z;
+                }
+                /* Computing MIN */
+                i__2 = cp + 1;
+                cp = Math.Min(i__2, 6);
+                L26200:
+                ;
+            }
+
+            L26300:
+            game.ParserVectors.prscon = 1;
+            /* 						!KILL REST OF LINE. */
+            if (pp1[0] != ' ') {
+                goto L26400;
+            }
+            /* 						!ANY INPUT? */
+            MessageHandler.rspeak_(game, 856);
+            /* 						!NO, HO HUM. */
+            return ret_val;
+
+            L26400:
+            dso7.encryp_(game, pp1, ch);
+            /* 						!COMPUTE RESPONSE. */
+            if (pp2[0] != ' ') {
+                goto L26600;
+            }
+            /* 						!TWO PHRASES? */
+
+            if (game.Flags.spellf)
+            {
+                goto L26550;
+            }
+
+            /* 						!HE'S TRYING TO LEARN. */
+            if ((game.Rooms.RoomFlags[(int)RoomIndices.tstrs - 1] & RoomFlags.RSEEN) == 0)
+            {
+                goto L26575;
+            }
+
+            game.Flags.spellf = true;
+            /* 						!TELL HIM. */
+            game.Player.TelFlag = true;
+            MessageHandler.more_output(string.Empty);
+            Console.WriteLine("A hollow voice replies:  \"%.6s %.6s\".\n", pp1, ch);
+
+            return ret_val;
+
+            L26550:
+            MessageHandler.rspeak_(game, 857);
+            /* 						!HE'S GOT ONE ALREADY. */
+            return ret_val;
+
+            L26575:
+            MessageHandler.rspeak_(game, 858);
+            /* 						!HE'S NOT IN ENDGAME. */
+            return ret_val;
+
+            L26600:
+            if ((game.Rooms.RoomFlags[(int)RoomIndices.tstrs - 1] & RoomFlags.RSEEN) != 0)
+            {
+                goto L26800;
+            }
+
+            for (i = 1; i <= 6; ++i)
+            {
+                if (pp2[i - 1] != ch[i - 1])
+                {
+                    goto L26575;
+                }
+                /* 						!WRONG. */
+                /* L26700: */
+            }
+
+            game.Flags.spellf = true;
+            /* 						!IT WORKS. */
+            MessageHandler.rspeak_(game, 859);
+            game.Clock.Ticks[(int)ClockIndices.cevste - 1] = 1;
+            /* 						!FORCE START. */
+            return ret_val;
+
+            L26800:
+            MessageHandler.rspeak_(game, 855);
+            /* 						!TOO LATE. */
+            return ret_val;
+            /* SVERBS, PAGE 8 */
+
+            /* V96--	ANSWER */
+
+            L27000:
+            if (game.ParserVectors.prscon > 1
+                && game.Player.Here == (int)RoomIndices.fdoor && game.Flags.inqstf)
+            {
+                goto L27100;
+            }
+            MessageHandler.rspeak_(game, 799);
+            /* 						!NO ONE LISTENS. */
+            game.ParserVectors.prscon = 1;
+            return ret_val;
+
+            L27100:
+            for (j = 1; j <= 14; j++)
+            {
+                /* 						!CHECK ANSWERS. */
+                if (game.Switch.quesno != answer[j - 1])
+                {
+                    goto L27300;
+                }
+
+                /* 						!ONLY CHECK PROPER ANS. */
+                z = ansstr[j - 1][0];
+                z2 = input_1.inbuf + game.ParserVectors.prscon - 1;
+
+                while (z != '\0')
+                {
+                    while (z2 == ' ')
+                        z2++;
+                    /* 						!STRIP INPUT BLANKS. */
+                    if (z++ != z2++)
+                        goto L27300;
+                }
+                goto L27500;
+                /* 						!RIGHT ANSWER. */
+                L27300:
+                ;
+            }
+
+            game.ParserVectors.prscon = 1;
+            /* 						!KILL REST OF LINE. */
+            ++game.Switch.nqatt;
+            /* 						!WRONG, CRETIN. */
+            if (game.Switch.nqatt >= 5) {
+                goto L27400;
+            }
+            /* 						!TOO MANY WRONG? */
+            i__1 = game.Switch.nqatt + 800;
+            MessageHandler.rspeak_(game, i__1);
+            /* 						!NO, TRY AGAIN. */
+            return ret_val;
+
+            L27400:
+            MessageHandler.rspeak_(game, 826);
+            /* 						!ALL OVER. */
+            game.Clock.Flags[(int)ClockIndices.cevinq - 1] = false;
+            /* 						!LOSE. */
+            return ret_val;
+
+            L27500:
+            game.ParserVectors.prscon = 1;
+            /* 						!KILL REST OF LINE. */
+            ++game.Switch.corrct;
+            /* 						!GOT IT RIGHT. */
+            MessageHandler.rspeak_(game, 800);
+            /* 						!HOORAY. */
+            if (game.Switch.corrct >= 3)
+            {
+                goto L27600;
+            }
+            /* 						!WON TOTALLY? */
+            game.Clock.Ticks[(int)ClockIndices.cevinq - 1] = 2;
+            /* 						!NO, START AGAIN. */
+            game.Switch.quesno = (game.Switch.quesno + 3) % 8;
+            game.Switch.nqatt = 0;
+            MessageHandler.rspeak_(game, 769);
+            /* 						!ASK NEXT QUESTION. */
+            i__1 = game.Switch.quesno + 770;
+            MessageHandler.rspeak_(game, i__1);
+            return ret_val;
+
+            L27600:
+            MessageHandler.rspeak_(game, 827);
+            /* 						!QUIZ OVER, */
+            game.Clock.Flags[(int)ClockIndices.cevinq - 1] = false;
+            game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] |= ObjectFlags2.OPENBT;
+            return ret_val;
+
+        } /* sverbs_ */
+
 
     }
 

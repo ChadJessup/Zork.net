@@ -55,7 +55,7 @@ namespace Zork.Core
                 goto L300;
             }
             /* 						!WALK? */
-            if (findxt_(game.ParserVectors.prso, game.Player.Here))
+            if (dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L250;
             }
@@ -75,7 +75,7 @@ namespace Zork.Core
             return ret_val;
 
             L275:
-            if (game.curxt_.xtype != xpars_1.xnorm)
+            if (game.curxt_.xtype != xpars_.xnorm)
             {
                 goto L10;
             }
@@ -100,7 +100,7 @@ namespace Zork.Core
             L350:
             if (game.ParserVectors.prsa != (int)VIndices.putw
                 || game.ParserVectors.prsi != (int)ObjectIndices.recep
-                || qempty_(ObjectIndices.recep))
+                || ObjectHandler.qempty_(game, ObjectIndices.recep))
             {
                 goto L10;
             }
@@ -129,7 +129,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(game, 550, game.Objects.odesc2[game.ParserVectors.prso - 1]);
             /* 						!LIGHT FIRE IN RECEP. */
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects.osize[game.ParserVectors.prso - 1] * 20;
-            game.Objects.oflag1[game.ParserVectors.prso - 1] |= ObjectFlags.ONBT + ObjectFlags.FLAMBT + ObjectFlags.LITEBT & ~(ObjectFlags.TAKEBT + ObjectFlags.READBT);
+            game.Objects.oflag1[game.ParserVectors.prso - 1] |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.TAKEBT + ObjectFlags.READBT);
 
             if (game.Switch.binff != 0)
             {
