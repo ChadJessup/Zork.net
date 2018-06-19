@@ -494,14 +494,14 @@ namespace Zork.Core
             L8000:
             game.Flags.frobzf = false;
             /* 						!ASSUME CANT MOVE. */
-            if (game.Switch.mloc != game.curxt_.xroom1) {
+            if (game.Switches.mloc != game.curxt_.xroom1) {
                 goto L8100;
             }
             /* 						!MIRROR IN WAY? */
             if (game.ParserVectors.prso == (int)XSearch.xnorth || game.ParserVectors.prso == (int)XSearch.xsouth) {
                 goto L8200;
             }
-            if (game.Switch.mdir % 180 != 0)
+            if (game.Switches.mdir % 180 != 0)
             {
                 goto L8300;
             }
@@ -521,12 +521,12 @@ namespace Zork.Core
             L8200:
             game.curxt_.xstrng = 814;
             /* 						!ASSUME STRUC BLOCKS. */
-            if (game.Switch.mdir % 180 == 0) {
+            if (game.Switches.mdir % 180 == 0) {
                 return ret_val;
             }
             /* 						!IF MIRROR N-S, DONE. */
             L8300:
-            ldir = game.Switch.mdir;
+            ldir = game.Switches.mdir;
             /* 						!SEE WHICH MIRROR. */
             if (game.ParserVectors.prso == (int)XSearch.xsouth)
             {
@@ -576,25 +576,25 @@ namespace Zork.Core
             /* 						!ASSUME CANT. */
             ldir = (game.ParserVectors.prso - (int)XSearch.xnorth) / (int)XSearch.xnorth * 45;
             /* 						!XLATE DIR TO DEGREES. */
-            if (!game.Flags.mropnf || (game.Switch.mdir + 270) % 360 != ldir && game.ParserVectors.prso != (int)XSearch.xexit)
+            if (!game.Flags.mropnf || (game.Switches.mdir + 270) % 360 != ldir && game.ParserVectors.prso != (int)XSearch.xexit)
             {
                 goto L10200;
             }
 
-            game.curxt_.xroom1 = (game.Switch.mloc - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae + 1
-                - game.Switch.mdir / 180;
+            game.curxt_.xroom1 = (game.Switches.mloc - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae + 1
+                - game.Switches.mdir / 180;
             /* 						!ASSUME E-W EXIT. */
-            if (game.Switch.mdir % 180 == 0)
+            if (game.Switches.mdir % 180 == 0)
             {
                 goto L10100;
             }
 
             /* 						!IF N-S, OK. */
-            game.curxt_.xroom1 = game.Switch.mloc + 1;
+            game.curxt_.xroom1 = game.Switches.mloc + 1;
             /* 						!ASSUME N EXIT. */
-            if (game.Switch.mdir > 180)
+            if (game.Switches.mdir > 180)
             {
-                game.curxt_.xroom1 = game.Switch.mloc - 1;
+                game.curxt_.xroom1 = game.Switches.mloc - 1;
             }
             /* 						!IF SOUTH. */
             L10100:
@@ -602,15 +602,15 @@ namespace Zork.Core
             return ret_val;
 
             L10200:
-            if (!game.Flags.wdopnf || (game.Switch.mdir + 180) % 360 != ldir &&
+            if (!game.Flags.wdopnf || (game.Switches.mdir + 180) % 360 != ldir &&
                 game.ParserVectors.prso != (int)XSearch.xexit) {
                 return ret_val;
             }
-            game.curxt_.xroom1 = game.Switch.mloc + 1;
+            game.curxt_.xroom1 = game.Switches.mloc + 1;
             /* 						!ASSUME N. */
-            if (game.Switch.mdir == 0)
+            if (game.Switches.mdir == 0)
             {
-                game.curxt_.xroom1 = game.Switch.mloc - 1;
+                game.curxt_.xroom1 = game.Switches.mloc - 1;
             }
             /* 						!IF S. */
             MessageHandler.rspeak_(game, 818);
@@ -623,7 +623,7 @@ namespace Zork.Core
             /* 	BUT IF LCELL.NE.4, DOOR ISNT THERE. */
 
             L11000:
-            if (game.Switch.lcell != 4)
+            if (game.Switches.lcell != 4)
             {
                 game.curxt_.xstrng = 678;
             }
@@ -635,14 +635,14 @@ namespace Zork.Core
             L12000:
             game.Flags.frobzf = true;
             /* 						!ALWAYS ENTER. */
-            game.Switch.cphere = 10;
+            game.Switches.cphere = 10;
             /* 						!SET SUBSTATE. */
             return ret_val;
 
             /* C13-	CPOUTF (PUZZLE ROOM SIZE ENTRANCE) */
 
             L13000:
-            game.Switch.cphere = 52;
+            game.Switches.cphere = 52;
             /* 						!SET SUBSTATE. */
             return ret_val;
             /* CXAPPL, PAGE 5 */
@@ -656,13 +656,13 @@ namespace Zork.Core
                 goto L14100;
             }
             /* 						!UP? */
-            if (game.Switch.cphere != 10) {
+            if (game.Switches.cphere != 10) {
                 return ret_val;
             }
             /* 						!AT EXIT? */
             game.curxt_.xstrng = 881;
             /* 						!ASSUME NO LADDER. */
-            if (PuzzleHandler.cpvec[game.Switch.cphere] != -2) {
+            if (PuzzleHandler.cpvec[game.Switches.cphere] != -2) {
                 return ret_val;
             }
             /* 						!LADDER HERE? */
@@ -673,7 +673,7 @@ namespace Zork.Core
             return ret_val;
 
             L14100:
-            if (game.Switch.cphere != 52 || game.ParserVectors.prso != (int)XSearch.xwest || !
+            if (game.Switches.cphere != 52 || game.ParserVectors.prso != (int)XSearch.xwest || !
                 game.Flags.cpoutf) {
                 goto L14200;
             }
@@ -695,14 +695,14 @@ namespace Zork.Core
             L14400:
             j = PuzzleHandler.cpdr[i];
             /* 						!GET DIRECTIONAL OFFSET. */
-            nxt = game.Switch.cphere + j;
+            nxt = game.Switches.cphere + j;
             /* 						!GET NEXT STATE. */
             k = 8;
             /* 						!GET ORTHOGONAL DIR. */
             if (j < 0) {
                 k = -8;
             }
-            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (PuzzleHandler.cpvec[game.Switch.cphere + k - 1] == 0 || PuzzleHandler.cpvec[nxt - k - 1] == 0)) && PuzzleHandler.cpvec[nxt - 1] == 0) {
+            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (PuzzleHandler.cpvec[game.Switches.cphere + k - 1] == 0 || PuzzleHandler.cpvec[nxt - k - 1] == 0)) && PuzzleHandler.cpvec[nxt - 1] == 0) {
                 goto L14500;
             }
             return ret_val;

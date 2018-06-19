@@ -104,6 +104,8 @@ namespace Zork.Core
                         throw new InvalidOperationException($"Error seeking database loc {iloc}");
                     }
 
+                    game.DataPosition = (int)iloc;
+
                     y = z;
                     z = 0;
                 }

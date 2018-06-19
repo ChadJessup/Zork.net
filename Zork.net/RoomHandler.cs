@@ -472,7 +472,7 @@ namespace Zork.Core
             // 						!IF MAGICF, CYCLOPS HOLE.
             MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
-            i = game.Switch.orrug + 17;
+            i = game.Switches.orrug + 17;
             // 						!ASSUME INITIAL STATE.
             if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.OPENBT) != 0)
             {
@@ -586,7 +586,7 @@ namespace Zork.Core
             // 						!LOOK?
             MessageHandler.Speak(27, game);
             // 						!DESCRIBE.
-            if (game.Switch.rvclr == 0)
+            if (game.Switches.rvclr == 0)
             {
                 return ret_val;
             }
@@ -603,7 +603,7 @@ namespace Zork.Core
             return ret_val;
 
             L6500:
-            if (game.Switch.rvclr != 0
+            if (game.Switches.rvclr != 0
                 || ObjectHandler.qhere_((int)ObjectIndices.leave, (int)RoomIndices.clear, game)
                 && (game.ParserVectors.prsa != (int)VIndices.movew
                 || game.ParserVectors.prso != (int)ObjectIndices.leave))
@@ -613,7 +613,7 @@ namespace Zork.Core
 
             MessageHandler.Speak(30, game);
             // 						!MOVE LEAVES, REVEAL GRATE.
-            game.Switch.rvclr = 1;
+            game.Switches.rvclr = 1;
             // 						!INDICATE LEAVES MOVED.
             return ret_val;
             // RAPPL1, PAGE 4
@@ -1086,12 +1086,12 @@ namespace Zork.Core
             // 						!DESCRIBE.
             i = 607;
             // 						!ASSUME BASIC STATE.
-            if (game.Switch.rvcyc > 0)
+            if (game.Switches.rvcyc > 0)
             {
                 i = 608;
             }
             // 						!>0?  HUNGRY.
-            if (game.Switch.rvcyc < 0)
+            if (game.Switches.rvcyc < 0)
             {
                 i = 609;
             }
@@ -1108,9 +1108,9 @@ namespace Zork.Core
             // 						!GONE?
             MessageHandler.Speak(i, game);
             // 						!DESCRIBE.
-            if (!game.Flags.cyclof && game.Switch.rvcyc != 0)
+            if (!game.Flags.cyclof && game.Switches.rvcyc != 0)
             {
-                i__1 = Math.Abs(game.Switch.rvcyc) + 193;
+                i__1 = Math.Abs(game.Switches.rvcyc) + 193;
                 MessageHandler.Speak(i__1, game);
             }
             return ret_val;
@@ -1213,9 +1213,9 @@ namespace Zork.Core
             {
                 return ret_val;
             }
-            ++game.Switch.rvsnd;
+            ++game.Switches.rvsnd;
             // 						!INCREMENT DIG STATE.
-            switch (game.Switch.rvsnd)
+            switch (game.Switches.rvsnd)
             {
                 case 1: goto L31100;
                 case 2: goto L31100;
@@ -1228,7 +1228,7 @@ namespace Zork.Core
             throw new InvalidOperationException("2");
 
             L31100:
-            i__1 = game.Switch.rvsnd + 85;
+            i__1 = game.Switches.rvsnd + 85;
             MessageHandler.Speak(i__1, game);
             // 						!1-3... DISCOURAGE HIM.
             return ret_val;
@@ -1246,7 +1246,7 @@ namespace Zork.Core
             return ret_val;
 
             L31500:
-            game.Switch.rvsnd = 0;
+            game.Switches.rvsnd = 0;
             // 						!5... SAND COLLAPSES
             AdventurerHandler.jigsup_(game, 90);
             // 						!AND SO DOES HE.
@@ -1268,11 +1268,11 @@ namespace Zork.Core
             // 						!IS IT HERE?
             // Computing MIN
             i__1 = 4;
-            i__2 = game.Switch.rvgua + 1;
+            i__2 = game.Switches.rvgua + 1;
 
-            game.Switch.rvgua = Math.Min(i__1, i__2);
+            game.Switches.rvgua = Math.Min(i__1, i__2);
             // 						!YES, SET NEW STATE.
-            i = game.Switch.rvgua + 91;
+            i = game.Switches.rvgua + 91;
             // 						!GET NASTY REMARK.
             L32100:
             MessageHandler.Speak(i, game);
@@ -1532,17 +1532,17 @@ namespace Zork.Core
 
                 i = 689;
                 // !ASSUME CASE 5.
-                if (game.Switch.mdir == 270 && game.Switch.mloc == (int)RoomIndices.mrb)
+                if (game.Switches.mdir == 270 && game.Switches.mloc == (int)RoomIndices.mrb)
                 {
-                    i = Math.Min(game.Switch.poleuf, 1) + 690;
+                    i = Math.Min(game.Switches.poleuf, 1) + 690;
                 }
-                if (game.Switch.mdir % 180 == 0)
+                if (game.Switches.mdir % 180 == 0)
                 {
-                    i = Math.Min(game.Switch.poleuf, 1) + 692;
+                    i = Math.Min(game.Switches.poleuf, 1) + 692;
                 }
                 MessageHandler.Speak(i, game);
                 // !DESCRIBE POLE.
-                i__1 = game.Switch.mdir / 45 + 695;
+                i__1 = game.Switches.mdir / 45 + 695;
                 MessageHandler.rspsub_(694, i__1, game);
                 // !DESCRIBE ARROW.
                 return ret_val;
@@ -1608,7 +1608,7 @@ namespace Zork.Core
                 {
                     i = 12;
                 }
-                if (game.Switch.lcell == 4)
+                if (game.Switches.lcell == 4)
                 {
                     MessageHandler.rspsub_(707, i, game);
                 }
@@ -1699,7 +1699,7 @@ namespace Zork.Core
                 L53000:
                 if (game.ParserVectors.prsa == (int)VIndices.lookw)
                 {
-                    i__1 = game.Switch.pnumb + 712;
+                    i__1 = game.Switches.pnumb + 712;
                     MessageHandler.rspsub_(712, i__1, game);
                 }
                 return ret_val;
@@ -1726,7 +1726,7 @@ namespace Zork.Core
                 {
                     i = 12;
                 }
-                if (game.Switch.lcell == 4)
+                if (game.Switches.lcell == 4)
                 {
                     MessageHandler.rspsub_(723, i, game);
                 }
@@ -1835,7 +1835,7 @@ namespace Zork.Core
                 return ret_val;
 
                 L60100:
-                dso7.cpinfo_(game, 880, game.Switch.cphere);
+                dso7.cpinfo_(game, 880, game.Switches.cphere);
                 // !DESCRIBE ROOM.
                 return ret_val;
             }
@@ -1936,7 +1936,7 @@ namespace Zork.Core
             /* NOTE THAT WE ARE EAST OR WEST OF MIRROR, AND */
             /* MIRROR MUST BE N-S. */
 
-            m1 = game.Switch.mdir + (rm - (int)RoomIndices.mrae) % 2 * 180 == 180;
+            m1 = game.Switches.mdir + (rm - (int)RoomIndices.mrae) % 2 * 180 == 180;
             i = (rm - (int)RoomIndices.mrae) % 2 + 819;
             /* 						!GET BASIC E/W STRING. */
             if (m1 && !game.Flags.mr1f || !m1 && !game.Flags.mr2f)
@@ -1977,23 +1977,23 @@ namespace Zork.Core
             /* 						!DESCRIBE SOUTH VIEW. */
             dir = 0;
             /* 						!ASSUME NO DIRECTION. */
-            i__1 = game.Switch.mloc - game.Player.Here;
+            i__1 = game.Switches.mloc - game.Player.Here;
             if (Math.Abs(i__1) != 1)
             {
                 goto L200;
             }
 
             /* 						!MIRROR TO N OR S? */
-            if (game.Switch.mloc == nrm)
+            if (game.Switches.mloc == nrm)
             {
                 dir = 695;
             }
-            if (game.Switch.mloc == srm)
+            if (game.Switches.mloc == srm)
             {
                 dir = 699;
             }
             /* 						!DIR=N/S. */
-            if (game.Switch.mdir % 180 != 0)
+            if (game.Switches.mdir % 180 != 0)
             {
                 goto L100;
             }
@@ -2068,7 +2068,7 @@ namespace Zork.Core
 
             ret_val = 1;
             /* 						!ASSUME MIRROR 1 HERE. */
-            if ((rm - (int)RoomIndices.mrae) % 2 == game.Switch.mdir / 180)
+            if ((rm - (int)RoomIndices.mrae) % 2 == game.Switches.mdir / 180)
             {
                 ret_val = 2;
             }
@@ -2079,8 +2079,8 @@ namespace Zork.Core
 
             L100:
             ret_val = 0;
-            i__1 = game.Switch.mloc - rm;
-            if (Math.Abs(i__1) != 1 || game.Switch.mdir % 180 == 0)
+            i__1 = game.Switches.mloc - rm;
+            if (Math.Abs(i__1) != 1 || game.Switches.mdir % 180 == 0)
             {
                 return ret_val;
             }
@@ -2088,7 +2088,7 @@ namespace Zork.Core
             /* RM IS WITHIN ONE OF MLOC, AND MDIR IS E-W */
 
             ret_val = 1;
-            if (rm < game.Switch.mloc && game.Switch.mdir < 180 || rm > game.Switch.mloc && game.Switch.mdir > 180)
+            if (rm < game.Switches.mloc && game.Switches.mdir < 180 || rm > game.Switches.mloc && game.Switches.mdir > 180)
             {
                 ret_val = 2;
             }

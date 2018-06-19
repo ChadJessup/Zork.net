@@ -25,7 +25,7 @@ namespace Zork.Core
                 goto L10;
             }
             /* 						!ONLY PROCESS LOOK. */
-            if (game.Switch.binff != 0)
+            if (game.Switches.binff != 0)
             {
                 goto L50;
             }
@@ -34,10 +34,10 @@ namespace Zork.Core
             /* 						!NO. */
             goto L100;
             L50:
-            MessageHandler.rspsub_(game, 544, game.Objects.odesc2[game.Switch.binff - 1]);
+            MessageHandler.rspsub_(game, 544, game.Objects.odesc2[game.Switches.binff - 1]);
             /* 						!YES. */
             L100:
-            if (game.Switch.btief != 0)
+            if (game.Switches.btief != 0)
             {
                 MessageHandler.Speak(game, 545);
             }
@@ -65,7 +65,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.Switch.btief == 0)
+            if (game.Switches.btief == 0)
             {
                 goto L275;
             }
@@ -89,11 +89,11 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VIndices.takew || game.ParserVectors.prso != game.Switch.binff)
+            if (game.ParserVectors.prsa != (int)VIndices.takew || game.ParserVectors.prso != game.Switches.binff)
             {
                 goto L350;
             }
-            MessageHandler.rspsub_(game, 548, game.Objects.odesc2[game.Switch.binff - 1]);
+            MessageHandler.rspsub_(game, 548, game.Objects.odesc2[game.Switches.binff - 1]);
             /* 						!RECEP CONT TOO HOT. */
             return ret_val;
 
@@ -113,7 +113,7 @@ namespace Zork.Core
             {
                 goto L600;
             }
-            if (game.Switch.binff != 0)
+            if (game.Switches.binff != 0)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             }
@@ -131,7 +131,7 @@ namespace Zork.Core
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects.osize[game.ParserVectors.prso - 1] * 20;
             game.Objects.oflag1[game.ParserVectors.prso - 1] |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.TAKEBT + ObjectFlags.READBT);
 
-            if (game.Switch.binff != 0)
+            if (game.Switches.binff != 0)
             {
                 return ret_val;
             }
@@ -140,13 +140,13 @@ namespace Zork.Core
                 ObjectHandler.newsta_(ObjectIndices.blabe, 0, 0, ObjectIndices.ballo, 0, game);
             }
             game.Flags.blabf = true;
-            game.Switch.binff = game.ParserVectors.prso;
+            game.Switches.binff = game.ParserVectors.prso;
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             MessageHandler.Speak(game, 551);
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa == (int)VIndices.unboaw && game.Switch.binff != 0
+            if (game.ParserVectors.prsa == (int)VIndices.unboaw && game.Switches.binff != 0
                 && (game.Rooms.RoomFlags[game.Player.Here - 1] & RoomFlags.RLAND) != 0)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;

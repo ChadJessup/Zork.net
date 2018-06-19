@@ -8,7 +8,42 @@ namespace Zork.Core
 {
     public class Game
     {
-        public Game(byte[] bytes) => this.Data = bytes;
+        public Game(byte[] bytes)
+        {
+            this.Data = bytes;
+            this.State.ltshft = 10;
+            this.State.MaxScore = this.State.ltshft;
+            this.State.egscor = 0;
+            this.State.egmxsc = 0;
+            this.State.MaxLoad = 100;
+            this.State.rwscor = 0;
+            this.State.Deaths = 0;
+            this.State.Moves = 0;
+            this.Time.pltime = 0;
+            this.State.mungrm = 0;
+            this.State.hs = 0;
+            this.ParserVectors.prsa = 0;
+
+            this.Hack.thfflg = false;
+            this.Hack.thfact = true;
+            this.Hack.swdact = false;
+            this.Hack.swdsta = 0;
+
+            this.Star.mbase = 0;
+
+            this.Flags.buoyf = true;
+            this.Flags.egyptf = true;
+            this.Flags.mr1f = true;
+            this.Flags.mr2f = true;
+            this.Flags.follwf = true;
+
+            this.Switches.ormtch = 4;
+            this.Switches.lcell = 1;
+            this.Switches.pnumb = 1;
+            this.Switches.mdir = 270;
+            this.Switches.mloc = (int)RoomIndices.mrb;
+            this.Switches.cphere = 10;
+        }
 
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
@@ -18,7 +53,7 @@ namespace Zork.Core
         public Random Random { get; } = new Random(DateTime.Now.Millisecond);
         public Exits Exits { get; } = new Exits();
         public Rooms Rooms { get; } = new Rooms();
-        public Switch Switch { get; } = new Switch();
+        public Switches Switches { get; } = new Switches();
         public Screen Screen { get; } = new Screen();
         public Rooms2 Rooms2 { get; } = new Rooms2();
         public Player Player { get; } = new Player();
@@ -69,6 +104,7 @@ namespace Zork.Core
                 if (this.ParserVectors.prscon <= 1)
                 {
                     input = Parser.ReadLine(1);
+                    this.ParserVectors.prscon = 1;
                 }
 
                 ++this.State.Moves;
@@ -79,10 +115,10 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                 if (xvehic_(1))
-                 {
+                if (xvehic_(1))
+                {
                     goto L400;
-                 }
+                }
 
                 if (this.ParserVectors.prsa == (int)VIndices.tellw)
                 {
@@ -93,6 +129,11 @@ namespace Zork.Core
                 if (this.ParserVectors.prso == (int)ObjectIndices.valua || this.ParserVectors.prso == (int)ObjectIndices.every)
                 {
                     goto L900;
+                }
+
+                if(this.ParserVectors.prsa == 152)
+                {
+                    int b = 0;
                 }
 
                 if (!Parser.vappli_(input, this.ParserVectors.prsa, this))
@@ -290,24 +331,22 @@ namespace Zork.Core
         }
 
         /* XVEHIC- EXECUTE VEHICLE FUNCTION */
-
-        /* DECLARATIONS */
-
         public bool xvehic_(int n)
-{
-	bool ret_val;
-        int av;
+        {
+            bool ret_val;
+            int av;
 
-        ret_val = false;
-	/* 						!ASSUME LOSES. */
-	av = this.Adventurers.Vehicles[this.Player.Winner - 1];
-	/* 						!GET VEHICLE. */
-	if (av != 0)
-	{
-		ret_val = ObjectHandler.oappli_(this.Objects.oactio[av - 1], n, this);
-    }
-	return ret_val;
-}
+            ret_val = false;
+            /* 						!ASSUME LOSES. */
+            av = this.Adventurers.Vehicles[this.Player.Winner - 1];
+            /* 						!GET VEHICLE. */
+            if (av != 0)
+            {
+                ret_val = ObjectHandler.oappli_(this.Objects.oactio[av - 1], n, this);
+            }
+
+            return ret_val;
+        }
     }
 
     public class hyper_

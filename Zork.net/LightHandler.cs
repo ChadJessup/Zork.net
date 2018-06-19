@@ -22,12 +22,12 @@ namespace Zork.Core
                 goto L20000;
             }
             /* 						!CANDLE? */
-            if (game.Switch.orcand != 0)
+            if (game.Switches.orcand != 0)
             {
                 goto L19100;
             }
             /* 						!FIRST REF? */
-            game.Switch.orcand = 1;
+            game.Switches.orcand = 1;
             /* 						!YES, CANDLES ARE */
             game.Clock.Ticks[(int)ClockIndices.cevcnd - 1] = 50;
             /* 						!BURNING WHEN SEEN. */
@@ -137,7 +137,7 @@ namespace Zork.Core
 
                 goto L20500;
             }
-            if (game.Switch.ormtch != 0)
+            if (game.Switches.ormtch != 0)
             {
                 goto L20100;
             }
@@ -147,7 +147,7 @@ namespace Zork.Core
             return ret_val;
 
             L20100:
-            --game.Switch.ormtch;
+            --game.Switches.ormtch;
             /* 						!DECREMENT NO MATCHES. */
             game.Objects.oflag1[(int)ObjectIndices.match - 1] |= flobts;
             game.Clock.Ticks[(int)ClockIndices.cevmat - 1] = 2;

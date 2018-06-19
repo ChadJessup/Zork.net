@@ -50,7 +50,7 @@
         public bool cpushf { get; set; }
     }
 
-    public class Switch
+    public class Switches
     {
         public int btief { get; set; }
         public int binff { get; set; }
@@ -61,6 +61,10 @@
         public int rvgua { get; set; }
         public int orrug { get; set; }
         public int orcand { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of matches.
+        /// </summary>
         public int ormtch { get; set; }
         public int orlamp { get; set; }
         public int mdir { get; set; }

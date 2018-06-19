@@ -127,14 +127,14 @@ namespace Zork.Core.Clock
             L2000:
             if (game.Player.Here == (int)RoomIndices.maint)
             {
-                i__1 = game.Switch.rvmnt / 2 + 71;
+                i__1 = game.Switches.rvmnt / 2 + 71;
                 MessageHandler.rspeak_(game, i__1);
             }
 
             /* 						!DESCRIBE. */
-            ++game.Switch.rvmnt;
+            ++game.Switches.rvmnt;
             /* 						!RAISE WATER LEVEL. */
-            if (game.Switch.rvmnt <= 16)
+            if (game.Switches.rvmnt <= 16)
             {
                 return;
             }
@@ -157,7 +157,7 @@ namespace Zork.Core.Clock
             /* CEV3--	LANTERN.  DESCRIBE GROWING DIMNESS. */
 
             L3000:
-            litint_(game, (int)ObjectIndices.lamp, game.Switch.orlamp, (int)ClockIndices.cevlnt, lmptck, 12);
+            litint_(game, (int)ObjectIndices.lamp, game.Switches.orlamp, (int)ClockIndices.cevlnt, lmptck, 12);
             /* 						!DO LIGHT INTERRUPT. */
             return;
 
@@ -172,7 +172,7 @@ namespace Zork.Core.Clock
             /* CEV5--	CANDLE.  DESCRIBE GROWING DIMNESS. */
 
             L5000:
-            litint_(game, (int)ObjectIndices.candl, game.Switch.orcand, (int)ClockIndices.cevcnd, cndtck, 10);
+            litint_(game, (int)ObjectIndices.candl, game.Switches.orcand, (int)ClockIndices.cevcnd, cndtck, 10);
             /* 						!DO CANDLE INTERRUPT. */
             return;
             /* CEVAPP, PAGE 3 */
@@ -196,7 +196,7 @@ namespace Zork.Core.Clock
             }
 
             /* 						!ON LEDGE? */
-            if ((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0 && game.Switch.binff != 0) {
+            if ((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0 && game.Switches.binff != 0) {
                 goto L6500;
             }
 
@@ -227,7 +227,7 @@ namespace Zork.Core.Clock
             L6200:
             f = AdventurerHandler.moveto_(game, game.State.bloc, game.Player.Winner);
             /* 						!MOVE HIM. */
-            if (game.Switch.binff == 0) {
+            if (game.Switches.binff == 0) {
                 goto L6250;
             }
             /* 						!IN BALLOON.  INFLATED? */
@@ -247,8 +247,8 @@ namespace Zork.Core.Clock
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             /* 						!DISABLE INTERRUPTS. */
             game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
-            game.Switch.binff = 0;
-            game.Switch.btief = 0;
+            game.Switches.binff = 0;
+            game.Switches.btief = 0;
             return;
 
             L6300:
@@ -287,8 +287,8 @@ namespace Zork.Core.Clock
             /* 						!AT VAIR4? */
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = 0;
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 0;
-            game.Switch.binff = 0;
-            game.Switch.btief = 0;
+            game.Switches.binff = 0;
+            game.Switches.btief = 0;
             game.State.bloc = (int)RoomIndices.vlbot;
             /* 						!FALL TO BOTTOM. */
             ObjectHandler.newsta_(game, (int)ObjectIndices.ballo, 0, 0, 0, 0);
@@ -367,7 +367,7 @@ namespace Zork.Core.Clock
             /* AT BOTTOM, GO UP IF INFLATED, DO NOTHING IF DEFLATED. */
 
             L6800:
-            if (game.Switch.binff == 0 || !((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0))
+            if (game.Switches.binff == 0 || !((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0))
             {
                 return;
             }
@@ -415,7 +415,7 @@ namespace Zork.Core.Clock
             L7200:
             ObjectHandler.newsta_(game, i, 0, 0, 0, 0);
             /* 						!VANISH OBJECT. */
-            game.Switch.binff = 0;
+            game.Switches.binff = 0;
             /* 						!UNINFLATED. */
             if (game.Player.Here == game.State.bloc)
             {
@@ -542,7 +542,7 @@ namespace Zork.Core.Clock
             return;
 
             L9200:
-            if (game.Switch.btief != 0)
+            if (game.Switches.btief != 0)
             {
                 goto L9300;
             }
@@ -558,8 +558,8 @@ namespace Zork.Core.Clock
             /* 						!BALLOON & CONTENTS DIE. */
             ObjectHandler.newsta_(game, (int)ObjectIndices.dball, 0, game.State.bloc, 0, 0);
             /* 						!INSERT DEAD BALLOON. */
-            game.Switch.btief = 0;
-            game.Switch.binff = 0;
+            game.Switches.btief = 0;
+            game.Switches.binff = 0;
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
             AdventurerHandler.jigsup_(game, 113);
@@ -744,7 +744,7 @@ namespace Zork.Core.Clock
             game.Clock.Flags[(int)ClockIndices.cevlnt - 1] = false;
             /* 						!LAMP IS GOOD AS NEW. */
             game.Clock.Ticks[(int)ClockIndices.cevlnt - 1] = 350;
-            game.Switch.orlamp = 0;
+            game.Switches.orlamp = 0;
             game.Objects.oflag2[(int)ObjectIndices.sword - 1] |= ObjectFlags2.TCHBT;
             game.Hack.swdact = true;
             game.Hack.swdsta = 0;
@@ -809,7 +809,7 @@ namespace Zork.Core.Clock
             }
             /* 						!IF PLAYER LEFT, DIE. */
             MessageHandler.rspeak_(game, 769);
-            i__1 = game.Switch.quesno + 770;
+            i__1 = game.Switches.quesno + 770;
             MessageHandler.rspeak_(game, i__1);
             game.Clock.Ticks[(int)ClockIndices.cevinq - 1] = 2;
             return;

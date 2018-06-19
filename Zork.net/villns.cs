@@ -196,7 +196,7 @@ namespace Zork.Core
             /* 						!WAKE CYCLOPS. */
             MessageHandler.rspsub_(game, 187);
             /* 						!DESCRIBE. */
-            game.Switch.rvcyc = Math.Abs(game.Switch.rvcyc);
+            game.Switches.rvcyc = Math.Abs(game.Switches.rvcyc);
             game.Objects.oflag2[(int)ObjectIndices.cyclo - 1] = (game.Objects.oflag2[(int)ObjectIndices.cyclo - 1] | ObjectFlags2.FITEBT) & ~ObjectFlags2.SLEPBT;
             return ret_val;
 
@@ -205,11 +205,11 @@ namespace Zork.Core
             {
                 goto L10;
             }
-            if (Math.Abs(game.Switch.rvcyc) <= 5) {
+            if (Math.Abs(game.Switches.rvcyc) <= 5) {
                 goto L200;
             }
             /* 						!ANNOYED TOO MUCH? */
-            game.Switch.rvcyc = 0;
+            game.Switches.rvcyc = 0;
             /* 						!RESTART COUNT. */
             AdventurerHandler.jigsup_(game, 188);
             /* 						!YES, EATS PLAYER. */
@@ -220,7 +220,7 @@ namespace Zork.Core
                 goto L500;
             }
             /* 						!GIVE? */
-            if (game.ParserVectors.prso != (int)ObjectIndices.food || game.Switch.rvcyc < 0) {
+            if (game.ParserVectors.prso != (int)ObjectIndices.food || game.Switches.rvcyc < 0) {
                 goto L300;
             }
             /* 						!FOOD WHEN HUNGRY? */
@@ -228,8 +228,8 @@ namespace Zork.Core
             /* 						!EATS PEPPERS. */
             /* Computing MIN */
             i__1 = -1;
-            i__2 = -game.Switch.rvcyc;
-            game.Switch.rvcyc = Math.Min(i__1, i__2);
+            i__2 = -game.Switches.rvcyc;
+            game.Switches.rvcyc = Math.Min(i__1, i__2);
             /* 						!GETS THIRSTY. */
             return ret_val;
 
@@ -238,7 +238,7 @@ namespace Zork.Core
                 goto L400;
             }
             /* 						!DRINK WHEN THIRSTY? */
-            if (game.Switch.rvcyc >= 0) {
+            if (game.Switches.rvcyc >= 0) {
                 goto L350;
             }
             ObjectHandler.newsta_(game, game.ParserVectors.prso, 190, 0, 0, 0);
@@ -266,15 +266,15 @@ namespace Zork.Core
             L450:
             MessageHandler.rspeak_(game, i);
             /* 						!DISDAIN IT. */
-            if (game.Switch.rvcyc < 0) {
-                --game.Switch.rvcyc;
+            if (game.Switches.rvcyc < 0) {
+                --game.Switches.rvcyc;
             }
-            if (game.Switch.rvcyc >= 0) {
-                ++game.Switch.rvcyc;
+            if (game.Switches.rvcyc >= 0) {
+                ++game.Switches.rvcyc;
             }
             if (!game.Flags.cyclof)
             {
-                i__1 = Math.Abs(game.Switch.rvcyc) + 193;
+                i__1 = Math.Abs(game.Switches.rvcyc) + 193;
                 MessageHandler.rspeak_(game, i__1);
             }
             return ret_val;

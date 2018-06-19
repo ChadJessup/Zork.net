@@ -5,7 +5,11 @@
     /// </summary>
     public class Star
     {
+        /// <summary>
+        /// The melee base value.
+        /// </summary>
         public int mbase { get; set; }
+
         public int strbit { get; set; }
     }
 }

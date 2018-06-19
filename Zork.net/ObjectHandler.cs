@@ -647,7 +647,7 @@ namespace Zork.Core
 
             /* O38--	WALL */
             L7000:
-            i__1 = game.Player.Here - game.Switch.mloc;
+            i__1 = game.Player.Here - game.Switches.mloc;
             if (Math.Abs(i__1) != 1
                 || RoomHandler.mrhere_(game, game.Player.Here) != 0
                 || game.ParserVectors.prsa != (int)VIndices.pushw)
@@ -718,7 +718,7 @@ namespace Zork.Core
             L9200:
             j = PuzzleHandler.cpwl[i];
             /* 						!GET DIRECTIONAL OFFSET. */
-            nxt = game.Switch.cphere + j;
+            nxt = game.Switches.cphere + j;
             /* 						!GET NEXT STATE. */
             wl = PuzzleHandler.cpvec[nxt - 1];
             /* 						!GET C(NEXT STATE). */
@@ -808,13 +808,13 @@ namespace Zork.Core
             /* 						!LIFT? */
             i = 749;
             /* 						!ASSUME UP. */
-            if (game.Switch.poleuf == 2)
+            if (game.Switches.poleuf == 2)
             {
                 i = 750;
             }
             /* 						!ALREADY UP? */
             MessageHandler.Speak(i, game);
-            game.Switch.poleuf = 2;
+            game.Switches.poleuf = 2;
             /* 						!POLE IS RAISED. */
             return ret_val;
 
@@ -824,7 +824,7 @@ namespace Zork.Core
 
                 goto L10;
             }
-            if (game.Switch.poleuf != 0)
+            if (game.Switches.poleuf != 0)
             {
                 goto L10200;
             }
@@ -834,32 +834,32 @@ namespace Zork.Core
             return ret_val;
 
             L10200:
-            if (game.Switch.mdir % 180 != 0)
+            if (game.Switches.mdir % 180 != 0)
             {
                 goto L10300;
             }
             /* 						!MIRROR N-S? */
-            game.Switch.poleuf = 0;
+            game.Switches.poleuf = 0;
             /* 						!YES, LOWER INTO */
             MessageHandler.Speak(752, game);
             /* 						!CHANNEL. */
             return ret_val;
 
             L10300:
-            if (game.Switch.mdir != 270 || game.Switch.mloc != (int)RoomIndices.mrb)
+            if (game.Switches.mdir != 270 || game.Switches.mloc != (int)RoomIndices.mrb)
             {
                 goto L10400;
             }
-            game.Switch.poleuf = 0;
+            game.Switches.poleuf = 0;
             /* 						!LOWER INTO HOLE. */
             MessageHandler.Speak(753, game);
             return ret_val;
 
             L10400:
-            i__1 = game.Switch.poleuf + 753;
+            i__1 = game.Switches.poleuf + 753;
             MessageHandler.Speak(i__1, game);
             /* 						!POLEUF = 1 OR 2. */
-            game.Switch.poleuf = 1;
+            game.Switches.poleuf = 1;
             /* 						!NOW ON FLOOR. */
             return ret_val;
 
@@ -956,7 +956,7 @@ namespace Zork.Core
             /* O44--	BRONZE DOOR */
 
             L13000:
-            if (game.Player.Here == (int)RoomIndices.ncell || game.Switch.lcell == 4 && (game.Player.Here == (int)RoomIndices.cell || game.Player.Here == (int)RoomIndices.scorr))
+            if (game.Player.Here == (int)RoomIndices.ncell || game.Switches.lcell == 4 && (game.Player.Here == (int)RoomIndices.cell || game.Player.Here == (int)RoomIndices.scorr))
             {
                 goto L13100;
             }
@@ -1004,14 +1004,14 @@ namespace Zork.Core
             /* 						!START INQUISITION. */
             game.Clock.Flags[(int)ClockIndices.cevinq - 1] = true;
             game.Clock.Ticks[(int)ClockIndices.cevinq - 1] = 2;
-            game.Switch.quesno = game.rnd_(8);
+            game.Switches.quesno = game.rnd_(8);
             /* 						!SELECT QUESTION. */
-            game.Switch.nqatt = 0;
-            game.Switch.corrct = 0;
+            game.Switches.nqatt = 0;
+            game.Switches.corrct = 0;
             MessageHandler.Speak(768, game);
             /* 						!ANNOUNCE RULES. */
             MessageHandler.Speak(769, game);
-            i__1 = game.Switch.quesno + 770;
+            i__1 = game.Switches.quesno + 770;
             MessageHandler.Speak(i__1, game);
             /* 						!ASK QUESTION. */
             return ret_val;
@@ -1063,11 +1063,11 @@ namespace Zork.Core
                 /* 						!RELOCATE OLD TO HYPER. */
                 if (game.Objects.oroom[i - 1] == (int)RoomIndices.cell && (game.Objects.oflag1[i - 1] & ObjectFlags.DOORBT) == 0)
                 {
-                    i__2 = game.Switch.lcell * game.hyper_.hfactr;
+                    i__2 = game.Switches.lcell * game.hyper_.hfactr;
                     newsta_(i, 0, i__2, 0, 0, game);
                 }
 
-                if (game.Objects.oroom[i - 1] == game.Switch.pnumb * game.hyper_.hfactr)
+                if (game.Objects.oroom[i - 1] == game.Switches.pnumb * game.hyper_.hfactr)
                 {
                     newsta_(i, 0, (int)RoomIndices.cell, 0, 0, game);
                 }
@@ -1077,7 +1077,7 @@ namespace Zork.Core
             game.Objects.oflag2[(int)ObjectIndices.odoor - 1] &= ~ObjectFlags2.OPENBT;
             game.Objects.oflag2[(int)ObjectIndices.cdoor - 1] &= ~ObjectFlags2.OPENBT;
             game.Objects.oflag1[(int)ObjectIndices.odoor - 1] &= ~ObjectFlags.VISIBT;
-            if (game.Switch.pnumb == 4)
+            if (game.Switches.pnumb == 4)
             {
                 game.Objects.oflag1[(int)ObjectIndices.odoor - 1] |= ObjectFlags.VISIBT;
             }
@@ -1087,7 +1087,7 @@ namespace Zork.Core
                 goto L17400;
             }
             /* 						!PLAYER IN CELL? */
-            if (game.Switch.lcell != 4)
+            if (game.Switches.lcell != 4)
             {
                 goto L17200;
             }
@@ -1101,7 +1101,7 @@ namespace Zork.Core
             /* 						!NO, MOVETO PCELL. */
 
             L17400:
-            game.Switch.lcell = game.Switch.pnumb;
+            game.Switches.lcell = game.Switches.pnumb;
             return ret_val;
             /* NOBJS, PAGE 10 */
 
@@ -1113,10 +1113,10 @@ namespace Zork.Core
                 goto L18100;
             }
             /* 						!SPIN? */
-            game.Switch.pnumb = game.rnd_(8) + 1;
+            game.Switches.pnumb = game.rnd_(8) + 1;
             /* 						!WHEE */
             /* 						! */
-            i__1 = game.Switch.pnumb + 712;
+            i__1 = game.Switches.pnumb + 712;
             MessageHandler.rspsub_(797, i__1, game);
             return ret_val;
 
@@ -1145,9 +1145,9 @@ namespace Zork.Core
             return ret_val;
 
             L18300:
-            game.Switch.pnumb = game.ParserVectors.prsi - (int)ObjectIndices.num1 + 1;
+            game.Switches.pnumb = game.ParserVectors.prsi - (int)ObjectIndices.num1 + 1;
             /* 						!SET UP NEW. */
-            i__1 = game.Switch.pnumb + 712;
+            i__1 = game.Switches.pnumb + 712;
             MessageHandler.rspsub_(808, i__1, game);
             return ret_val;
 
@@ -1550,7 +1550,7 @@ namespace Zork.Core
             return ret_val;
 
             L10600:
-            if (game.ParserVectors.prsa != (int)VIndices.lookuw || game.Switch.rvclr != 0)
+            if (game.ParserVectors.prsa != (int)VIndices.lookuw || game.Switches.rvclr != 0)
             {
                 goto L10;
             }
@@ -2199,14 +2199,14 @@ namespace Zork.Core
                 goto L10;
             }
             /* 						!PUSH? */
-            if (game.Switch.poleuf != 0)
+            if (game.Switches.poleuf != 0)
             {
                 goto L56100;
             }
             /* 						!SHORT POLE UP? */
             i = 731;
             /* 						!NO, WONT BUDGE. */
-            if (game.Switch.mdir % 180 == 0)
+            if (game.Switches.mdir % 180 == 0)
             {
                 i = 732;
             }
@@ -2216,7 +2216,7 @@ namespace Zork.Core
             return ret_val;
 
             L56100:
-            if (game.Switch.mloc != (int)RoomIndices.mrg)
+            if (game.Switches.mloc != (int)RoomIndices.mrg)
             {
                 goto L56200;
             }
@@ -2235,9 +2235,9 @@ namespace Zork.Core
             }
             MessageHandler.Speak(i, game);
             /* 						!TELL DIRECTION. */
-            game.Switch.mdir = (game.Switch.mdir + 45 + (i - 830) * 270) % 360;
+            game.Switches.mdir = (game.Switches.mdir + 45 + (i - 830) * 270) % 360;
             /* 						!CALCULATE NEW DIR. */
-            i__1 = game.Switch.mdir / 45 + 695;
+            i__1 = game.Switches.mdir / 45 + 695;
             MessageHandler.rspsub_(734, i__1, game);
             /* 						!TELL NEW DIR. */
             if (game.Flags.wdopnf)
@@ -2257,7 +2257,7 @@ namespace Zork.Core
                 goto L10;
             }
             /* 						!PUSH? */
-            if (game.Switch.mdir % 180 == 0)
+            if (game.Switches.mdir % 180 == 0)
             {
                 goto L57100;
             }
@@ -2272,9 +2272,9 @@ namespace Zork.Core
                 goto L57300;
             }
             /* 						!PUSH PINE WALL? */
-            if (game.Switch.mloc == (int)RoomIndices.mrc && game.Switch.mdir == 180 ||
-                game.Switch.mloc == (int)RoomIndices.mrd && game.Switch.mdir == 0 ||
-                game.Switch.mloc == (int)RoomIndices.mrg)
+            if (game.Switches.mloc == (int)RoomIndices.mrc && game.Switches.mdir == 180 ||
+                game.Switches.mloc == (int)RoomIndices.mrd && game.Switches.mdir == 0 ||
+                game.Switches.mloc == (int)RoomIndices.mrg)
             {
                 goto L57200;
             }
@@ -2295,11 +2295,11 @@ namespace Zork.Core
             return ret_val;
 
             L57300:
-            nloc = game.Switch.mloc - 1;
+            nloc = game.Switches.mloc - 1;
             /* 						!NEW LOC IF SOUTH. */
-            if (game.Switch.mdir == 0)
+            if (game.Switches.mdir == 0)
             {
-                nloc = game.Switch.mloc + 1;
+                nloc = game.Switches.mloc + 1;
             }
             /* 						!NEW LOC IF NORTH. */
             if (nloc >= (int)RoomIndices.mra && nloc <= (int)RoomIndices.mrd)
@@ -2313,28 +2313,28 @@ namespace Zork.Core
             L57400:
             i = 699;
             /* 						!ASSUME SOUTH. */
-            if (game.Switch.mdir == 0)
+            if (game.Switches.mdir == 0)
             {
                 i = 695;
             }
             /* 						!NORTH. */
             j = 739;
             /* 						!ASSUME SMOOTH. */
-            if (game.Switch.poleuf != 0)
+            if (game.Switches.poleuf != 0)
             {
                 j = 740;
             }
             /* 						!POLE UP, WOBBLES. */
             MessageHandler.rspsub_(j, i, game);
             /* 						!DESCRIBE. */
-            game.Switch.mloc = nloc;
-            if (game.Switch.mloc != (int)RoomIndices.mrg)
+            game.Switches.mloc = nloc;
+            if (game.Switches.mloc != (int)RoomIndices.mrg)
             {
                 return ret_val;
             }
             /* 						!NOW IN GDN ROOM? */
 
-            if (game.Switch.poleuf != 0)
+            if (game.Switches.poleuf != 0)
             {
                 goto L57500;
             }
@@ -2477,7 +2477,7 @@ namespace Zork.Core
             /* O131--	GLOBAL LADDER */
 
             L62000:
-            if (PuzzleHandler.cpvec[game.Switch.cphere] == -2 || PuzzleHandler.cpvec[game.Switch.cphere - 2] == -3)
+            if (PuzzleHandler.cpvec[game.Switches.cphere] == -2 || PuzzleHandler.cpvec[game.Switches.cphere - 2] == -3)
             {
                 goto L62100;
             }
@@ -2496,7 +2496,7 @@ namespace Zork.Core
             return ret_val;
 
             L62200:
-            if (game.Switch.cphere == 10 && PuzzleHandler.cpvec[game.Switch.cphere] == -2)
+            if (game.Switches.cphere == 10 && PuzzleHandler.cpvec[game.Switches.cphere] == -2)
             {
                 goto L62300;
             }
@@ -2789,15 +2789,15 @@ namespace Zork.Core
                 goto L9300;
             }
             /* 						!MOVE? */
-            i__1 = game.Switch.orrug + 145;
+            i__1 = game.Switches.orrug + 145;
             MessageHandler.Speak(i__1, game);
-            game.Switch.orrug = 1;
+            game.Switches.orrug = 1;
             game.Objects.oflag1[(int)ObjectIndices.door - 1] |= ObjectFlags.VISIBT;
             return ret_val;
 
             L9300:
             if (game.ParserVectors.prsa != (int)VIndices.lookuw
-                || game.Switch.orrug != 0
+                || game.Switches.orrug != 0
                 || (game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 goto L10;
@@ -3245,7 +3245,7 @@ namespace Zork.Core
             /* O20--	LEAK */
 
             L33000:
-            if (game.ParserVectors.prso != (int)ObjectIndices.leak || game.ParserVectors.prsa != (int)VIndices.plugw || game.Switch.rvmnt <= 0)
+            if (game.ParserVectors.prso != (int)ObjectIndices.leak || game.ParserVectors.prsa != (int)VIndices.plugw || game.Switches.rvmnt <= 0)
             {
                 goto L10;
             }
@@ -3256,7 +3256,7 @@ namespace Zork.Core
             }
 
             /* 						!WITH PUTTY? */
-            game.Switch.rvmnt = -1;
+            game.Switches.rvmnt = -1;
             /* 						!DISABLE LEAK. */
             game.Clock.Ticks[(int)ClockIndices.cevmnt - 1] = 0;
             MessageHandler.Speak(577, game);
@@ -3310,14 +3310,14 @@ namespace Zork.Core
             return ret_val;
 
             L34400:
-            if (game.Switch.rvmnt != 0)
+            if (game.Switches.rvmnt != 0)
             {
                 goto L34500;
             }
             /* 						!LEAK ALREADY STARTED? */
             MessageHandler.Speak(233, game);
             /* 						!NO, START LEAK. */
-            game.Switch.rvmnt = 1;
+            game.Switches.rvmnt = 1;
             game.Clock.Ticks[(int)ClockIndices.cevmnt - 1] = -1;
             return ret_val;
 
@@ -3469,7 +3469,7 @@ namespace Zork.Core
                 goto L41500;
             }
 
-            game.Switch.btief = game.ParserVectors.prsi;
+            game.Switches.btief = game.ParserVectors.prsi;
             /* 						!RECORD LOCATION. */
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             /* 						!STALL ASCENT. */
@@ -3483,7 +3483,7 @@ namespace Zork.Core
                 goto L10;
             }
 
-            if (game.Switch.btief != 0)
+            if (game.Switches.btief != 0)
             {
                 goto L41600;
             }
@@ -3495,7 +3495,7 @@ namespace Zork.Core
 
             L41600:
             MessageHandler.Speak(250, game);
-            game.Switch.btief = 0;
+            game.Switches.btief = 0;
             /* 						!UNTIE. */
 
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;

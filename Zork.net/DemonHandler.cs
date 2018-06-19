@@ -631,7 +631,7 @@ namespace Zork.Core
             }
             else
             {
-                ret_val = r == (int)RoomIndices.mrg || r == (int)RoomIndices.mrge || r == (int)RoomIndices.mrgw || r == (int)RoomIndices.inmir && game.Switch.mloc == (int)RoomIndices.mrg;
+                ret_val = r == (int)RoomIndices.mrg || r == (int)RoomIndices.mrge || r == (int)RoomIndices.mrgw || r == (int)RoomIndices.inmir && game.Switches.mloc == (int)RoomIndices.mrg;
             }
 
             return ret_val;

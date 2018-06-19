@@ -76,7 +76,7 @@ namespace Zork.Core
                 /* 						!RELOCATE OBJECTS. */
                 if (game.Objects.oroom[i - 1] == (int)RoomIndices.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
-                    i__2 = game.Switch.cphere * game.hyper_.hfactr;
+                    i__2 = game.Switches.cphere * game.hyper_.hfactr;
                     ObjectHandler.newsta_(game, i, 0, i__2, 0, 0);
                 }
 
@@ -86,7 +86,7 @@ namespace Zork.Core
                 }
                 /* L100: */
             }
-            game.Switch.cphere = st;
+            game.Switches.cphere = st;
         }
 
         /* CPINFO--	DESCRIBE PUZZLE ROOM */

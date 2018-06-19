@@ -149,7 +149,7 @@ namespace Zork.Core
             // !CHAR PTR=0.
 
             L200:
-            j = inbuf[game.ParserVectors.prscon];
+            j = inbuf[game.ParserVectors.prscon - 1];
 
             // !GET CHARACTER
             if (j == '\0')
@@ -201,7 +201,7 @@ namespace Zork.Core
             // END OF INPUT, SEE IF PARTIAL WORD AVAILABLE.
 
             L1000:
-            if (inbuf[game.ParserVectors.prscon] == '\0')
+            if (inbuf[game.ParserVectors.prscon - 1] == '\0')
             {
                 game.ParserVectors.prscon = 1;
             }
@@ -834,12 +834,19 @@ namespace Zork.Core
         {
             int i;
 
-            for (i = 1; i <= 11; ++i)
-            {
-                // !CLEAR SYNTAX.
-                //syn[i - 1] = 0;
-                // L10:
-            }
+            // !CLEAR SYNTAX.
+            game.Syntax.dfl1 = 0;
+            game.Syntax.dfl2 = 0;
+            game.Syntax.dfw1 = 0;
+            game.Syntax.dfw2 = 0;
+            game.Syntax.dobj = 0;
+            game.Syntax.ifl1 = 0;
+            game.Syntax.ifl2 = 0;
+            game.Syntax.ifw1 = 0;
+            game.Syntax.ifw2 = 0;
+            game.Syntax.iobj = 0;
+            game.Syntax.vflag = 0;
+            // L10:
 
             game.Syntax.vflag = (SyntaxFlags)ParserConstants.vvoc[oldj - 1];
             j = oldj + 1;
@@ -4101,7 +4108,7 @@ namespace Zork.Core
             for (j = 1; j <= 14; j++)
             {
                 /* 						!CHECK ANSWERS. */
-                if (game.Switch.quesno != answer[j - 1])
+                if (game.Switches.quesno != answer[j - 1])
                 {
                     goto L27300;
                 }
@@ -4126,13 +4133,13 @@ namespace Zork.Core
 
             game.ParserVectors.prscon = 1;
             /* 						!KILL REST OF LINE. */
-            ++game.Switch.nqatt;
+            ++game.Switches.nqatt;
             /* 						!WRONG, CRETIN. */
-            if (game.Switch.nqatt >= 5) {
+            if (game.Switches.nqatt >= 5) {
                 goto L27400;
             }
             /* 						!TOO MANY WRONG? */
-            i__1 = game.Switch.nqatt + 800;
+            i__1 = game.Switches.nqatt + 800;
             MessageHandler.rspeak_(game, i__1);
             /* 						!NO, TRY AGAIN. */
             return ret_val;
@@ -4147,22 +4154,22 @@ namespace Zork.Core
             L27500:
             game.ParserVectors.prscon = 1;
             /* 						!KILL REST OF LINE. */
-            ++game.Switch.corrct;
+            ++game.Switches.corrct;
             /* 						!GOT IT RIGHT. */
             MessageHandler.rspeak_(game, 800);
             /* 						!HOORAY. */
-            if (game.Switch.corrct >= 3)
+            if (game.Switches.corrct >= 3)
             {
                 goto L27600;
             }
             /* 						!WON TOTALLY? */
             game.Clock.Ticks[(int)ClockIndices.cevinq - 1] = 2;
             /* 						!NO, START AGAIN. */
-            game.Switch.quesno = (game.Switch.quesno + 3) % 8;
-            game.Switch.nqatt = 0;
+            game.Switches.quesno = (game.Switches.quesno + 3) % 8;
+            game.Switches.nqatt = 0;
             MessageHandler.rspeak_(game, 769);
             /* 						!ASK NEXT QUESTION. */
-            i__1 = game.Switch.quesno + 770;
+            i__1 = game.Switches.quesno + 770;
             MessageHandler.rspeak_(game, i__1);
             return ret_val;
 
