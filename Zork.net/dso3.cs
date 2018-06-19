@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Zork.Core.Object;
 
 namespace Zork.Core
 {
     public static class dso3
     {
-        /* FINDXT- FIND EXIT FROM ROOM */
+        /// <summary>
+        /// findxt_ - Find Exit from room.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="dir"></param>
+        /// <param name="rm"></param>
+        /// <returns></returns>
         public static bool findxt_(Game game, int dir, int rm)
         {
             /* System generated locals */

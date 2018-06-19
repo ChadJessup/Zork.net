@@ -43,6 +43,8 @@ namespace Zork.Core
             this.Switches.mdir = 270;
             this.Switches.mloc = (int)RoomIndices.mrb;
             this.Switches.cphere = 10;
+
+            this.isRunning = true;
         }
 
         public Time Time { get; } = new Time();
@@ -86,6 +88,13 @@ namespace Zork.Core
 
         public int rnd_(int maxVal) => this.Random.Next(maxVal);
 
+        private bool isRunning = true;
+        public void Exit()
+        {
+            Console.WriteLine("The game is over.");
+            isRunning = false;
+        }
+
         public void Play()
         {
             MessageHandler.Speak(1, this);
@@ -93,9 +102,15 @@ namespace Zork.Core
             bool f = false;
             int i = 0;
 
-            while (true)
+            while (this.isRunning)
             {
                 L100:
+                if (!this.isRunning)
+                {
+                    // Game is over, exit this game loop.
+                    continue;
+                }
+
                 this.Player.Winner = (int)AIndices.player;
                 this.Player.TelFlag = false;
 
@@ -129,11 +144,6 @@ namespace Zork.Core
                 if (this.ParserVectors.prso == (int)ObjectIndices.valua || this.ParserVectors.prso == (int)ObjectIndices.every)
                 {
                     goto L900;
-                }
-
-                if(this.ParserVectors.prsa == 152)
-                {
-                    int b = 0;
                 }
 
                 if (!Parser.vappli_(input, this.ParserVectors.prsa, this))

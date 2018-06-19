@@ -258,9 +258,8 @@ namespace Zork.Core
             L1100:
             AdventurerHandler.score_(game, false);
             // !TELL SCORE.
-            //(void)fclose(dbfile);
-            //exit_();
 
+            game.Exit();
         }
 
         public static bool moveto_(Game game, RoomIndices nr, int who) => moveto_(game, (int)nr, who);
