@@ -4,7 +4,7 @@ namespace Zork.Core
 {
     public static class dso4
     {
-        /* ROBADV-- STEAL WINNER'S VALUABLES */
+        // ROBADV-- STEAL WINNER'S VALUABLES
 
         public static int robadv_(Game game, int adv, int nr, ObjectIndices nc, int na)
         {
@@ -12,7 +12,7 @@ namespace Zork.Core
             int i;
 
             ret_val = 0;
-            /* 						!COUNT OBJECTS */
+            // !COUNT OBJECTS
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
@@ -22,31 +22,31 @@ namespace Zork.Core
                     goto L100;
                 }
 
-                ObjectHandler.newsta_(i, 0, nr, (int)nc, na, game);
-                /* 						!STEAL OBJECT */
+                ObjectHandler.SetNewObjectStatus(i, 0, nr, (int)nc, na, game);
+                // !STEAL OBJECT
                 ++ret_val;
                 L100:
                 ;
             }
             return ret_val;
-        } /* robadv_ */
+        } // robadv_
 
-        /* ROBRM-- STEAL ROOM VALUABLES */
+        // ROBRM-- STEAL ROOM VALUABLES
 
-        /* DECLARATIONS */
+        // DECLARATIONS
 
         public static int robrm_(Game game, int rm, int pr, int nr, int nc, int na)
         {
             int ret_val, i__1, i__2;
             int i;
 
-            /* OBJECTS */
+            // OBJECTS
             ret_val = 0;
-            /* 						!COUNT OBJECTS */
+            // !COUNT OBJECTS
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i) {
-                /* 						!LOOP ON OBJECTS. */
-                if (!ObjectHandler.qhere_(i, rm, game))
+                // !LOOP ON OBJECTS.
+                if (!ObjectHandler.IsObjectInRoom(i, rm, game))
                 {
                     goto L100;
                 }
@@ -56,7 +56,7 @@ namespace Zork.Core
                     goto L50;
                 }
 
-                ObjectHandler.newsta_(i, 0, nr, nc, na, game);
+                ObjectHandler.SetNewObjectStatus(i, 0, nr, nc, na, game);
                 ++ret_val;
                 game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
                 goto L100;
@@ -70,57 +70,57 @@ namespace Zork.Core
                 ;
             }
             return ret_val;
-        } /* robrm_ */
+        } // robrm_
 
-        /* WINNIN-- SEE IF VILLAIN IS WINNING */
+        // WINNIN-- SEE IF VILLAIN IS WINNING
 
-        /* DECLARATIONS */
+        // DECLARATIONS
 
         public static bool winnin_(Game game, int vl, int hr)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             int ps, vs;
 
 
-            /* OBJECTS */
+            // OBJECTS
             vs = game.Objects.ocapac[vl - 1];
-            /* 						!VILLAIN STRENGTH */
+            // !VILLAIN STRENGTH
             ps = vs - fights_(game, hr, true);
-            /* 						!HIS MARGIN OVER HERO */
+            // !HIS MARGIN OVER HERO
             ret_val = RoomHandler.prob_(game, 90, 100);
             if (ps > 3) {
                 return ret_val;
             }
-            /* 						!+3... 90% WINNING */
+            // !+3... 90% WINNING
             ret_val = RoomHandler.prob_(game, 75, 85);
             if (ps > 0) {
                 return ret_val;
             }
-            /* 						!>0... 75% WINNING */
+            // !>0... 75% WINNING
             ret_val = RoomHandler.prob_(game, 50, 30);
             if (ps == 0) {
                 return ret_val;
             }
-            /* 						!=0... 50% WINNING */
+            // !=0... 50% WINNING
             ret_val = RoomHandler.prob_(game, 25, 25);
             if (vs > 1) {
                 return ret_val;
             }
-            /* 						!ANY VILLAIN STRENGTH. */
+            // !ANY VILLAIN STRENGTH.
             ret_val = RoomHandler.prob_(game, 10, 0);
             return ret_val;
-        } /* winnin_ */
+        } // winnin_
 
-        /* FIGHTS-- COMPUTE FIGHT STRENGTH */
+        // FIGHTS-- COMPUTE FIGHT STRENGTH
         public static int fights_(Game game, int h, bool flg)
         {
             const int smin = 2;
             const int smax = 7;
 
-            /* System generated locals */
+            // System generated locals
             int ret_val;
 
             ret_val = smin + ((smax - smin) * game.Adventurers.Scores[h - 1] + game.State.MaxScore / 2) / game.State.MaxScore;
@@ -128,16 +128,16 @@ namespace Zork.Core
                 ret_val += game.Adventurers.astren[h - 1];
             }
             return ret_val;
-        } /* fights_ */
+        } // fights_
 
-        /* VILSTR-	COMPUTE VILLAIN STRENGTH */
+        // VILSTR-	COMPUTE VILLAIN STRENGTH
 
         public static int vilstr_(Game game, int v)
         {
-            /* System generated locals */
+            // System generated locals
             int ret_val, i__1, i__2, i__3;
 
-            /* Local variables */
+            // Local variables
             int i;
 
             ret_val = game.Objects.ocapac[v - 1];
@@ -151,25 +151,25 @@ namespace Zork.Core
                 goto L100;
             }
             game.Flags.thfenf = false;
-            /* 						!THIEF UNENGROSSED. */
+            // !THIEF UNENGROSSED.
             ret_val = Math.Min(ret_val, 2);
-            /* 						!NO BETTER THAN 2. */
+            // !NO BETTER THAN 2.
 
             L100:
             i__1 = game.Villians.Count;
             for (i = 1; i <= i__1; ++i) {
-                /* 						!SEE IF  BEST WEAPON. */
+                // !SEE IF  BEST WEAPON.
                 if (game.Villians.villns[i - 1] == v && game.ParserVectors.prsi == game.Villians.vbest[i - 1])
                 {
-                    /* Computing MAX */
+                    // Computing MAX
                     i__2 = 1;
                     i__3 = ret_val - 1;
                     ret_val = Math.Max(i__2, i__3);
                 }
-                /* L200: */
+                // L200:
             }
 
             return ret_val;
-        } /* vilstr_ */
+        } // vilstr_
     }
 }

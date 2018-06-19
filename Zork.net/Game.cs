@@ -1,5 +1,5 @@
 ﻿using System;
-using Zork.Core.Room;
+using System.Collections.Generic;
 
 namespace Zork.Core
 {
@@ -13,7 +13,7 @@ namespace Zork.Core
             this.State.egscor = 0;
             this.State.egmxsc = 0;
             this.State.MaxLoad = 100;
-            this.State.rwscor = 0;
+            this.State.RawScore = 0;
             this.State.Deaths = 0;
             this.State.Moves = 0;
             this.Time.pltime = 0;
@@ -44,6 +44,7 @@ namespace Zork.Core
             this.isRunning = true;
         }
 
+        public List<Room> NewRooms { get; } = new List<Room>();
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
@@ -164,7 +165,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                f = RoomHandler.rappli_(this.Rooms.RoomActions[this.Player.Here - 1], this);
+                f = RoomHandler.rappli_(this.Rooms.Actions[this.Player.Here - 1], this);
 
                 L400:
                 xendmv_(this.Player.TelFlag);
@@ -295,7 +296,7 @@ namespace Zork.Core
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.rappli_(this.Rooms.RoomActions[this.Player.Here - 1], this);
+                f = RoomHandler.rappli_(this.Rooms.Actions[this.Player.Here - 1], this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);
@@ -310,7 +311,7 @@ namespace Zork.Core
             }
         }
 
-        /* XENDMV-	EXECUTE END OF MOVE FUNCTIONS. */
+        // XENDMV-	EXECUTE END OF MOVE FUNCTIONS.
         public void xendmv_(bool flag)
         {
             bool f;
@@ -319,44 +320,44 @@ namespace Zork.Core
             {
                 MessageHandler.rspeak_(this, 341);
             }
-            /* 						!DEFAULT REMARK. */
+            // !DEFAULT REMARK.
             if (this.Hack.thfact)
             {
                 actors.thiefd_(this);
             }
-            /* 						!THIEF DEMON. */
+            // !THIEF DEMON.
             if (this.ParserVectors.prswon)
             {
                 DemonHandler.fightd_(this);
             }
-            /* 						!FIGHT DEMON. */
+            // !FIGHT DEMON.
             if (this.Hack.swdact)
             {
                 DemonHandler.swordd_(this);
             }
-            /* 						!SWORD DEMON. */
+            // !SWORD DEMON.
             if (this.ParserVectors.prswon)
             {
                 f = ClockEvents.clockd_(this);
             }
-            /* 						!CLOCK DEMON. */
+            // !CLOCK DEMON.
             if (this.ParserVectors.prswon)
             {
                 f = xvehic_(2);
             }
-            /* 						!VEHICLE READOUT. */
+            // !VEHICLE READOUT.
         }
 
-        /* XVEHIC- EXECUTE VEHICLE FUNCTION */
+        // XVEHIC- EXECUTE VEHICLE FUNCTION
         public bool xvehic_(int n)
         {
             bool ret_val;
             int av;
 
             ret_val = false;
-            /* 						!ASSUME LOSES. */
+            // !ASSUME LOSES.
             av = this.Adventurers.Vehicles[this.Player.Winner - 1];
-            /* 						!GET VEHICLE. */
+            // !GET VEHICLE.
             if (av != 0)
             {
                 ret_val = ObjectHandler.oappli_(this.Objects.oactio[av - 1], n, this);

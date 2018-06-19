@@ -1,11 +1,10 @@
 ﻿using System;
-using Zork.Core.Room;
 
 namespace Zork.Core
 {
     public static class dso7
     {
-        /* ENCRYP--	ENCRYPT PASSWORD */
+        // ENCRYP--	ENCRYPT PASSWORD
         public static void encryp_(Game game, char[] inw, char[] outw)
         {
             string keyw = "ECORMS";
@@ -17,21 +16,21 @@ namespace Zork.Core
             char[] ukeyw = new char[1 * 6];
             int uinws, ukeyws;
 
-            /* Parameter adjustments */
+            // Parameter adjustments
             //--outw;
             //--inw;
 
-            /* Function Body */
+            // Function Body
 
             uinws = 0;
-            /* 						!UNBIASED INW SUM. */
+            // !UNBIASED INW SUM.
             ukeyws = 0;
-            /* 						!UNBIASED KEYW SUM. */
+            // !UNBIASED KEYW SUM.
             j = 1;
-            /* 						!POINTER IN KEYWORD. */
+            // !POINTER IN KEYWORD.
             for (i = 1; i <= 6; ++i)
             {
-                /* 						!UNBIAS, COMPUTE SUMS. */
+                // !UNBIAS, COMPUTE SUMS.
                 ukeyw[i - 1] = (char)(keyw[i - 1] - 64);
                 if (inw[j] <= '@')
                 {
@@ -41,11 +40,11 @@ namespace Zork.Core
                 ukeyws += ukeyw[i - 1];
                 uinws += uinw[i - 1];
                 ++j;
-                /* L100: */
+                // L100:
             }
 
             usum = uinws % 8 + (ukeyws % 8 << 3);
-            /* 						!COMPUTE MASK. */
+            // !COMPUTE MASK.
             for (i = 1; i <= 6; ++i)
             {
                 j = (uinw[i - 1] ^ ukeyw[i - 1] ^ usum) & 31;
@@ -56,37 +55,37 @@ namespace Zork.Core
                 }
 
                 //outw[i] = (Math.Max(1, j) + 64);
-                /* L200: */
+                // L200:
             }
         }
 
-        /* CPGOTO--	MOVE TO NEXT STATE IN PUZZLE ROOM */
+        // CPGOTO--	MOVE TO NEXT STATE IN PUZZLE ROOM
         public static void cpgoto_(Game game, int st)
         {
             int i__1, i__2;
             int i;
 
-            game.Rooms.RoomFlags[(int)RoomIndices.cpuzz - 1] &= ~RoomFlags.RSEEN;
+            game.Rooms.Flags[(int)RoomIndices.cpuzz - 1] &= ~RoomFlags.SEEN;
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
-                /* 						!RELOCATE OBJECTS. */
+                // !RELOCATE OBJECTS.
                 if (game.Objects.oroom[i - 1] == (int)RoomIndices.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
                     i__2 = game.Switches.cphere * game.hyper_.hfactr;
-                    ObjectHandler.newsta_(game, i, 0, i__2, 0, 0);
+                    ObjectHandler.SetNewObjectStatus(game, i, 0, i__2, 0, 0);
                 }
 
                 if (game.Objects.oroom[i - 1] == st * game.hyper_.hfactr)
                 {
-                    ObjectHandler.newsta_(game, i, 0, (int)RoomIndices.cpuzz, 0, 0);
+                    ObjectHandler.SetNewObjectStatus(game, i, 0, (int)RoomIndices.cpuzz, 0, 0);
                 }
-                /* L100: */
+                // L100:
             }
             game.Switches.cphere = st;
         }
 
-        /* CPINFO--	DESCRIBE PUZZLE ROOM */
+        // CPINFO--	DESCRIBE PUZZLE ROOM
         public static void cpinfo_(Game game, int rmk, int st)
         {
             int[] dgmoft = { -9, -8, -7, -1, 1, 7, 8, 9 };
@@ -100,7 +99,7 @@ namespace Zork.Core
             {
                 j = dgmoft[i - 1];
                 dgm[i - 1] = pict[PuzzleHandler.cpvec[st + j - 1] + 3];
-                /* 						!GET PICTURE ELEMENT. */
+                // !GET PICTURE ELEMENT.
                 if (Math.Abs(j) == 1 || Math.Abs(j) == 8)
                 {
                     goto L100;
@@ -110,7 +109,7 @@ namespace Zork.Core
                 {
                     k = -8;
                 }
-                /* 						!GET ORTHO DIR. */
+                // !GET ORTHO DIR.
                 l = j - k;
                 if (PuzzleHandler.cpvec[st + k - 1] != 0 && PuzzleHandler.cpvec[st + l - 1] !=
                     0)
@@ -132,14 +131,14 @@ namespace Zork.Core
             {
                 MessageHandler.rspeak_(game, 870);
             }
-            /* 						!AT HOLE? */
+            // !AT HOLE?
             if (st == 37)
             {
                 MessageHandler.rspeak_(game, 871);
             }
-            /* 						!AT NICHE? */
+            // !AT NICHE?
             i = 872;
-            /* 						!DOOR OPEN? */
+            // !DOOR OPEN?
             if (game.Flags.cpoutf)
             {
                 i = 873;
@@ -150,18 +149,18 @@ namespace Zork.Core
                 MessageHandler.rspeak_(game, i);
             }
 
-            /* 						!AT DOOR? */
+            // !AT DOOR?
             if (PuzzleHandler.cpvec[st] == -2)
             {
                 MessageHandler.rspeak_(game, 874);
             }
 
-            /* 						!EAST LADDER? */
+            // !EAST LADDER?
             if (PuzzleHandler.cpvec[st - 2] == -3)
             {
                 MessageHandler.rspeak_(game, 875);
             }
-            /* 						!WEST LADDER? */
+            // !WEST LADDER?
         }
     }
 }

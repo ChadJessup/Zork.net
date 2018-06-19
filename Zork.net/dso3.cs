@@ -13,29 +13,29 @@ namespace Zork.Core
         /// <returns></returns>
         public static bool findxt_(Game game, int dir, int rm)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             int i, xi;
             int xxxflg;
 
             ret_val = true;
-            /* 						!ASSUME WINS. */
-            xi = game.Rooms.RoomExits[rm - 1];
-            /* 						!FIND FIRST ENTRY. */
+            // !ASSUME WINS.
+            xi = game.Rooms.Exits[rm - 1];
+            // !FIND FIRST ENTRY.
             if (xi == 0)
             {
                 goto L1000;
             }
-            /* 						!NO EXITS? */
+            // !NO EXITS?
 
             L100:
             i = game.Exits.Travel[xi - 1];
-            /* 						!GET ENTRY. */
+            // !GET ENTRY.
             game.curxt_.xroom1 = i & xpars_.xrmask;
-            /* mask to 16-bits to get rid of sign extension problems with 32-bit ints
-            */
+            // mask to 16-bits to get rid of sign extension problems with 32-bit ints
+           
             xxxflg = ~xpars_.xlflag & 65535;
             game.curxt_.xtype = ((i & xxxflg) / xpars_.xfshft & xpars_.xfmask) + 1;
             switch (game.curxt_.xtype)
@@ -45,7 +45,7 @@ namespace Zork.Core
                 case 3: goto L130;
                 case 4: goto L130;
             }
-            /* 						!BRANCH ON ENTRY. */
+            // !BRANCH ON ENTRY.
             throw new InvalidOperationException();
             //bug_(10, game.curxt_.xtype);
 
@@ -54,10 +54,10 @@ namespace Zork.Core
             game.curxt_.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
             L120:
             game.curxt_.xstrng = game.Exits.Travel[xi];
-            /* 						!DOOR/CEXIT/NEXIT - STRING. */
+            // !DOOR/CEXIT/NEXIT - STRING.
             L110:
             xi += xpars_.xelnt[game.curxt_.xtype - 1];
-            /* 						!ADVANCE TO NEXT ENTRY. */
+            // !ADVANCE TO NEXT ENTRY.
             if ((i & xpars_.xdmask) == dir)
             {
                 return ret_val;
@@ -70,22 +70,22 @@ namespace Zork.Core
 
             L1000:
             ret_val = false;
-            /* 						!YES, LOSE. */
+            // !YES, LOSE.
             return ret_val;
-        } /* findxt_ */
+        } // findxt_
 
-        /* FWIM- FIND WHAT I MEAN */
+        // FWIM- FIND WHAT I MEAN
         public static int fwim_(Game game, int f1, int f2, int rm, int con, int adv, bool nocare)
         {
             int ret_val, i__1, i__2;
             int i, j;
             ret_val = 0;
 
-            /* 						!ASSUME NOTHING. */
+            // !ASSUME NOTHING.
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
-                /* 						!LOOP */
+                // !LOOP
                 if ((rm == 0 || game.Objects.oroom[i - 1] != rm) && (adv == 0 ||
                     game.Objects.oadv[i - 1] != adv) && (con == 0 || game.Objects.ocan[
                     i - 1] != con))
@@ -93,7 +93,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                /* OBJECT IS ON LIST... IS IT A MATCH? */
+                // OBJECT IS ON LIST... IS IT A MATCH?
 
                 if ((game.Objects.oflag1[i - 1] & ObjectFlags.VISIBT) == 0)
                 {
@@ -112,16 +112,16 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                /* 						!ALREADY GOT SOMETHING? */
+                // !ALREADY GOT SOMETHING?
                 ret_val = -ret_val;
-                /* 						!YES, AMBIGUOUS. */
+                // !YES, AMBIGUOUS.
                 return ret_val;
 
                 L400:
                 ret_val = i;
-                /* 						!NOTE MATCH. */
+                // !NOTE MATCH.
 
-                /* DOES OBJECT CONTAIN A MATCH? */
+                // DOES OBJECT CONTAIN A MATCH?
 
                 L500:
                 if ((game.Objects.oflag2[i - 1] & ObjectFlags2.OPENBT) == 0)
@@ -131,7 +131,7 @@ namespace Zork.Core
                 i__2 = game.Objects.Count;
                 for (j = 1; j <= i__2; ++j)
                 {
-                    /* 						!NO, SEARCH CONTENTS. */
+                    // !NO, SEARCH CONTENTS.
                     if (game.Objects.ocan[j - 1] != i
                         || (game.Objects.oflag1[j - 1] & ObjectFlags.VISIBT) == 0
                         || (game.Objects.oflag1[j - 1] & (ObjectFlags)f1) == 0
@@ -158,23 +158,23 @@ namespace Zork.Core
             return ret_val;
         }
 
-        /* YESNO- OBTAIN YES/NO ANSWER */
-        /* 	YES-IS-TRUE=YESNO(QUESTION,YES-STRING,NO-STRING) */
+        // YESNO- OBTAIN YES/NO ANSWER
+        // 	YES-IS-TRUE=YESNO(QUESTION,YES-STRING,NO-STRING)
         public static bool yesno_(Game game, int q, int y, int n)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             char[] ans = new char[100];
 
             L100:
             MessageHandler.rspeak_(game, q);
-            /* 						!ASK */
+            // !ASK
             //(void) fflush(stdout);
             //(void) fgets(ans, sizeof ans, stdin);
             MessageHandler.more_input();
-            /* 						!GET ANSWER */
+            // !GET ANSWER
             if (ans[0] == 'Y' || ans[0] == 'y')
             {
                 goto L200;
@@ -184,21 +184,21 @@ namespace Zork.Core
                 goto L300;
             }
             MessageHandler.rspeak_(game, 6);
-            /* 						!SCOLD. */
+            // !SCOLD.
             goto L100;
 
             L200:
             ret_val = true;
-            /* 						!YES, */
+            // !YES,
             MessageHandler.rspeak_(game, y);
-            /* 						!OUT WITH IT. */
+            // !OUT WITH IT.
             return ret_val;
 
             L300:
             ret_val = false;
-            /* 						!NO, */
+            // !NO,
             MessageHandler.rspeak_(game, n);
-            /* 						!LIKEWISE. */
+            // !LIKEWISE.
             return ret_val;
         }
     }

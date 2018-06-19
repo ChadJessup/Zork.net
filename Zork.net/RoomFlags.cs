@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zork.Core.Room
+namespace Zork.Core
 {
     /// <summary>
     /// RoomFlags, original names ftw, will translate later when I know what they mean.
@@ -15,10 +15,10 @@ namespace Zork.Core.Room
         RMUNG = 256,
         RFILL = 512,
         RSACRD = 1024,
-        RAIR = 2048,
-        RWATER = 4096,
-        RLAND = 8192,
-        RLIGHT = 16384,
-        RSEEN = 32768,
+        AIR = 2048,
+        WATER = 4096,
+        LAND = 8192,
+        LIGHT = 16384,
+        SEEN = 32768,
     }
 }

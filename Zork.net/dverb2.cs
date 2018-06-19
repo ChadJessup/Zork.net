@@ -1,26 +1,25 @@
 ﻿using System;
-using Zork.Core.Room;
 
 namespace Zork.Core
 {
     public static class dverb2
     {
-        /* SAVE- SAVE GAME STATE */
+        // SAVE- SAVE GAME STATE
         public static void savegm_(Game game)
         {
-            /* Local variables */
+            // Local variables
             int i;
             //FILE* e;
 
             game.ParserVectors.prswon = false;
-            /* 						!DISABLE GAME. */
-            /* Note: save file format is different for PDP vs. non-PDP versions */
+            // !DISABLE GAME.
+            // Note: save file format is different for PDP vs. non-PDP versions
 
             //if ((e = fopen("dsave.dat", BINWRITE)) == NULL)
             //    goto L100;
 
             //gttime_(&i);
-            /* 						!GET TIME. */
+            // !GET TIME.
 
 //#define do_uio(i, zbuf, cbytes) \
             //(void)fwrite((const char*)(zbuf), (cbytes), (i), e)
@@ -90,19 +89,19 @@ namespace Zork.Core
 
             L100:
             MessageHandler.rspeak_(game, 598);
-            /* 						!CANT DO IT. */
-        } /* savegm_ */
+            // !CANT DO IT.
+        } // savegm_
 
-        /* RESTORE- RESTORE GAME STATE */
+        // RESTORE- RESTORE GAME STATE
         public static void rstrgm_(Game game)
         {
-            /* Local variables */
+            // Local variables
             int i, j, k;
 //            FILE* e;
 
             game.ParserVectors.prswon = false;
-            /* 						!DISABLE GAME. */
-            /* Note: save file format is different for PDP vs. non-PDP versions */
+            // !DISABLE GAME.
+            // Note: save file format is different for PDP vs. non-PDP versions
 
 //            if ((e = fopen("dsave.dat", BINREAD)) == NULL)
             {
@@ -179,23 +178,23 @@ namespace Zork.Core
 
             L100:
             MessageHandler.rspeak_(game, 598);
-            /* 						!CANT DO IT. */
+            // !CANT DO IT.
             return;
 
             L200:
             MessageHandler.rspeak_(game, 600);
-            /* 						!OBSOLETE VERSION */
+            // !OBSOLETE VERSION
             //(void)fclose(e);
         }
 
-        /* WALK- MOVE IN SPECIFIED DIRECTION */
+        // WALK- MOVE IN SPECIFIED DIRECTION
         public static bool walk_(Game game)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
             ret_val = true;
-            /* 						!ASSUME WINS. */
+            // !ASSUME WINS.
             if (game.Player.Winner != (int)AIndices.player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
@@ -205,8 +204,8 @@ namespace Zork.Core
             {
                 goto L450;
             }
-            /* 						!INVALID EXIT? GRUE */
-            /* 						! */
+            // !INVALID EXIT? GRUE
+            // !
             switch (game.curxt_.xtype)
             {
                 case 1: goto L400;
@@ -214,7 +213,7 @@ namespace Zork.Core
                 case 3: goto L100;
                 case 4: goto L300;
             }
-            /* 						!DECODE EXIT TYPE. */
+            // !DECODE EXIT TYPE.
             throw new InvalidOperationException();
             //bug_(9, game.curxt_.xtype);
 
@@ -223,17 +222,17 @@ namespace Zork.Core
             {
                 goto L400;
             }
-            /* 						!CEXIT... RETURNED ROOM? */
+            // !CEXIT... RETURNED ROOM?
             // TODO: chadj: figure out how to do this
             //if (game.Flags[game.curxt_.xobj - 1])
             {
               //  goto L400;
             }
-            /* 						!NO, FLAG ON? */
+            // !NO, FLAG ON?
             L200:
             AdventurerHandler.jigsup_(game, 523);
-            /* 						!BAD EXIT, GRUE */
-            /* 						! */
+            // !BAD EXIT, GRUE
+            // !
             return ret_val;
 
             L300:
@@ -241,15 +240,15 @@ namespace Zork.Core
             {
                 goto L400;
             }
-            /* 						!DOOR... RETURNED ROOM? */
+            // !DOOR... RETURNED ROOM?
             if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 goto L400;
             }
-            /* 						!NO, DOOR OPEN? */
+            // !NO, DOOR OPEN?
             AdventurerHandler.jigsup_(game, 523);
-            /* 						!BAD EXIT, GRUE */
-            /* 						! */
+            // !BAD EXIT, GRUE
+            // !
             return ret_val;
 
             L400:
@@ -257,42 +256,42 @@ namespace Zork.Core
             {
                 goto L900;
             }
-            /* 						!VALID ROOM, IS IT LIT? */
+            // !VALID ROOM, IS IT LIT?
             L450:
             AdventurerHandler.jigsup_(game, 522);
-            /* 						!NO, GRUE */
-            /* 						! */
+            // !NO, GRUE
+            // !
             return ret_val;
 
-            /* ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE). */
+            // ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE).
 
             L500:
             if (dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L550;
             }
-            /* 						!EXIT EXIST? */
+            // !EXIT EXIST?
             L525:
             game.curxt_.xstrng = 678;
-            /* 						!ASSUME WALL. */
+            // !ASSUME WALL.
             if (game.ParserVectors.prso == (int)XSearch.xup)
             {
                 game.curxt_.xstrng = 679;
             }
-            /* 						!IF UP, CANT. */
+            // !IF UP, CANT.
             if (game.ParserVectors.prso == (int)XSearch.xdown)
             {
                 game.curxt_.xstrng = 680;
             }
-            /* 						!IF DOWN, CANT. */
-            if ((game.Rooms.RoomFlags[game.Player.Here - 1] & RoomFlags.RNWALL) != 0)
+            // !IF DOWN, CANT.
+            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.RNWALL) != 0)
             {
                 game.curxt_.xstrng = 524;
             }
 
             MessageHandler.rspeak_(game, game.curxt_.xstrng);
             game.ParserVectors.prscon = 1;
-            /* 						!STOP CMD STREAM. */
+            // !STOP CMD STREAM.
             return ret_val;
 
             L550:
@@ -303,7 +302,7 @@ namespace Zork.Core
                 case 3: goto L700;
                 case 4: goto L800;
             }
-            /* 						!BRANCH ON EXIT TYPE. */
+            // !BRANCH ON EXIT TYPE.
             throw new InvalidOperationException();
             //bug_(9, curxt_.xtype);
 
@@ -312,23 +311,23 @@ namespace Zork.Core
             {
                 goto L900;
             }
-            /* 						!CEXIT... RETURNED ROOM? */
+            // !CEXIT... RETURNED ROOM?
             // TODO: chadj figure this out
             //if (game.Flags[game.curxt_.xobj - 1])
             {
               //  goto L900;
             }
-            /* 						!NO, FLAG ON? */
+            // !NO, FLAG ON?
             L600:
             if (game.curxt_.xstrng == 0)
             {
                 goto L525;
             }
-            /* 						!IF NO REASON, USE STD. */
+            // !IF NO REASON, USE STD.
             MessageHandler.rspeak_(game, game.curxt_.xstrng);
-            /* 						!DENY EXIT. */
+            // !DENY EXIT.
             game.ParserVectors.prscon = 1;
-            /* 						!STOP CMD STREAM. */
+            // !STOP CMD STREAM.
             return ret_val;
 
             L800:
@@ -336,50 +335,50 @@ namespace Zork.Core
             {
                 goto L900;
             }
-            /* 						!DOOR... RETURNED ROOM? */
+            // !DOOR... RETURNED ROOM?
             if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 goto L900;
             }
-            /* 						!NO, DOOR OPEN? */
+            // !NO, DOOR OPEN?
             if (game.curxt_.xstrng == 0)
             {
                 game.curxt_.xstrng = 525;
             }
-            /* 						!IF NO REASON, USE STD. */
+            // !IF NO REASON, USE STD.
             MessageHandler.rspsub_(game.curxt_.xstrng, game.Objects.odesc2[game.curxt_.xobj - 1], game);
             game.ParserVectors.prscon = 1;
-            /* 						!STOP CMD STREAM. */
+            // !STOP CMD STREAM.
             return ret_val;
 
             L900:
             ret_val = AdventurerHandler.moveto_(game, game.curxt_.xroom1, game.Player.Winner);
-            /* 						!MOVE TO ROOM. */
+            // !MOVE TO ROOM.
             if (ret_val)
             {
                 ret_val = RoomHandler.RoomDescription(0, game);
             }
-            /* 						!DESCRIBE ROOM. */
+            // !DESCRIBE ROOM.
             return ret_val;
-        } /* walk_ */
+        } // walk_
 
-        /* CXAPPL- CONDITIONAL EXIT PROCESSORS */
+        // CXAPPL- CONDITIONAL EXIT PROCESSORS
         public static int cxappl_(Game game, int ri)
         {
-            /* System generated locals */
+            // System generated locals
             int ret_val, i__1;
 
-            /* Local variables */
+            // Local variables
             int i, j, k;
             int nxt;
             int ldir;
 
             ret_val = 0;
-            /* 						!NO RETURN. */
+            // !NO RETURN.
             if (ri == 0) {
                 return ret_val;
             }
-            /* 						!IF NO ACTION, DONE. */
+            // !IF NO ACTION, DONE.
             switch (ri) {
                 case 1: goto L1000;
                 case 2: goto L2000;
@@ -399,102 +398,102 @@ namespace Zork.Core
             throw new InvalidOperationException();
             //bug_(5, ri);
 
-            /* C1- COFFIN-CURE */
+            // C1- COFFIN-CURE
 
             L1000:
             game.Flags.egyptf = game.Objects.oadv[(int)ObjectIndices.coffi - 1] != game.Player.Winner;
-            /* 						!T IF NO COFFIN. */
+            // !T IF NO COFFIN.
             return ret_val;
 
-            /* C2- CAROUSEL EXIT */
-            /* C5- CAROUSEL OUT */
+            // C2- CAROUSEL EXIT
+            // C5- CAROUSEL OUT
 
             L2000:
             if (game.Flags.caroff) {
                 return ret_val;
             }
-            /* 						!IF FLIPPED, NOTHING. */
+            // !IF FLIPPED, NOTHING.
             L2500:
             MessageHandler.rspeak_(game, 121);
-            /* 						!SPIN THE COMPASS. */
+            // !SPIN THE COMPASS.
             L5000:
             i = xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8);
-            /* 						!CHOOSE RANDOM EXIT. */
-            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms.RoomExits[game.Player.Here - 1] + i - 1] & xpars_.xrmask;
+            // !CHOOSE RANDOM EXIT.
+            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms.Exits[game.Player.Here - 1] + i - 1] & xpars_.xrmask;
             ret_val = game.curxt_.xroom1;
-            /* 						!RETURN EXIT. */
+            // !RETURN EXIT.
             return ret_val;
 
-            /* C3- CHIMNEY FUNCTION */
+            // C3- CHIMNEY FUNCTION
 
             L3000:
             game.Flags.litldf = false;
-            /* 						!ASSUME HEAVY LOAD. */
+            // !ASSUME HEAVY LOAD.
             j = 0;
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i) {
-                /* 						!COUNT OBJECTS. */
+                // !COUNT OBJECTS.
                 if (game.Objects.oadv[i - 1] == game.Player.Winner) {
                     ++j;
                 }
-                /* L3100: */
+                // L3100:
             }
 
             if (j > 2) {
                 return ret_val;
             }
-            /* 						!CARRYING TOO MUCH? */
+            // !CARRYING TOO MUCH?
             game.curxt_.xstrng = 446;
-            /* 						!ASSUME NO LAMP. */
+            // !ASSUME NO LAMP.
             if (game.Objects.oadv[(int)ObjectIndices.lamp - 1] != game.Player.Winner) {
                 return ret_val;
             }
-            /* 						!NO LAMP? */
+            // !NO LAMP?
             game.Flags.litldf = true;
-            /* 						!HE CAN DO IT. */
+            // !HE CAN DO IT.
             if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.OPENBT) == 0) {
                 game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
             }
             return ret_val;
 
-            /* C4-	FROBOZZ FLAG (MAGNET ROOM, FAKE EXIT) */
-            /* C6-	FROBOZZ FLAG (MAGNET ROOM, REAL EXIT) */
+            // C4-	FROBOZZ FLAG (MAGNET ROOM, FAKE EXIT)
+            // C6-	FROBOZZ FLAG (MAGNET ROOM, REAL EXIT)
 
             L4000:
             if (game.Flags.caroff) {
                 goto L2500;
             }
-            /* 						!IF FLIPPED, GO SPIN. */
+            // !IF FLIPPED, GO SPIN.
             game.Flags.frobzf = false;
-            /* 						!OTHERWISE, NOT AN EXIT. */
+            // !OTHERWISE, NOT AN EXIT.
             return ret_val;
 
             L6000:
             if (game.Flags.caroff) {
                 goto L2500;
             }
-            /* 						!IF FLIPPED, GO SPIN. */
+            // !IF FLIPPED, GO SPIN.
             game.Flags.frobzf = true;
-            /* 						!OTHERWISE, AN EXIT. */
+            // !OTHERWISE, AN EXIT.
             return ret_val;
 
-            /* C7-	FROBOZZ FLAG (BANK ALARM) */
+            // C7-	FROBOZZ FLAG (BANK ALARM)
 
             L7000:
             game.Flags.frobzf = game.Objects.oroom[(int)ObjectIndices.bills - 1] != 0 &
                 game.Objects.oroom[(int)ObjectIndices.portr - 1] != 0;
             return ret_val;
-            /* CXAPPL, PAGE 3 */
+            // CXAPPL, PAGE 3
 
-            /* C8-	FROBOZZ FLAG (MRGO) */
+            // C8-	FROBOZZ FLAG (MRGO)
 
             L8000:
             game.Flags.frobzf = false;
-            /* 						!ASSUME CANT MOVE. */
+            // !ASSUME CANT MOVE.
             if (game.Switches.mloc != game.curxt_.xroom1) {
                 goto L8100;
             }
-            /* 						!MIRROR IN WAY? */
+            // !MIRROR IN WAY?
             if (game.ParserVectors.prso == (int)XSearch.xnorth || game.ParserVectors.prso == (int)XSearch.xsouth) {
                 goto L8200;
             }
@@ -503,35 +502,35 @@ namespace Zork.Core
                 goto L8300;
             }
 
-            /* 						!MIRROR MUST BE N-S. */
+            // !MIRROR MUST BE N-S.
             game.curxt_.xroom1 = (game.curxt_.xroom1 - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae;
-            /* 						!CALC EAST ROOM. */
+            // !CALC EAST ROOM.
             if (game.ParserVectors.prso > (int)XSearch.xsouth)
             {
                 ++game.curxt_.xroom1;
             }
-            /* 						!IF SW/NW, CALC WEST. */
+            // !IF SW/NW, CALC WEST.
             L8100:
             ret_val = game.curxt_.xroom1;
             return ret_val;
 
             L8200:
             game.curxt_.xstrng = 814;
-            /* 						!ASSUME STRUC BLOCKS. */
+            // !ASSUME STRUC BLOCKS.
             if (game.Switches.mdir % 180 == 0) {
                 return ret_val;
             }
-            /* 						!IF MIRROR N-S, DONE. */
+            // !IF MIRROR N-S, DONE.
             L8300:
             ldir = game.Switches.mdir;
-            /* 						!SEE WHICH MIRROR. */
+            // !SEE WHICH MIRROR.
             if (game.ParserVectors.prso == (int)XSearch.xsouth)
             {
                 ldir = 180;
             }
 
             game.curxt_.xstrng = 815;
-            /* 						!MIRROR BLOCKS. */
+            // !MIRROR BLOCKS.
             if (ldir > 180 && !game.Flags.mr1f || ldir < 180 && !game.Flags.mr2f)
             {
                 game.curxt_.xstrng = 816;
@@ -539,40 +538,40 @@ namespace Zork.Core
 
             return ret_val;
 
-            /* C9-	FROBOZZ FLAG (MIRIN) */
+            // C9-	FROBOZZ FLAG (MIRIN)
 
             L9000:
-            if (RoomHandler.mrhere_(game, game.Player.Here) != 1)
+            if (RoomHandler.IsMirrorHere(game, game.Player.Here) != 1)
             {
                 goto L9100;
             }
 
-            /* 						!MIRROR 1 HERE? */
+            // !MIRROR 1 HERE?
             if (game.Flags.mr1f)
             {
                 game.curxt_.xstrng = 805;
             }
 
-            /* 						!SEE IF BROKEN. */
+            // !SEE IF BROKEN.
             game.Flags.frobzf = game.Flags.mropnf;
-            /* 						!ENTER IF OPEN. */
+            // !ENTER IF OPEN.
             return ret_val;
 
             L9100:
             game.Flags.frobzf = false;
-            /* 						!NOT HERE, */
+            // !NOT HERE,
             game.curxt_.xstrng = 817;
-            /* 						!LOSE. */
+            // !LOSE.
             return ret_val;
-            /* CXAPPL, PAGE 4 */
+            // CXAPPL, PAGE 4
 
-            /* C10-	FROBOZZ FLAG (MIRROR EXIT) */
+            // C10-	FROBOZZ FLAG (MIRROR EXIT)
 
             L10000:
             game.Flags.frobzf = false;
-            /* 						!ASSUME CANT. */
+            // !ASSUME CANT.
             ldir = (game.ParserVectors.prso - (int)XSearch.xnorth) / (int)XSearch.xnorth * 45;
-            /* 						!XLATE DIR TO DEGREES. */
+            // !XLATE DIR TO DEGREES.
             if (!game.Flags.mropnf || (game.Switches.mdir + 270) % 360 != ldir && game.ParserVectors.prso != (int)XSearch.xexit)
             {
                 goto L10200;
@@ -580,20 +579,20 @@ namespace Zork.Core
 
             game.curxt_.xroom1 = (game.Switches.mloc - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae + 1
                 - game.Switches.mdir / 180;
-            /* 						!ASSUME E-W EXIT. */
+            // !ASSUME E-W EXIT.
             if (game.Switches.mdir % 180 == 0)
             {
                 goto L10100;
             }
 
-            /* 						!IF N-S, OK. */
+            // !IF N-S, OK.
             game.curxt_.xroom1 = game.Switches.mloc + 1;
-            /* 						!ASSUME N EXIT. */
+            // !ASSUME N EXIT.
             if (game.Switches.mdir > 180)
             {
                 game.curxt_.xroom1 = game.Switches.mloc - 1;
             }
-            /* 						!IF SOUTH. */
+            // !IF SOUTH.
             L10100:
             ret_val = game.curxt_.xroom1;
             return ret_val;
@@ -604,69 +603,69 @@ namespace Zork.Core
                 return ret_val;
             }
             game.curxt_.xroom1 = game.Switches.mloc + 1;
-            /* 						!ASSUME N. */
+            // !ASSUME N.
             if (game.Switches.mdir == 0)
             {
                 game.curxt_.xroom1 = game.Switches.mloc - 1;
             }
-            /* 						!IF S. */
+            // !IF S.
             MessageHandler.rspeak_(game, 818);
-            /* 						!CLOSE DOOR. */
+            // !CLOSE DOOR.
             game.Flags.wdopnf = false;
             ret_val = game.curxt_.xroom1;
             return ret_val;
 
-            /* C11-	MAYBE DOOR.  NORMAL MESSAGE IS THAT DOOR IS CLOSED. */
-            /* 	BUT IF LCELL.NE.4, DOOR ISNT THERE. */
+            // C11-	MAYBE DOOR.  NORMAL MESSAGE IS THAT DOOR IS CLOSED.
+            // 	BUT IF LCELL.NE.4, DOOR ISNT THERE.
 
             L11000:
             if (game.Switches.lcell != 4)
             {
                 game.curxt_.xstrng = 678;
             }
-            /* 						!SET UP MSG. */
+            // !SET UP MSG.
             return ret_val;
 
-            /* C12-	FROBZF (PUZZLE ROOM MAIN ENTRANCE) */
+            // C12-	FROBZF (PUZZLE ROOM MAIN ENTRANCE)
 
             L12000:
             game.Flags.frobzf = true;
-            /* 						!ALWAYS ENTER. */
+            // !ALWAYS ENTER.
             game.Switches.cphere = 10;
-            /* 						!SET SUBSTATE. */
+            // !SET SUBSTATE.
             return ret_val;
 
-            /* C13-	CPOUTF (PUZZLE ROOM SIZE ENTRANCE) */
+            // C13-	CPOUTF (PUZZLE ROOM SIZE ENTRANCE)
 
             L13000:
             game.Switches.cphere = 52;
-            /* 						!SET SUBSTATE. */
+            // !SET SUBSTATE.
             return ret_val;
-            /* CXAPPL, PAGE 5 */
+            // CXAPPL, PAGE 5
 
-            /* C14-	FROBZF (PUZZLE ROOM TRANSITIONS) */
+            // C14-	FROBZF (PUZZLE ROOM TRANSITIONS)
 
             L14000:
             game.Flags.frobzf = false;
-            /* 						!ASSSUME LOSE. */
+            // !ASSSUME LOSE.
             if (game.ParserVectors.prso != (int)XSearch.xup) {
                 goto L14100;
             }
-            /* 						!UP? */
+            // !UP?
             if (game.Switches.cphere != 10) {
                 return ret_val;
             }
-            /* 						!AT EXIT? */
+            // !AT EXIT?
             game.curxt_.xstrng = 881;
-            /* 						!ASSUME NO LADDER. */
+            // !ASSUME NO LADDER.
             if (PuzzleHandler.cpvec[game.Switches.cphere] != -2) {
                 return ret_val;
             }
-            /* 						!LADDER HERE? */
+            // !LADDER HERE?
             MessageHandler.rspeak_(game, 882);
-            /* 						!YOU WIN. */
+            // !YOU WIN.
             game.Flags.frobzf = true;
-            /* 						!LET HIM OUT. */
+            // !LET HIM OUT.
             return ret_val;
 
             L14100:
@@ -675,27 +674,27 @@ namespace Zork.Core
                 goto L14200;
             }
             game.Flags.frobzf = true;
-            /* 						!YES, LET HIM OUT. */
+            // !YES, LET HIM OUT.
             return ret_val;
 
             L14200:
             for (i = 1; i <= 16; i += 2) {
-                /* 						!LOCATE EXIT. */
+                // !LOCATE EXIT.
                 if (game.ParserVectors.prso == PuzzleHandler.cpdr[i - 1]) {
                     goto L14400;
                 }
-                /* L14300: */
+                // L14300:
             }
             return ret_val;
-            /* 						!NO SUCH EXIT. */
+            // !NO SUCH EXIT.
 
             L14400:
             j = PuzzleHandler.cpdr[i];
-            /* 						!GET DIRECTIONAL OFFSET. */
+            // !GET DIRECTIONAL OFFSET.
             nxt = game.Switches.cphere + j;
-            /* 						!GET NEXT STATE. */
+            // !GET NEXT STATE.
             k = 8;
-            /* 						!GET ORTHOGONAL DIR. */
+            // !GET ORTHOGONAL DIR.
             if (j < 0) {
                 k = -8;
             }
@@ -706,9 +705,9 @@ namespace Zork.Core
 
             L14500:
             dso7.cpgoto_(game, nxt);
-            /* 						!MOVE TO STATE. */
+            // !MOVE TO STATE.
             game.curxt_.xroom1 = (int)RoomIndices.cpuzz;
-            /* 						!STAY IN ROOM. */
+            // !STAY IN ROOM.
             ret_val = game.curxt_.xroom1;
             return ret_val;
 

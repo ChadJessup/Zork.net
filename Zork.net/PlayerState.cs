@@ -4,7 +4,7 @@
     {
         public int Moves { get; set; }
         public int Deaths { get; set; }
-        public int rwscor { get; set; }
+        public int RawScore { get; set; }
         public int MaxScore { get; set; }
         public int MaxLoad { get; set; }
         public int ltshft { get; set; }

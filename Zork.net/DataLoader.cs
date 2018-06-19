@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Zork.Core.Room;
 
 namespace Zork.Core
 {
@@ -32,18 +31,18 @@ namespace Zork.Core
             game.State.egmxsc = DataLoader.ReadInt(bytes, game);
 
             game.Rooms.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions1, bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomDescriptions2, bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.RoomExits, bytes, game);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomActions, bytes, game);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.RoomValues, bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Descriptions1, bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Descriptions2, bytes, game);
+            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Exits, bytes, game);
+            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.Actions, bytes, game);
+            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.Values, bytes, game);
 
             var tempFlags = new List<int>();
             DataLoader.ReadInts(game.Rooms.Count, tempFlags, bytes, game);
 
             for (int idx = 0; idx < tempFlags.Count; idx++)
             {
-                game.Rooms.RoomFlags.Add((RoomFlags)tempFlags[idx]);
+                game.Rooms.Flags.Add((RoomFlags)tempFlags[idx]);
             }
 
             game.Exits.Count = DataLoader.ReadInt(bytes, game);

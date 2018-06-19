@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Zork.Core.Room
+﻿namespace Zork.Core
 {
     public enum RoomIndices
     {
-        whous = 2,
-        lroom = 8,
-        cella = 9,
-        mtrol = 10,
+        WhiteHouse = 2,
+        LivingRoom = 8,
+        Cellar = 9,
+        Troll = 10,
         maze1 = 11,
         mgrat = 25,
         maz15 = 30,
-        fore1 = 31,
-        fore3 = 33,
-        clear = 36,
+        Forest1 = 31,
+        Forest3 = 33,
+        ForestClearing = 36,
         reser = 40,
         strea = 42,
-        egypt = 44,
+        Egypt = 44,
         echor = 49,
         tshaf = 61,
         bshaf = 76,
@@ -66,7 +62,7 @@ namespace Zork.Core.Room
         bktwi = 153,
         bkvau = 154,
         bkbox = 155,
-        crypt = 157,
+        Crypt = 157,
         tstrs = 158,
         mrant = 159,
         mreye = 160,

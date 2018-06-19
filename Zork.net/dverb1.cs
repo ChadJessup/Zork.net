@@ -1,44 +1,43 @@
-﻿using Zork.Core.Room;
-
+﻿
 namespace Zork.Core
 {
     public static class dverb1
     {
-        /* TAKE-- BASIC TAKE SEQUENCE */
-        /* TAKE AN OBJECT (FOR VERBS TAKE, PUT, DROP, READ, ETC.) */
+        // TAKE-- BASIC TAKE SEQUENCE
+        // TAKE AN OBJECT (FOR VERBS TAKE, PUT, DROP, READ, ETC.)
         public static bool take_(Game game, bool flg)
         {
-            /* System generated locals */
+            // System generated locals
             int i__1;
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             int oa;
             int x;
 
             ret_val = false;
-            /* 						!ASSUME LOSES. */
+            // !ASSUME LOSES.
             oa = game.Objects.oactio[game.ParserVectors.prso - 1];
-            /* 						!GET OBJECT ACTION. */
+            // !GET OBJECT ACTION.
             if (game.ParserVectors.prso <= game.Star.strbit)
             {
                 goto L100;
             }
-            /* 						!STAR? */
+            // !STAR?
             ret_val = ObjectHandler.objact_(game);
-            /* 						!YES, LET IT HANDLE. */
+            // !YES, LET IT HANDLE.
             return ret_val;
 
             L100:
             x = game.Objects.ocan[game.ParserVectors.prso - 1];
-            /* 						!INSIDE? */
+            // !INSIDE?
             if (game.ParserVectors.prso != game.Adventurers.Vehicles[game.Player.Winner - 1])
             {
                 goto L400;
             }
-            /* 						!HIS VEHICLE? */
+            // !HIS VEHICLE?
             MessageHandler.rspeak_(game, 672);
-            /* 						!DUMMY. */
+            // !DUMMY.
             return ret_val;
 
             L400:
@@ -53,7 +52,7 @@ namespace Zork.Core
             }
             return ret_val;
 
-            /* OBJECT IS TAKEABLE AND IN POSITION TO BE TAKEN. */
+            // OBJECT IS TAKEABLE AND IN POSITION TO BE TAKEN.
 
             L500:
             if (x != 0 || ObjectHandler.qhere_(game, game.ParserVectors.prso, game.Player.Here))
@@ -64,7 +63,7 @@ namespace Zork.Core
             {
                 MessageHandler.rspeak_(game, 557);
             }
-            /* 						!ALREADY GOT IT? */
+            // !ALREADY GOT IT?
             return ret_val;
 
             L600:
@@ -73,63 +72,63 @@ namespace Zork.Core
                 goto L700;
             }
             MessageHandler.rspeak_(game, 558);
-            /* 						!TOO MUCH WEIGHT. */
+            // !TOO MUCH WEIGHT.
             return ret_val;
 
             L700:
             ret_val = true;
-            /* 						!AT LAST. */
+            // !AT LAST.
             if (ObjectHandler.oappli_(oa, 0, game))
             {
                 return ret_val;
             }
-            /* 						!DID IT HANDLE? */
-            ObjectHandler.newsta_(game, game.ParserVectors.prso, 0, 0, 0, game.Player.Winner);
-            /* 						!TAKE OBJECT FOR WINNER. */
+            // !DID IT HANDLE?
+            ObjectHandler.SetNewObjectStatus(game, game.ParserVectors.prso, 0, 0, 0, game.Player.Winner);
+            // !TAKE OBJECT FOR WINNER.
             game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
-            AdventurerHandler.scrupd_(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
-            /* 						!UPDATE SCORE. */
+            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            // !UPDATE SCORE.
             game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
-            /* 						!CANT BE SCORED AGAIN. */
+            // !CANT BE SCORED AGAIN.
             if (flg)
             {
                 MessageHandler.rspeak_(game, 559);
             }
-            /* 						!TELL TAKEN. */
+            // !TELL TAKEN.
             return ret_val;
 
-        } /* take_ */
+        } // take_
 
-        /* DROP- DROP VERB PROCESSOR */
+        // DROP- DROP VERB PROCESSOR
         public static bool drop_(Game game, bool z)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             bool f;
             int i, x;
 
             ret_val = true;
-            /* 						!ASSUME WINS. */
+            // !ASSUME WINS.
             x = game.Objects.ocan[game.ParserVectors.prso - 1];
-            /* 						!GET CONTAINER. */
+            // !GET CONTAINER.
             if (x == 0)
             {
                 goto L200;
             }
-            /* 						!IS IT INSIDE? */
+            // !IS IT INSIDE?
             if (game.Objects.oadv[x - 1] != game.Player.Winner)
             {
                 goto L1000;
             }
-            /* 						!IS HE CARRYING CON? */
+            // !IS HE CARRYING CON?
             if ((game.Objects.oflag2[x - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 goto L300;
             }
             MessageHandler.rspsub_(game, 525, game.Objects.odesc2[x - 1]);
-            /* 						!CANT REACH. */
+            // !CANT REACH.
             return ret_val;
 
             L200:
@@ -137,43 +136,43 @@ namespace Zork.Core
             {
                 goto L1000;
             }
-            /* 						!IS HE CARRYING OBJ? */
+            // !IS HE CARRYING OBJ?
             L300:
             if (game.Adventurers.Vehicles[game.Player.Winner - 1] == 0)
             {
                 goto L400;
             }
-            /* 						!IS HE IN VEHICLE? */
+            // !IS HE IN VEHICLE?
             game.ParserVectors.prsi = game.Adventurers.Vehicles[game.Player.Winner - 1];
-            /* 						!YES, */
+            // !YES,
             f = put_(game, true);
-            /* 						!DROP INTO VEHICLE. */
+            // !DROP INTO VEHICLE.
             game.ParserVectors.prsi = 0;
-            /* 						!DISARM PARSER. */
+            // !DISARM PARSER.
             return ret_val;
-            /* 						!DONE. */
+            // !DONE.
 
             L400:
-            ObjectHandler.newsta_(game, game.ParserVectors.prso, 0, game.Player.Here, 0, 0);
-            /* 						!DROP INTO ROOM. */
+            ObjectHandler.SetNewObjectStatus(game, game.ParserVectors.prso, 0, game.Player.Here, 0, 0);
+            // !DROP INTO ROOM.
             if (game.Player.Here == (int)RoomIndices.mtree)
             {
-                ObjectHandler.newsta_(game, game.ParserVectors.prso, 0, (int)RoomIndices.fore3, 0, 0);
+                ObjectHandler.SetNewObjectStatus(game, game.ParserVectors.prso, 0, (int)RoomIndices.Forest3, 0, 0);
             }
 
-            AdventurerHandler.scrupd_(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
-            /* 						!SCORE OBJECT. */
+            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            // !SCORE OBJECT.
             game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
-            /* 						!CANT BE SCORED AGAIN. */
+            // !CANT BE SCORED AGAIN.
             game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
 
             if (ObjectHandler.objact_(game))
             {
                 return ret_val;
             }
-            /* 						!DID IT HANDLE? */
+            // !DID IT HANDLE?
             i = 0;
-            /* 						!ASSUME NOTHING TO SAY. */
+            // !ASSUME NOTHING TO SAY.
             if (game.ParserVectors.prsa == (int)VIndices.dropw)
             {
                 i = 528;
@@ -192,18 +191,18 @@ namespace Zork.Core
 
             L1000:
             MessageHandler.rspeak_(game, 527);
-            /* 						!DONT HAVE IT. */
+            // !DONT HAVE IT.
             return ret_val;
 
-        } /* drop_ */
+        } // drop_
 
-        /* PUT- PUT VERB PROCESSOR */
+        // PUT- PUT VERB PROCESSOR
         public static bool put_(Game game, bool flg)
         {
-            /* System generated locals */
+            // System generated locals
             bool ret_val;
 
-            /* Local variables */
+            // Local variables
             int j;
             int svi, svo;
 
@@ -216,7 +215,7 @@ namespace Zork.Core
             {
                 MessageHandler.rspeak_(game, 560);
             }
-            /* 						!STAR */
+            // !STAR
             ret_val = true;
             return ret_val;
 
@@ -228,7 +227,7 @@ namespace Zork.Core
             }
 
             MessageHandler.rspeak_(game, 561);
-            /* 						!CANT PUT IN THAT. */
+            // !CANT PUT IN THAT.
             return ret_val;
 
             L300:
@@ -236,9 +235,9 @@ namespace Zork.Core
             {
                 goto L400;
             }
-            /* 						!IS IT OPEN? */
+            // !IS IT OPEN?
             MessageHandler.rspeak_(game, 562);
-            /* 						!NO, JOKE */
+            // !NO, JOKE
             return ret_val;
 
             L400:
@@ -246,9 +245,9 @@ namespace Zork.Core
             {
                 goto L500;
             }
-            /* 						!INTO ITSELF? */
+            // !INTO ITSELF?
             MessageHandler.rspeak_(game, 563);
-            /* 						!YES, JOKE. */
+            // !YES, JOKE.
             return ret_val;
 
             L500:
@@ -256,7 +255,7 @@ namespace Zork.Core
             {
                 goto L600;
             }
-            /* 						!ALREADY INSIDE. */
+            // !ALREADY INSIDE.
             MessageHandler.rspsb2_(game, 564, game.Objects.odesc2[game.ParserVectors.prso - 1], game.Objects.odesc2[game.ParserVectors.prsi - 1]);
             ret_val = true;
             return ret_val;
@@ -268,32 +267,32 @@ namespace Zork.Core
             }
 
             MessageHandler.rspeak_(game, 565);
-            /* 						!THEN CANT DO IT. */
+            // !THEN CANT DO IT.
             return ret_val;
 
-            /* NOW SEE IF OBJECT (OR ITS CONTAINER) IS IN ROOM */
+            // NOW SEE IF OBJECT (OR ITS CONTAINER) IS IN ROOM
 
             L700:
             j = game.ParserVectors.prso;
-            /* 						!START SEARCH. */
+            // !START SEARCH.
             L725:
             if (ObjectHandler.qhere_(game, j, game.Player.Here))
             {
                 goto L750;
             }
-            /* 						!IS IT HERE? */
+            // !IS IT HERE?
             j = game.Objects.ocan[j - 1];
             if (j != 0)
             {
                 goto L725;
             }
-            /* 						!MORE TO DO? */
+            // !MORE TO DO?
             goto L800;
-            /* 						!NO, SCH FAILS. */
+            // !NO, SCH FAILS.
 
             L750:
             svo = game.ParserVectors.prso;
-            /* 						!SAVE PARSER. */
+            // !SAVE PARSER.
             svi = game.ParserVectors.prsi;
             game.ParserVectors.prsa = (int)VIndices.takew;
             game.ParserVectors.prsi = 0;
@@ -301,88 +300,88 @@ namespace Zork.Core
             {
                 return ret_val;
             }
-            /* 						!TAKE OBJECT. */
+            // !TAKE OBJECT.
             game.ParserVectors.prsa = (int)VIndices.putw;
             game.ParserVectors.prso = svo;
             game.ParserVectors.prsi = svi;
             goto L1000;
 
-            /* NOW SEE IF OBJECT IS ON PERSON. */
+            // NOW SEE IF OBJECT IS ON PERSON.
 
             L800:
             if (game.Objects.ocan[game.ParserVectors.prso - 1] == 0)
             {
                 goto L1000;
             }
-            /* 						!INSIDE? */
+            // !INSIDE?
             if ((game.Objects.oflag2[game.Objects.ocan[game.ParserVectors.prso - 1] - 1] & ObjectFlags2.OPENBT) != 0)
             {
                 goto L900;
             }
-            /* 						!OPEN? */
+            // !OPEN?
             MessageHandler.rspsub_(game, 566, game.Objects.odesc2[game.ParserVectors.prso - 1]);
-            /* 						!LOSE. */
+            // !LOSE.
             return ret_val;
 
             L900:
-            AdventurerHandler.scrupd_(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
-            /* 						!SCORE OBJECT. */
+            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            // !SCORE OBJECT.
             game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
             game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
-            ObjectHandler.newsta_(game, game.ParserVectors.prso, 0, 0, 0, game.Player.Winner);
-            /* 						!TEMPORARILY ON WINNER. */
+            ObjectHandler.SetNewObjectStatus(game, game.ParserVectors.prso, 0, 0, 0, game.Player.Winner);
+            // !TEMPORARILY ON WINNER.
 
             L1000:
             if (ObjectHandler.objact_(game))
             {
                 return ret_val;
             }
-            /* 						!NO, GIVE OBJECT A SHOT. */
-            ObjectHandler.newsta_(game, game.ParserVectors.prso, 2, 0, game.ParserVectors.prsi, 0);
-            /* 						!CONTAINED INSIDE. */
+            // !NO, GIVE OBJECT A SHOT.
+            ObjectHandler.SetNewObjectStatus(game, game.ParserVectors.prso, 2, 0, game.ParserVectors.prsi, 0);
+            // !CONTAINED INSIDE.
             ret_val = true;
             return ret_val;
 
-        } /* put_ */
+        } // put_
 
-        /* VALUAC- HANDLES VALUABLES/EVERYTHING */
+        // VALUAC- HANDLES VALUABLES/EVERYTHING
         public static void valuac_(Game game, int v)
         {
-            /* System generated locals */
+            // System generated locals
             int i__1;
 
-            /* Local variables */
+            // Local variables
             bool f;
             int i;
             bool f1;
             int savep, saveh;
 
             f = true;
-            /* 						!ASSUME NO ACTIONS. */
+            // !ASSUME NO ACTIONS.
             i = 579;
-            /* 						!ASSUME NOT LIT. */
+            // !ASSUME NOT LIT.
             if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
                 goto L4000;
             }
-            /* 						!IF NOT LIT, PUNT. */
+            // !IF NOT LIT, PUNT.
             i = 677;
-            /* 						!ASSUME WRONG VERB. */
+            // !ASSUME WRONG VERB.
             savep = game.ParserVectors.prso;
-            /* 						!SAVE PRSO. */
+            // !SAVE PRSO.
             saveh = game.Player.Here;
-            /* 						!SAVE HERE. */
+            // !SAVE HERE.
 
-            /* L100: */
+            // L100:
             if (game.ParserVectors.prsa != (int)VIndices.takew)
             {
                 goto L1000;
             }
-            /* 						!TAKE EVERY/VALUA? */
+            // !TAKE EVERY/VALUA?
             i__1 = game.Objects.Count;
             for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
             {
-                /* 						!LOOP THRU OBJECTS. */
+                // !LOOP THRU OBJECTS.
                 if (!ObjectHandler.qhere_(game, game.ParserVectors.prso, game.Player.Here) || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.VISIBT) == 0
                     || (game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.ACTRBT) != 0
                     || savep == v && game.Objects.otval[game.ParserVectors.prso - 1] <= 0)
@@ -413,7 +412,7 @@ namespace Zork.Core
             {
                 goto L2000;
             }
-            /* 						!DROP EVERY/VALUA? */
+            // !DROP EVERY/VALUA?
             i__1 = game.Objects.Count;
             for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
             {
@@ -439,11 +438,11 @@ namespace Zork.Core
             {
                 goto L3000;
             }
-            /* 						!PUT EVERY/VALUA? */
+            // !PUT EVERY/VALUA?
             i__1 = game.Objects.Count;
             for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
             {
-                /* 						!LOOP THRU OBJECTS. */
+                // !LOOP THRU OBJECTS.
                 if (game.Objects.oadv[game.ParserVectors.prso - 1] != game.Player.Winner ||
                     game.ParserVectors.prso == game.ParserVectors.prsi || savep == v &&
                     game.Objects.otval[game.ParserVectors.prso - 1] <= 0 || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.VISIBT) == 0)
@@ -468,13 +467,13 @@ namespace Zork.Core
             {
                 i = 582;
             }
-            /* 						!CHOOSE MESSAGE. */
+            // !CHOOSE MESSAGE.
             L4000:
             if (f)
             {
                 MessageHandler.rspeak_(game, i);
             }
-            /* 						!IF NOTHING, REPORT. */
+            // !IF NOTHING, REPORT.
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Zork.Core.Room
+namespace Zork.Core
 {
     public class Exits
     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using Zork.Core.Room;
 
 namespace Zork.Core
 {
@@ -111,7 +110,7 @@ namespace Zork.Core
             // !HIMSELF?
             MessageHandler.rspsub_(432, game.Objects.odesc2[game.Adventurers.Objects[game.Player.Winner - 1] - 1], game);
             // !NO, SAY WHO DIED.
-            ObjectHandler.newsta_(game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
             // !SEND TO HYPER SPACE.
             return;
 
@@ -139,7 +138,7 @@ namespace Zork.Core
             for (j = 1; j <= i__1; ++j)
             {
                 // !TURN OFF FIGHTING.
-                if (ObjectHandler.qhere_(j, game.Player.Here, game))
+                if (ObjectHandler.IsObjectInRoom(j, game.Player.Here, game))
                 {
                     game.Objects.oflag2[j - 1] &= ~ObjectFlags2.FITEBT;
                 }
@@ -147,15 +146,15 @@ namespace Zork.Core
             }
 
             ++game.State.Deaths;
-            AdventurerHandler.scrupd_(game, -10);
+            AdventurerHandler.ScoreUpdate(game, -10);
             // !CHARGE TEN POINTS.
-            f = AdventurerHandler.moveto_(game, RoomIndices.fore1, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, RoomIndices.Forest1, game.Player.Winner);
             // !REPOSITION HIM.
             game.Flags.egyptf = true;
             // !RESTORE COFFIN.
             if (game.Objects.oadv[(int)ObjectIndices.coffi - 1] == game.Player.Winner)
             {
-                ObjectHandler.newsta_(ObjectIndices.coffi, 0, RoomIndices.egypt, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIndices.coffi, 0, RoomIndices.Egypt, 0, 0, game);
             }
 
             game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
@@ -163,7 +162,7 @@ namespace Zork.Core
 
             if (game.Objects.oroom[(int)ObjectIndices.lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIndices.lamp - 1] == game.Player.Winner)
             {
-                ObjectHandler.newsta_(ObjectIndices.lamp, 0, RoomIndices.lroom, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIndices.lamp, 0, RoomIndices.LivingRoom, 0, 0, game);
             }
 
             // NOW REDISTRIBUTE HIS VALUABLES AND OTHER BELONGINGS.
@@ -190,7 +189,7 @@ namespace Zork.Core
                 }
                 // !MOVE TO RANDOM LOCATIONS.
 
-                ObjectHandler.newsta_(j, 0, rlist[i - 1], 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(j, 0, rlist[i - 1], 0, 0, game);
                 L200:
                 ;
             }
@@ -199,7 +198,7 @@ namespace Zork.Core
             i = game.Rooms.Count + 1;
 
             // !NOW MOVE VALUABLES.
-            nonofl = (int)(RoomFlags.RAIR + (int)RoomFlags.RWATER + (int)RoomFlags.RSACRD + (int)RoomFlags.REND);
+            nonofl = (int)(RoomFlags.AIR + (int)RoomFlags.WATER + (int)RoomFlags.RSACRD + (int)RoomFlags.REND);
             // !DONT MOVE HERE.
             i__1 = game.Objects.Count;
             for (j = 1; j <= i__1; ++j)
@@ -211,12 +210,12 @@ namespace Zork.Core
                 L250:
                 --i;
                 // !FIND NEXT ROOM.
-                if ((game.Rooms.RoomFlags[i - 1] & (RoomFlags)nonofl) != 0)
+                if ((game.Rooms.Flags[i - 1] & (RoomFlags)nonofl) != 0)
                 {
                     goto L250;
                 }
 
-                ObjectHandler.newsta_(j, 0, i, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(j, 0, i, 0, 0, game);
                 // !YES, MOVE.
                 L300:
                 ;
@@ -233,12 +232,12 @@ namespace Zork.Core
                 L450:
                 --i;
                 // !FIND NEXT ROOM.
-                if ((game.Rooms.RoomFlags[i - 1] & (RoomFlags)nonofl) != 0)
+                if ((game.Rooms.Flags[i - 1] & (RoomFlags)nonofl) != 0)
                 {
                     goto L450;
                 }
 
-                ObjectHandler.newsta_(j, 0, i, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(j, 0, i, 0, 0, game);
                 L500:
                 ;
             }
@@ -247,16 +246,17 @@ namespace Zork.Core
             // CAN'T OR WON'T CONTINUE, CLEAN UP AND EXIT.
 
             L900:
-            MessageHandler.Speak(625, game);
             // !IN ENDGAME, LOSE.
+            MessageHandler.Speak(625, game);
             goto L1100;
 
             L1000:
-            MessageHandler.Speak(7, game);
             // !INVOLUNTARY EXIT.
+            MessageHandler.Speak(7, game);
+
             L1100:
-            AdventurerHandler.score_(game, false);
             // !TELL SCORE.
+            AdventurerHandler.score_(game, false);
 
             game.Exit();
         }
@@ -275,8 +275,8 @@ namespace Zork.Core
 
             ret_val = false;
             // !ASSUME FAILS.
-            lhr = (game.Rooms.RoomFlags[game.Player.Here - 1] & RoomFlags.RLAND) != 0;
-            lnr = (game.Rooms.RoomFlags[nr - 1] & RoomFlags.RLAND) != 0;
+            lhr = (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) != 0;
+            lnr = (game.Rooms.Flags[nr - 1] & RoomFlags.LAND) != 0;
             j = game.Adventurers.Vehicles[who - 1];
             // !HIS VEHICLE
 
@@ -301,13 +301,13 @@ namespace Zork.Core
             // !ASSUME NOWHERE.
             if (j == (int)ObjectIndices.rboat)
             {
-                bits = (int)RoomFlags.RWATER;
+                bits = (int)RoomFlags.WATER;
             }
 
             // !IN BOAT?
             if (j == (int)ObjectIndices.ballo)
             {
-                bits = (int)RoomFlags.RAIR;
+                bits = (int)RoomFlags.AIR;
             }
 
             // !IN BALLOON?
@@ -317,8 +317,8 @@ namespace Zork.Core
             }
 
             // !IN BUCKET?
-            nlv = (game.Rooms.RoomFlags[nr - 1] & (RoomFlags)bits) == 0;
-            if (!lnr && nlv || lnr && lhr && nlv && bits != (int)RoomFlags.RLAND)
+            nlv = (game.Rooms.Flags[nr - 1] & (RoomFlags)bits) == 0;
+            if (!lnr && nlv || lnr && lhr && nlv && bits != (int)RoomFlags.LAND)
             {
                 goto L800;
             }
@@ -326,31 +326,31 @@ namespace Zork.Core
             L500:
             ret_val = true;
             // !MOVE SHOULD SUCCEED.
-            if ((game.Rooms.RoomFlags[nr - 1] & RoomFlags.RMUNG) == 0)
+            if ((game.Rooms.Flags[nr - 1] & RoomFlags.RMUNG) == 0)
             {
                 goto L600;
             }
 
-            MessageHandler.Speak(game.Rooms.RoomActions[nr - 1], game);
+            MessageHandler.Speak(game.Rooms.Actions[nr - 1], game);
             // !YES, TELL HOW.
             return ret_val;
 
             L600:
             if (who != (int)AIndices.player)
             {
-                ObjectHandler.newsta_(game.Adventurers.Objects[who - 1], 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[who - 1], 0, nr, 0, 0, game);
             }
 
             if (j != 0)
             {
-                ObjectHandler.newsta_(j, 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(j, 0, nr, 0, 0, game);
             }
 
             game.Player.Here = nr;
             game.Adventurers.Rooms[who - 1] = game.Player.Here;
-            AdventurerHandler.scrupd_(game, game.Rooms.RoomValues[nr - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Rooms.Values[nr - 1]);
             // !SCORE ROOM
-            game.Rooms.RoomValues[nr - 1] = 0;
+            game.Rooms.Values[nr - 1] = 0;
             return ret_val;
 
             L800:
@@ -363,8 +363,8 @@ namespace Zork.Core
         /// score_ - Print out current score
         /// </summary>
         /// <param name="game"></param>
-        /// <param name="flg"></param>
-        public static void score_(Game game, bool flg)
+        /// <param name="isFutureTense"></param>
+        public static void score_(Game game, bool isFutureTense)
         {
             int[] rank = { 20, 19, 18, 16, 12, 8, 4, 2, 1, 0 };
             int[] erank = { 20, 15, 10, 5, 0 };
@@ -384,7 +384,7 @@ namespace Zork.Core
             MessageHandler.more_output(game, string.Empty);
 
             MessageHandler.more_output(game, "Your score ");
-            if (flg)
+            if (isFutureTense)
             {
                 MessageHandler.more_output(game, "would be");
             }
@@ -420,7 +420,7 @@ namespace Zork.Core
             MessageHandler.more_output(game, string.Empty);
             MessageHandler.more_output(game, "Your score in the endgame ");
 
-            if (flg)
+            if (isFutureTense)
             {
                 MessageHandler.more_output(game, "would be");
             }
@@ -449,8 +449,8 @@ namespace Zork.Core
         /// scrupd_ - Update Winner's score.
         /// </summary>
         /// <param name="game"></param>
-        /// <param name="n"></param>
-        public static void scrupd_(Game game, int n)
+        /// <param name="incrementAmount"></param>
+        public static void ScoreUpdate(Game game, int incrementAmount)
         {
             if (game.Flags.endgmf)
             {
@@ -458,9 +458,9 @@ namespace Zork.Core
             }
 
             // !ENDGAME?
-            game.Adventurers.Scores[game.Player.Winner - 1] += n;
+            game.Adventurers.Scores[game.Player.Winner - 1] += incrementAmount;
             // !UPDATE SCORE
-            game.State.rwscor += n;
+            game.State.RawScore += incrementAmount;
             // !UPDATE RAW SCORE
             if (game.Adventurers.Scores[game.Player.Winner - 1] < game.State.MaxScore - game.State.Deaths * 10)
             {
@@ -474,7 +474,7 @@ namespace Zork.Core
             return;
 
             L100:
-            game.State.egscor += n;
+            game.State.egscor += incrementAmount;
             // !UPDATE EG SCORE.
         }
     }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zork.Core.Room;
 
 namespace Zork.Core
 {
@@ -11,7 +8,7 @@ namespace Zork.Core
         {
             bool ret_val = true;
 
-            /* 						!ASSUME WINS. */
+            // !ASSUME WINS.
             switch (obj - game.Star.strbit)
             {
                 case 1: goto L1000;
@@ -43,55 +40,55 @@ namespace Zork.Core
 
             throw new InvalidOperationException("60");
 
-            /* 1000--	STARS ARE ALWAYS HERE */
+            // 1000--	STARS ARE ALWAYS HERE
 
             L1000:
             return ret_val;
 
-            /* 2000--	BIRD */
+            // 2000--	BIRD
 
             L2000:
-            ret_val = rm >= (int)RoomIndices.fore1 && rm < (int)RoomIndices.clear || rm == (int)RoomIndices.mtree;
+            ret_val = rm >= (int)RoomIndices.Forest1 && rm < (int)RoomIndices.ForestClearing || rm == (int)RoomIndices.mtree;
             return ret_val;
 
-            /* 3000--	TREE */
+            // 3000--	TREE
 
             L3000:
-            ret_val = rm >= (int)RoomIndices.fore1 && rm < (int)RoomIndices.clear && rm != (int)RoomIndices.fore3;
+            ret_val = rm >= (int)RoomIndices.Forest1 && rm < (int)RoomIndices.ForestClearing && rm != (int)RoomIndices.Forest3;
             return ret_val;
 
-            /* 4000--	NORTH WALL */
+            // 4000--	NORTH WALL
 
             L4000:
             ret_val = rm >= (int)RoomIndices.bkvw && rm <= (int)RoomIndices.bkbox || rm == (int)RoomIndices.cpuzz;
             return ret_val;
 
-            /* 5000--	EAST, SOUTH, WEST WALLS */
+            // 5000--	EAST, SOUTH, WEST WALLS
 
             L5000:
             ret_val = rm >= (int)RoomIndices.bkvw && rm < (int)RoomIndices.bkbox || rm == (int)RoomIndices.cpuzz;
             return ret_val;
 
-            /* 6000--	GLOBAL WATER */
+            // 6000--	GLOBAL WATER
 
             L6000:
-            ret_val = (game.Rooms.RoomFlags[rm - 1] & (int)RoomFlags.RWATER + RoomFlags.RFILL) != 0;
+            ret_val = (game.Rooms.Flags[rm - 1] & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
             return ret_val;
 
-            /* 7000--	GLOBAL GUARDIANS */
+            // 7000--	GLOBAL GUARDIANS
 
             L7000:
             ret_val = rm >= (int)RoomIndices.mrc && rm <= (int)RoomIndices.mrd || rm >= (int)RoomIndices.mrce && rm <= (int)RoomIndices.mrdw || rm == (int)RoomIndices.inmir;
             return ret_val;
 
-            /* 8000--	ROSE/CHANNEL */
+            // 8000--	ROSE/CHANNEL
 
             L8000:
             ret_val = rm >= (int)RoomIndices.mra && rm <= (int)RoomIndices.mrd || rm == (int)RoomIndices.inmir;
             return ret_val;
 
-            /* 9000--	MIRROR */
-            /* 9100		PANEL */
+            // 9000--	MIRROR
+            // 9100		PANEL
 
             L9100:
             if (rm == (int)RoomIndices.fdoor)
@@ -99,18 +96,18 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            /* 						!PANEL AT FDOOR. */
+            // !PANEL AT FDOOR.
             L9000:
             ret_val = rm >= (int)RoomIndices.mra && rm <= (int)RoomIndices.mrc || rm >= (int)RoomIndices.mrae && rm <= (int)RoomIndices.mrcw;
             return ret_val;
 
-            /* 10000--	MASTER */
+            // 10000--	MASTER
 
             L10000:
             ret_val = rm == (int)RoomIndices.fdoor || rm == (int)RoomIndices.ncorr || rm == (int)RoomIndices.parap || rm == (int)RoomIndices.cell;
             return ret_val;
 
-            /* 11000--	LADDER */
+            // 11000--	LADDER
 
             L11000:
             ret_val = rm == (int)RoomIndices.cpuzz;

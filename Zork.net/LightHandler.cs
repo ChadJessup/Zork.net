@@ -12,43 +12,43 @@ namespace Zork.Core
             int i;
 
             ret_val = true;
-            /* 						!ASSUME WINS */
+            // !ASSUME WINS
             flobts = ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.ONBT;
             if (obj != ObjectIndices.candl)
             {
                 goto L20000;
             }
-            /* 						!CANDLE? */
+            // !CANDLE?
             if (game.Switches.orcand != 0)
             {
                 goto L19100;
             }
-            /* 						!FIRST REF? */
+            // !FIRST REF?
             game.Switches.orcand = 1;
-            /* 						!YES, CANDLES ARE */
+            // !YES, CANDLES ARE
             game.Clock.Ticks[(int)ClockIndices.cevcnd - 1] = 50;
-            /* 						!BURNING WHEN SEEN. */
+            // !BURNING WHEN SEEN.
 
             L19100:
             if (game.ParserVectors.prsi == (int)ObjectIndices.candl)
             {
                 goto L10;
             }
-            /* 						!IGNORE IND REFS. */
+            // !IGNORE IND REFS.
             if (game.ParserVectors.prsa != (int)VIndices.trnofw)
             {
                 goto L19200;
             }
-            /* 						!TURN OFF? */
+            // !TURN OFF?
             i = 513;
-            /* 						!ASSUME OFF. */
+            // !ASSUME OFF.
             if ((game.Objects.oflag1[(int)ObjectIndices.candl - 1] & ObjectFlags.ONBT) != 0)
             {
                 i = 514;
             }
-            /* 						!IF ON, DIFFERENT. */
+            // !IF ON, DIFFERENT.
             game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
-            /* 						!DISABLE COUNTDOWN. */
+            // !DISABLE COUNTDOWN.
             game.Objects.oflag1[(int)ObjectIndices.candl - 1] &= ~ObjectFlags.ONBT;
             MessageHandler.Speak(i, game);
             return ret_val;
@@ -64,7 +64,7 @@ namespace Zork.Core
                 goto L19300;
             }
             MessageHandler.Speak(game, 515);
-            /* 						!CANDLES TOO SHORT. */
+            // !CANDLES TOO SHORT.
             return ret_val;
 
             L19300:
@@ -73,9 +73,9 @@ namespace Zork.Core
                 goto L19400;
             }
 
-            /* 						!ANY FLAME? */
+            // !ANY FLAME?
             MessageHandler.Speak(game, 516);
-            /* 						!NO, LOSE. */
+            // !NO, LOSE.
             game.ParserVectors.prswon = false;
             return ret_val;
 
@@ -85,15 +85,15 @@ namespace Zork.Core
                 goto L19500;
             }
             i = 517;
-            /* 						!ASSUME OFF. */
+            // !ASSUME OFF.
             if ((game.Objects.oflag1[(int)ObjectIndices.candl - 1] & ObjectFlags.ONBT) != 0)
             {
                 i = 518;
             }
-            /* 						!IF ON, JOKE. */
+            // !IF ON, JOKE.
             game.Objects.oflag1[(int)ObjectIndices.candl - 1] |= ObjectFlags.ONBT;
             game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = true;
-            /* 						!RESUME COUNTDOWN. */
+            // !RESUME COUNTDOWN.
             MessageHandler.Speak(i, game);
             return ret_val;
 
@@ -106,20 +106,20 @@ namespace Zork.Core
             {
                 goto L19700;
             }
-            /* 						!ALREADY ON? */
+            // !ALREADY ON?
 
-            ObjectHandler.newsta_(ObjectIndices.candl, 521, 0, 0, 0, game);
-            /* 						!NO, VAPORIZE. */
+            ObjectHandler.SetNewObjectStatus(ObjectIndices.candl, 521, 0, 0, 0, game);
+            // !NO, VAPORIZE.
             return ret_val;
 
             L19600:
             MessageHandler.Speak(game, 519);
-            /* 						!CANT LIGHT WITH THAT. */
+            // !CANT LIGHT WITH THAT.
             return ret_val;
 
             L19700:
             MessageHandler.Speak(game, 520);
-            /* 						!ALREADY ON. */
+            // !ALREADY ON.
             return ret_val;
 
             L20000:
@@ -138,17 +138,17 @@ namespace Zork.Core
             {
                 goto L20100;
             }
-            /* 						!ANY MATCHES LEFT? */
+            // !ANY MATCHES LEFT?
             MessageHandler.Speak(183, game);
-            /* 						!NO, LOSE. */
+            // !NO, LOSE.
             return ret_val;
 
             L20100:
             --game.Switches.ormtch;
-            /* 						!DECREMENT NO MATCHES. */
+            // !DECREMENT NO MATCHES.
             game.Objects.oflag1[(int)ObjectIndices.match - 1] |= flobts;
             game.Clock.Ticks[(int)ClockIndices.cevmat - 1] = 2;
-            /* 						!COUNTDOWN. */
+            // !COUNTDOWN.
             MessageHandler.Speak(184, game);
             return ret_val;
 
@@ -163,7 +163,7 @@ namespace Zork.Core
             MessageHandler.Speak(185, game);
             return ret_val;
 
-            /* HERE FOR FALSE RETURN */
+            // HERE FOR FALSE RETURN
 
             L10:
             ret_val = false;
