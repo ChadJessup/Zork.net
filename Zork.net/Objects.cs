@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Zork.Core.Object
+namespace Zork.Core
 {
     public class Objects
     {

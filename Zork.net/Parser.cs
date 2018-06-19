@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Zork.Core.Clock;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
 namespace Zork.Core
 {
     public static class Parser
     {
-        public static string ReadLine(int who)
+        public static string ReadLine(Game game, int who)
         {
             string buffer;
 
@@ -20,10 +16,10 @@ namespace Zork.Core
             }
 
             L10:
-            Console.Write(">");
+            game.WriteOutput(">");
 
             L90:
-            buffer = Console.ReadLine();
+            buffer = game.ReadInput();
             if (buffer[0] == '!')
             {
                 buffer = buffer.TrimStart(new[] { '!' });
@@ -3464,8 +3460,8 @@ namespace Zork.Core
             /* V74--	VERSION.  PRINT INFO. */
 
             L5000:
-            MessageHandler.more_output(string.Empty);
-//            Console.WriteLine("V%1d.%1d%c\n", vers_1.vmaj, vers_1.vmin, vers_1.vedit);
+            MessageHandler.more_output(game, string.Empty);
+//            game.WriteOutputLine("V%1d.%1d%c\n", vers_1.vmaj, vers_1.vmin, vers_1.vedit);
             game.Player.TelFlag = true;
             return ret_val;
 
@@ -3820,18 +3816,26 @@ namespace Zork.Core
             i = k / 60;
             j = k % 60;
 
-            MessageHandler.more_output(string.Empty);
-            Console.Write("You have been playing Dungeon for ");
-            if (i >= 1) {
-                Console.Write("%d hour", i);
+            MessageHandler.more_output(game, string.Empty);
+            game.WriteOutput("You have been playing Dungeon for ");
+            if (i >= 1)
+            {
+                game.WriteOutput($"{i} hour");
                 if (i >= 2)
-                    Console.Write("s");
-                Console.Write(" and ");
+                {
+                    game.WriteOutput("s");
+                }
+
+                game.WriteOutput(" and ");
             }
-            Console.Write("%d minute", j);
+
+            game.WriteOutput($"{j} minute");
             if (j != 1)
-                Console.Write("s");
-            Console.Write(".\n");
+            {
+                game.WriteOutput("s");
+            }
+
+            game.WriteOutput(".\n");
             game.Player.TelFlag = true;
             return ret_val;
 
@@ -3951,9 +3955,10 @@ namespace Zork.Core
             i = (-j - 1) * 30 + game.Clock.Ticks[(int)ClockIndices.cevcur - 1];
             /* 						!COMPUTE WAIT. */
 
-            if (j != 0) {
-                MessageHandler.more_output(string.Empty);
-                Console.WriteLine("You will be cured after %d moves.\n", i);
+            if (j != 0)
+            {
+                MessageHandler.more_output(game, string.Empty);
+                game.WriteOutput($"You will be cured after {i} moves.{Environment.NewLine}");
             }
 
             i__1 = k + 478;
@@ -4047,8 +4052,8 @@ namespace Zork.Core
             game.Flags.spellf = true;
             /* 						!TELL HIM. */
             game.Player.TelFlag = true;
-            MessageHandler.more_output(string.Empty);
-            Console.WriteLine("A hollow voice replies:  \"%.6s %.6s\".\n", pp1, ch);
+            MessageHandler.more_output(game, string.Empty);
+            game.WriteOutput($"A hollow voice replies:  \"{pp1} {ch} {Environment.NewLine}\"");//%.6s %.6s\".\n", pp1, ch);
 
             return ret_val;
 

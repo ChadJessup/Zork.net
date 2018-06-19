@@ -1,5 +1,4 @@
-﻿using Zork.Core;
-using Zork.Core.Object;
+﻿using System;
 using Zork.Core.Room;
 
 namespace Zork.Core
@@ -382,26 +381,26 @@ namespace Zork.Core
             }
 
             // !ENDGAME?
-            MessageHandler.more_output(string.Empty);
+            MessageHandler.more_output(game, string.Empty);
 
-            MessageHandler.more_output("Your score ");
+            MessageHandler.more_output(game, "Your score ");
             if (flg)
             {
-                MessageHandler.more_output("would be");
+                MessageHandler.more_output(game, "would be");
             }
             else
             {
-                MessageHandler.more_output("is");
+                MessageHandler.more_output(game, "is");
             }
 
-            MessageHandler.more_output($" {intAs} [total of {game.State.MaxScore} points], in {game.State.Moves} move");
+            MessageHandler.more_output(game, $" {intAs} [total of {game.State.MaxScore} points], in {game.State.Moves} move");
 
             if (game.State.Moves != 1)
             {
-                MessageHandler.more_output("s");
+                MessageHandler.more_output(game, "s");
             }
 
-            MessageHandler.more_output(".\n");
+            MessageHandler.more_output(game, $".{Environment.NewLine}");
 
             for (i = 1; i <= 10; ++i)
             {
@@ -418,19 +417,19 @@ namespace Zork.Core
             return;
 
             L60:
-            MessageHandler.more_output(string.Empty);
-            MessageHandler.more_output("Your score in the endgame ");
+            MessageHandler.more_output(game, string.Empty);
+            MessageHandler.more_output(game, "Your score in the endgame ");
 
             if (flg)
             {
-                MessageHandler.more_output("would be");
+                MessageHandler.more_output(game, "would be");
             }
             else
             {
-                MessageHandler.more_output("is");
+                MessageHandler.more_output(game, "is");
             }
 
-            MessageHandler.more_output($" {game.State.egscor} [total of {game.State.egmxsc} points], in {game.State.Moves} moves.\n");
+            MessageHandler.more_output(game, $" {game.State.egscor} [total of {game.State.egmxsc} points], in {game.State.Moves} moves.\n");
 
             for (i = 1; i <= 5; ++i)
             {

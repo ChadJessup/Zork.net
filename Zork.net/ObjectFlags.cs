@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zork.Core.Object
+namespace Zork.Core
 {
     [Flags]
     public enum ObjectFlags : int

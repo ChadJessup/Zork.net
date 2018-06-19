@@ -3,7 +3,7 @@
 namespace Zork.Core.Room
 {
     /// <summary>
-    /// Room game.Flags, original names ftw, will translate later when I know what they mean.
+    /// RoomFlags, original names ftw, will translate later when I know what they mean.
     /// </summary>
     [Flags]
     public enum RoomFlags

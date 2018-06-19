@@ -1,6 +1,4 @@
-﻿using Zork.Core.Object;
-
-namespace Zork.Core
+﻿namespace Zork.Core
 {
     public class Syntax
     {

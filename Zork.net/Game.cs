@@ -1,7 +1,4 @@
 ﻿using System;
-using Zork.Core.Clock;
-using Zork.Core.Helpers;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
 namespace Zork.Core
@@ -84,6 +81,16 @@ namespace Zork.Core
 
         public int astag { get; set; } = 32768;
 
+        /// <summary>
+        /// Gets or sets the method that provides input.
+        /// </summary>
+        public Func<string> ReadInput { get; set; }
+
+        /// <summary>
+        /// Gets or sets the method that displays the text output.
+        /// </summary>
+        public Action<string> WriteOutput { get; set; }
+
         public static Game Initialize() => DataLoader.LoadDataFile();
 
         public int rnd_(int maxVal) => this.Random.Next(maxVal);
@@ -91,7 +98,7 @@ namespace Zork.Core
         private bool isRunning = true;
         public void Exit()
         {
-            Console.WriteLine("The game is over.");
+            this.WriteOutput("The game is over.");
             isRunning = false;
         }
 
@@ -118,7 +125,7 @@ namespace Zork.Core
 
                 if (this.ParserVectors.prscon <= 1)
                 {
-                    input = Parser.ReadLine(1);
+                    input = Parser.ReadLine(this, 1);
                     this.ParserVectors.prscon = 1;
                 }
 
@@ -179,7 +186,7 @@ namespace Zork.Core
                 // IF INPUT IS NOT 'ECHO' OR A DIRECTION, JUST ECHO.
 
                 L1000:
-                input = Parser.ReadLine(0);
+                input = Parser.ReadLine(this, 0);
 
                 // !CHARGE FOR MOVES.
                 ++this.State.Moves;
@@ -211,7 +218,7 @@ namespace Zork.Core
                 // !VALID EXIT?
 
                 L1400:
-                MessageHandler.more_output(input);
+                MessageHandler.more_output(this, input);
                 this.Player.TelFlag = true;
                 // !INDICATE OUTPUT.
                 goto L1000;

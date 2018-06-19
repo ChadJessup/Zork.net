@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
 namespace Zork.Core

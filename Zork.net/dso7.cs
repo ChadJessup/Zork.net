@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
 namespace Zork.Core
@@ -125,11 +122,11 @@ namespace Zork.Core
             }
 
             // more_output(NULL);
-            // Console.Write("       |%c%c %c%c %c%c|\n", dgm[0], dgm[0], dgm[1], dgm[1], dgm[2], dgm[2]);
+            // game.WriteOutput("       |%c%c %c%c %c%c|\n", dgm[0], dgm[0], dgm[1], dgm[1], dgm[2], dgm[2]);
             // more_output(NULL);
-            // Console.Write(" West  |%c%c .. %c%c| East\n", dgm[3], dgm[3], dgm[4], dgm[4]);
+            // game.WriteOutput(" West  |%c%c .. %c%c| East\n", dgm[3], dgm[3], dgm[4], dgm[4]);
             // more_output(NULL);
-            // Console.Write("       |%c%c %c%c %c%c|\n", dgm[5], dgm[5], dgm[6], dgm[6], dgm[7], dgm[7]);
+            // game.WriteOutput("       |%c%c %c%c %c%c|\n", dgm[5], dgm[5], dgm[6], dgm[6], dgm[7], dgm[7]);
 
             if (st == 10)
             {

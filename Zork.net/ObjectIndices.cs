@@ -1,4 +1,4 @@
-﻿namespace Zork.Core.Object
+﻿namespace Zork.Core
 {
     public enum ObjectIndices
     {

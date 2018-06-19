@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
-namespace Zork.Core.Clock
+namespace Zork.Core
 {
     public class ClockEvents
     {

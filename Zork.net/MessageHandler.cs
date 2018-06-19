@@ -8,7 +8,7 @@ namespace Zork.Core
         public static void Speak(Game game, int messageNumber) => MessageHandler.Speak(messageNumber, game);
         public static void Speak(int messageNumber, Game game) => MessageHandler.rspsb2nl_(messageNumber, 0, 0, true, game);
 
-        public static void more_output(string output) => Console.Write(output);
+        public static void more_output(Game game, string output) => game.WriteOutput(output);
         public static void more_input() { }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Zork.Core
 
             if (newLine)
             {
-                Console.Write('\n');
+                game.WriteOutput(Environment.NewLine);
             }
 
             while (true)
@@ -88,10 +88,10 @@ namespace Zork.Core
                 }
                 else if (i == '\n')
                 {
-                    Console.Write('\n');
+                    game.WriteOutput(Environment.NewLine);
                     if (newLine)
                     {
-                        // Console.Write('\n');
+                        // game.WriteOutput(Environment.NewLine);
                     }
                 }
                 else if (i == '#' && y != 0)
@@ -111,13 +111,13 @@ namespace Zork.Core
                 }
                 else
                 {
-                    Console.Write((char)i);
+                    game.WriteOutput(((char)i).ToString());
                 }
             }
 
             if (newLine)
             {
-                Console.Write('\n');
+                game.WriteOutput(Environment.NewLine);
             }
         }
     }

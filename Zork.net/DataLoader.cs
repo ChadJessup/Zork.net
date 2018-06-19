@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Zork.Core.Object;
 using Zork.Core.Room;
 
-namespace Zork.Core.Helpers
+namespace Zork.Core
 {
     public static class DataLoader
     {

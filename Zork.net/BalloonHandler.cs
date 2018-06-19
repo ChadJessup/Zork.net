@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Zork.Core.Object;
-using Zork.Core.Room;
+﻿using Zork.Core.Room;
 
 namespace Zork.Core
 {
