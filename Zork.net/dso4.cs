@@ -8,12 +8,12 @@ namespace Zork.Core
         /// robadv_ - Steal Winner's Valuables
         /// </summary>
         /// <param name="game"></param>
-        /// <param name="adv"></param>
+        /// <param name="actorId"></param>
         /// <param name="nr"></param>
         /// <param name="nc"></param>
         /// <param name="na"></param>
         /// <returns></returns>
-        public static int RobAdventurer(Game game, int adv, int nr, ObjectIds nc, int na)
+        public static int RobAdventurer(Game game, ActorIds actorId, RoomIds nr, ObjectIds nc, ActorIds na)
         {
             int ret_val, i__1;
             int i;
@@ -23,14 +23,15 @@ namespace Zork.Core
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
-                if (game.Objects.oadv[i - 1] != adv || game.Objects.otval[i - 1] <= 0
+                if (game.Objects.oadv[i - 1] != (int)actorId
+                    || game.Objects.otval[i - 1] <= 0
                     || (game.Objects.oflag2[i - 1] & ObjectFlags2.SCRDBT) != 0)
                 {
                     goto L100;
                 }
 
                 // !STEAL OBJECT
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, (int)nc, na, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, nc, na, game);
                 ++ret_val;
                 L100:
                 ;
@@ -48,7 +49,7 @@ namespace Zork.Core
         /// <param name="nc"></param>
         /// <param name="na"></param>
         /// <returns></returns>
-        public static int RobRoom(Game game, int rm, int pr, int nr, int nc, int na)
+        public static int RobRoom(Game game, RoomIds rm, int pr, RoomIds nr, int nc, int na)
         {
             int ret_val, i__1, i__2;
             int i;
@@ -57,9 +58,10 @@ namespace Zork.Core
             ret_val = 0;
             // !COUNT OBJECTS
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i) {
+            for (i = 1; i <= i__1; ++i)
+            {
                 // !LOOP ON OBJECTS.
-                if (!ObjectHandler.IsObjectInRoom(i, rm, game))
+                if (!ObjectHandler.IsObjectInRoom((ObjectIds)i, rm, game))
                 {
                     goto L100;
                 }
@@ -69,15 +71,15 @@ namespace Zork.Core
                     goto L50;
                 }
 
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, nc, na, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)nr, (ObjectIds)nc, (ActorIds)na, game);
                 ++ret_val;
                 game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
                 goto L100;
                 L50:
                 if ((game.Objects.oflag2[i - 1] & ObjectFlags2.ACTRBT) != 0)
                 {
-                    i__2 = ObjectHandler.GetActor(i, game);
-                    ret_val += RobAdventurer(game, i__2, nr, (ObjectIds)nc, na);
+                    i__2 = (int)ObjectHandler.GetActor(i, game);
+                    ret_val += RobAdventurer(game, (ActorIds)i__2, nr, (ObjectIds)nc, (ActorIds)na);
                 }
                 L100:
                 ;
@@ -92,7 +94,7 @@ namespace Zork.Core
         /// <param name="vl"></param>
         /// <param name="hr"></param>
         /// <returns></returns>
-        public static bool IsVillianWinning(Game game, int vl, int hr)
+        public static bool IsVillianWinning(Game game, int vl, ActorIds hr)
         {
             // System generated locals
             bool ret_val;
@@ -141,10 +143,10 @@ namespace Zork.Core
         /// fights_ - Compute Fight Strength
         /// </summary>
         /// <param name="game"></param>
-        /// <param name="h"></param>
+        /// <param name="actorId"></param>
         /// <param name="flg"></param>
         /// <returns></returns>
-        public static int ComputeFightStrength(Game game, int h, bool flg)
+        public static int ComputeFightStrength(Game game, ActorIds actorId, bool flg)
         {
             const int smin = 2;
             const int smax = 7;
@@ -152,10 +154,12 @@ namespace Zork.Core
             // System generated locals
             int ret_val;
 
-            ret_val = smin + ((smax - smin) * game.Adventurers.Scores[h - 1] + game.State.MaxScore / 2) / game.State.MaxScore;
-            if (flg) {
-                ret_val += game.Adventurers.astren[h - 1];
+            ret_val = smin + ((smax - smin) * game.Adventurers.Scores[(int)actorId - 1] + game.State.MaxScore / 2) / game.State.MaxScore;
+            if (flg)
+            {
+                ret_val += game.Adventurers.astren[(int)actorId - 1];
             }
+
             return ret_val;
         }
 

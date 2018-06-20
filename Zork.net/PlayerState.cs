@@ -8,8 +8,8 @@
         public int MaxScore { get; set; }
         public int MaxLoad { get; set; }
         public int ltshft { get; set; }
-        public int BalloonLocation { get; set; }
-        public int mungrm { get; set; }
+        public RoomIds BalloonLocation { get; set; }
+        public RoomIds mungrm { get; set; }
 
         /// <summary>
         /// Gets or set Hello Sailor count. (???)

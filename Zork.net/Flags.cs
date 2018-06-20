@@ -68,7 +68,7 @@
         public int ormtch { get; set; }
         public int orlamp { get; set; }
         public int mdir { get; set; }
-        public int mloc { get; set; }
+        public RoomIds mloc { get; set; }
         public int poleuf { get; set; }
         public int quesno { get; set; }
         public int nqatt { get; set; }

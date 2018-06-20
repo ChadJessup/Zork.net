@@ -19,21 +19,22 @@ namespace Zork.Core
                 goto L1100;
             }
             // !FIGHT?
-            if (game.Objects.ocan[(int)ObjectIds.axe - 1] == (int)ObjectIds.troll) {
+            if (game.Objects.ocan[(int)ObjectIds.axe - 1] == (int)ObjectIds.Troll) {
                 goto L10;
             }
             // !GOT AXE?  NOTHING.
             i = 433;
             // !ASSUME CANT GET.
-            if (!ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.axe, game.Player.Here)) {
+            if (!ObjectHandler.IsObjectInRoom(ObjectIds.axe, game.Player.Here, game))
+            {
                 goto L1050;
             }
             // !HERE?
             i = 434;
             // !YES, RECOVER.
-            ObjectHandler.SetNewObjectStatus(ObjectIds.axe, 0, 0, (int)ObjectIds.troll, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.axe, 0, 0, ObjectIds.Troll, 0, game);
             L1050:
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.troll, game.Player.Here))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Troll, game.Player.Here, game))
             {
                 MessageHandler.rspsub_(game, i);
             }
@@ -57,7 +58,7 @@ namespace Zork.Core
             game.Flags.trollf = true;
             // !PERMIT EXITS.
             game.Objects.oflag1[(int)ObjectIds.axe - 1] &= ~ObjectFlags.IsVisible;
-            game.Objects.odesc1[(int)ObjectIds.troll - 1] = 435;
+            game.Objects.odesc1[(int)ObjectIds.Troll - 1] = 435;
             // !TROLL OUT.
             return ret_val;
 
@@ -69,9 +70,10 @@ namespace Zork.Core
             game.Flags.trollf = false;
             // !FORBID EXITS.
             game.Objects.oflag1[(int)ObjectIds.axe - 1] |= ObjectFlags.IsVisible;
-            game.Objects.odesc1[(int)ObjectIds.troll - 1] = 436;
+            game.Objects.odesc1[(int)ObjectIds.Troll - 1] = 436;
             // !TROLL IN.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.troll, game.Player.Here)) {
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Troll, game.Player.Here, game))
+            {
                 MessageHandler.rspsub_(game, 437);
             }
             return ret_val;
@@ -88,19 +90,19 @@ namespace Zork.Core
             L1500:
             if (game.ParserVectors.prsa != (int)VerbIds.movew && game.ParserVectors.prsa != (int)VerbIds.takew &&
                 game.ParserVectors.prsa != (int)VerbIds.mungw && game.ParserVectors.prsa !=
-                (int)VerbIds.throww && game.ParserVectors.prsa != (int)VerbIds.givew) {
+                (int)VerbIds.Throw && game.ParserVectors.prsa != (int)VerbIds.Give) {
                 goto L2000;
             }
-            if (game.Objects.ocapac[(int)ObjectIds.troll - 1] >= 0) {
+            if (game.Objects.ocapac[(int)ObjectIds.Troll - 1] >= 0) {
                 goto L1550;
             }
             // !TROLL OUT?
-            game.Objects.ocapac[(int)ObjectIds.troll - 1] = -game.Objects.ocapac[(int)ObjectIds.troll - 1]
+            game.Objects.ocapac[(int)ObjectIds.Troll - 1] = -game.Objects.ocapac[(int)ObjectIds.Troll - 1]
                 ;
             // !YES, WAKE HIM.
             game.Objects.oflag1[(int)ObjectIds.axe - 1] |= ObjectFlags.IsVisible;
             game.Flags.trollf = false;
-            game.Objects.odesc1[(int)ObjectIds.troll - 1] = 436;
+            game.Objects.odesc1[(int)ObjectIds.Troll - 1] = 436;
             MessageHandler.rspsub_(game, 437);
 
             L1550:
@@ -127,7 +129,7 @@ namespace Zork.Core
             // !NO OBJECT?
             i = 440;
             // !ASSUME THROW.
-            if (game.ParserVectors.prsa == (int)VerbIds.givew) {
+            if (game.ParserVectors.prsa == (int)VerbIds.Give) {
                 i = 441;
             }
             // !GIVE?
@@ -144,7 +146,7 @@ namespace Zork.Core
             L1900:
             MessageHandler.rspeak_(game, 443);
             // !KNIFE, THROWS IT BACK
-            game.Objects.oflag2[(int)ObjectIds.troll - 1] |= ObjectFlags2.FITEBT;
+            game.Objects.oflag2[(int)ObjectIds.Troll - 1] |= ObjectFlags2.FITEBT;
             return ret_val;
 
             L2000:
@@ -211,7 +213,7 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if (game.ParserVectors.prsa != (int)VerbIds.givew) {
+            if (game.ParserVectors.prsa != (int)VerbIds.Give) {
                 goto L500;
             }
             // !GIVE?
@@ -283,7 +285,7 @@ namespace Zork.Core
                 goto L450;
             }
             // !HELLO IS NO GO.
-            if (game.ParserVectors.prsa == (int)VerbIds.throww || game.ParserVectors.prsa == (int)VerbIds.mungw) {
+            if (game.ParserVectors.prsa == (int)VerbIds.Throw || game.ParserVectors.prsa == (int)VerbIds.mungw) {
 
                 i = game.rnd_(2) + 200;
             }
@@ -325,13 +327,14 @@ namespace Zork.Core
                 goto L10;
             }
             // !GOT STILLETTO?  F.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, game.Hack.ThiefPosition)) {
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.still, game.Hack.ThiefPosition, game))
+            {
                 goto L50;
             }
             // !CAN HE RECOVER IT?
             ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 0, 0, 0, 0, game);
             // !NO, VANISH.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.thief, game.Player.Here))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
             {
                 MessageHandler.rspeak_(game, 498);
             }
@@ -340,9 +343,9 @@ namespace Zork.Core
             return ret_val;
 
             L50:
-            ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             // !YES, RECOVER.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.thief, game.Player.Here))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
             {
                 MessageHandler.rspeak_(game, 499);
             }
@@ -377,8 +380,8 @@ namespace Zork.Core
                 // !LOOP.
                 if (i == (int)ObjectIds.chali
                     || i == (int)ObjectIds.thief
-                    || game.Player.Here != (int)RoomIds.Treasure
-                    || !ObjectHandler.IsObjectInRoom(game, i, game.Player.Here))
+                    || game.Player.Here != RoomIds.Treasure
+                    || !ObjectHandler.IsObjectInRoom((ObjectIds)i, game.Player.Here, game))
                 {
                     goto L135;
                 }
@@ -432,7 +435,8 @@ namespace Zork.Core
                 goto L500;
             }
             // !IN?
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.thief, game.Player.Here)) {
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
+            {
                 MessageHandler.rspeak_(game, 505);
             }
             // !CAN HERO SEE?
@@ -441,11 +445,12 @@ namespace Zork.Core
             game.Objects.odesc1[(int)ObjectIds.thief - 1] = 503;
             // !CHANGE DESCRIPTION.
             game.Objects.oflag1[(int)ObjectIds.still - 1] |= ObjectFlags.IsVisible;
-            if (game.Player.Here == (int)RoomIds.Treasure
-                && ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.chali, game.Player.Here))
+
+            if (game.Player.Here == RoomIds.Treasure && ObjectHandler.IsObjectInRoom(ObjectIds.chali, game.Player.Here, game))
             {
                 game.Objects.oflag1[(int)ObjectIds.chali - 1] &= ~ObjectFlags.IsTakeable;
             }
+
             return ret_val;
 
             L500:
@@ -458,7 +463,7 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VerbIds.throww || game.ParserVectors.prso != (int)ObjectIds.Knife ||
+            if (game.ParserVectors.prsa != (int)VerbIds.Throw || game.ParserVectors.prso != (int)ObjectIds.Knife ||
                 (game.Objects.oflag2[(int)ObjectIds.thief - 1] & ObjectFlags2.FITEBT) != 0) {
                 goto L700;
             }
@@ -490,7 +495,7 @@ namespace Zork.Core
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa != (int)VerbIds.throww && game.ParserVectors.prsa != (int)VerbIds.givew ||
+            if (game.ParserVectors.prsa != (int)VerbIds.Throw && game.ParserVectors.prsa != (int)VerbIds.Give ||
                 game.ParserVectors.prso == 0 || game.ParserVectors.prso == (int)ObjectIds.thief) {
                 goto L10;
             }
@@ -515,7 +520,7 @@ namespace Zork.Core
 
             L800:
             i__1 = -(int)ObjectIds.thief;
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, i__1, game);
+            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, (ActorIds)i__1, game);
             // !THIEF TAKES GIFT.
             if (game.Objects.otval[game.ParserVectors.prso - 1] > 0) {
                 goto L900;

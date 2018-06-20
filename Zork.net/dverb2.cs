@@ -195,7 +195,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.Player.Winner != (int)ActorIds.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
+            if (game.Player.Winner != ActorIds.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
             }
@@ -284,7 +284,7 @@ namespace Zork.Core
                 game.curxt_.xstrng = 680;
             }
             // !IF DOWN, CANT.
-            if ((game.Rooms[game.Player.Here - 1].Flags & RoomFlags.NOWALL) != 0)
+            if ((game.Rooms[(int)game.Player.Here - 1].Flags & RoomFlags.NOWALL) != 0)
             {
                 game.curxt_.xstrng = 524;
             }
@@ -379,7 +379,8 @@ namespace Zork.Core
                 return ret_val;
             }
             // !IF NO ACTION, DONE.
-            switch (ri) {
+            switch (ri)
+            {
                 case 1: goto L1000;
                 case 2: goto L2000;
                 case 3: goto L3000;
@@ -401,7 +402,7 @@ namespace Zork.Core
             // C1- COFFIN-CURE
 
             L1000:
-            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIds.Coffin - 1] != game.Player.Winner;
+            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIds.Coffin - 1] != (int)game.Player.Winner;
             // !T IF NO COFFIN.
             return ret_val;
 
@@ -419,8 +420,8 @@ namespace Zork.Core
             L5000:
             i = xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8);
             // !CHOOSE RANDOM EXIT.
-            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms[game.Player.Here - 1].Exit + i - 1] & xpars_.xrmask;
-            ret_val = game.curxt_.xroom1;
+            game.curxt_.xroom1 = (RoomIds)(int)(game.Exits.Travel[game.Rooms[(int)game.Player.Here - 1].Exit + i - 1] & xpars_.xrmask);
+            ret_val = (int)game.curxt_.xroom1;
             // !RETURN EXIT.
             return ret_val;
 
@@ -431,45 +432,56 @@ namespace Zork.Core
             // !ASSUME HEAVY LOAD.
             j = 0;
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i) {
+            for (i = 1; i <= i__1; ++i)
+            {
                 // !COUNT OBJECTS.
-                if (game.Objects.oadv[i - 1] == game.Player.Winner) {
+                if (game.Objects.oadv[i - 1] == (int)game.Player.Winner)
+                {
                     ++j;
                 }
                 // L3100:
             }
 
-            if (j > 2) {
+            if (j > 2)
+            {
                 return ret_val;
             }
+
             // !CARRYING TOO MUCH?
             game.curxt_.xstrng = 446;
             // !ASSUME NO LAMP.
-            if (game.Objects.oadv[(int)ObjectIds.Lamp - 1] != game.Player.Winner) {
+            if (game.Objects.oadv[(int)ObjectIds.Lamp - 1] != (int)game.Player.Winner)
+            {
                 return ret_val;
             }
+
             // !NO LAMP?
             game.Flags.litldf = true;
             // !HE CAN DO IT.
-            if ((game.Objects.oflag2[(int)ObjectIds.door - 1] & ObjectFlags2.IsOpen) == 0) {
+            if ((game.Objects.oflag2[(int)ObjectIds.door - 1] & ObjectFlags2.IsOpen) == 0)
+            {
                 game.Objects.oflag2[(int)ObjectIds.door - 1] &= ~ObjectFlags2.TCHBT;
             }
+
             return ret_val;
 
             // C4-	FROBOZZ FLAG (MAGNET ROOM, FAKE EXIT)
             // C6-	FROBOZZ FLAG (MAGNET ROOM, REAL EXIT)
 
             L4000:
-            if (game.Flags.caroff) {
+            if (game.Flags.caroff)
+            {
                 goto L2500;
             }
+
             // !IF FLIPPED, GO SPIN.
             game.Flags.frobzf = false;
             // !OTHERWISE, NOT AN EXIT.
             return ret_val;
 
             L6000:
-            if (game.Flags.caroff) {
+            if (game.Flags.caroff)
+            {
                 goto L2500;
             }
             // !IF FLIPPED, GO SPIN.
@@ -480,8 +492,8 @@ namespace Zork.Core
             // C7-	FROBOZZ FLAG (BANK ALARM)
 
             L7000:
-            game.Flags.frobzf = game.Objects.oroom[(int)ObjectIds.bills - 1] != 0 &
-                game.Objects.oroom[(int)ObjectIds.portr - 1] != 0;
+            game.Flags.frobzf = game.Objects.oroom[(int)ObjectIds.bills - 1] != 0 & game.Objects.oroom[(int)ObjectIds.portr - 1] != 0;
+
             return ret_val;
             // CXAPPL, PAGE 3
 
@@ -503,7 +515,7 @@ namespace Zork.Core
             }
 
             // !MIRROR MUST BE N-S.
-            game.curxt_.xroom1 = (game.curxt_.xroom1 - (int)RoomIds.mra << 1) + (int)RoomIds.mrae;
+            game.curxt_.xroom1 = (game.curxt_.xroom1 - RoomIds.mra << 1) + RoomIds.mrae;
             // !CALC EAST ROOM.
             if (game.ParserVectors.prso > (int)XSearch.xsouth)
             {
@@ -511,7 +523,7 @@ namespace Zork.Core
             }
             // !IF SW/NW, CALC WEST.
             L8100:
-            ret_val = game.curxt_.xroom1;
+            ret_val = (int)game.curxt_.xroom1;
             return ret_val;
 
             L8200:
@@ -577,8 +589,8 @@ namespace Zork.Core
                 goto L10200;
             }
 
-            game.curxt_.xroom1 = (game.Switches.mloc - (int)RoomIds.mra << 1) + (int)RoomIds.mrae + 1
-                - game.Switches.mdir / 180;
+            game.curxt_.xroom1 = (game.Switches.mloc - RoomIds.mra << 1) + RoomIds.mrae + 1 - game.Switches.mdir / 180;
+
             // !ASSUME E-W EXIT.
             if (game.Switches.mdir % 180 == 0)
             {
@@ -594,7 +606,7 @@ namespace Zork.Core
             }
             // !IF SOUTH.
             L10100:
-            ret_val = game.curxt_.xroom1;
+            ret_val = (int)game.curxt_.xroom1;
             return ret_val;
 
             L10200:
@@ -612,7 +624,7 @@ namespace Zork.Core
             MessageHandler.rspeak_(game, 818);
             // !CLOSE DOOR.
             game.Flags.wdopnf = false;
-            ret_val = game.curxt_.xroom1;
+            ret_val = (int)game.curxt_.xroom1;
             return ret_val;
 
             // C11-	MAYBE DOOR.  NORMAL MESSAGE IS THAT DOOR IS CLOSED.
@@ -706,9 +718,9 @@ namespace Zork.Core
             L14500:
             dso7.cpgoto_(game, nxt);
             // !MOVE TO STATE.
-            game.curxt_.xroom1 = (int)RoomIds.cpuzz;
+            game.curxt_.xroom1 = RoomIds.cpuzz;
             // !STAY IN ROOM.
-            ret_val = game.curxt_.xroom1;
+            ret_val = (int)game.curxt_.xroom1;
             return ret_val;
 
         }

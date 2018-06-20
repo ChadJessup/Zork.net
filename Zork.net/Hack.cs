@@ -5,7 +5,7 @@
         /// <summary>
         /// Gets or sets the Thief's position.
         /// </summary>
-        public int ThiefPosition { get; set; }
+        public RoomIds ThiefPosition { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating if Thief was introduced.

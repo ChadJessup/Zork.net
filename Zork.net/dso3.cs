@@ -11,7 +11,7 @@ namespace Zork.Core
         /// <param name="dir"></param>
         /// <param name="rm"></param>
         /// <returns></returns>
-        public static bool FindExit(Game game, int dir, int rm)
+        public static bool FindExit(Game game, int dir, RoomIds rm)
         {
             // System generated locals
             bool ret_val;
@@ -23,7 +23,7 @@ namespace Zork.Core
             ret_val = true;
             // !ASSUME WINS.
             // !FIND FIRST ENTRY.
-            xi = game.Rooms[rm - 1].Exit;
+            xi = game.Rooms[(int)rm - 1].Exit;
 
             // !NO EXITS?
             if (xi == 0)
@@ -35,7 +35,7 @@ namespace Zork.Core
             // !GET ENTRY.
             i = game.Exits.Travel[xi - 1];
 
-            game.curxt_.xroom1 = i & xpars_.xrmask;
+            game.curxt_.xroom1 = (RoomIds)(i & xpars_.xrmask);
 
             // mask to 16-bits to get rid of sign extension problems with 32-bit ints
             xxxflg = ~xpars_.xlflag & 65535;

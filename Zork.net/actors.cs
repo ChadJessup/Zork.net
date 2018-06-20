@@ -52,16 +52,16 @@ namespace Zork.Core
             game.Clock.Flags[(int)ClockIndices.cevsph - 1] = false;
 
             // !RESET FOR PLAYER.
-            game.Player.Winner= (int)ActorIds.Player;
+            game.Player.Winner = ActorIds.Player;
 
             // !MOVE TO NEW ROOM.
-            f = AdventurerHandler.moveto_(game, (int)RoomIds.cager, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, RoomIds.cager, game.Player.Winner);
 
             // !INSTALL CAGE IN ROOM.
-            ObjectHandler.SetNewObjectStatus(ObjectIds.cage, 567, (int)RoomIds.cager, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.cage, 567, RoomIds.cager, 0, 0, game);
 
             // !INSTALL ROBOT IN ROOM.
-            ObjectHandler.SetNewObjectStatus(ObjectIds.robot, 0, (int)RoomIds.cager, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.robot, 0, RoomIds.cager, 0, 0, game);
 
             // !ALSO MOVE ROBOT/ADV.
             game.Adventurers.Rooms[(int)ActorIds.Robot - 1] = (int)RoomIds.cager;
@@ -98,12 +98,12 @@ namespace Zork.Core
             L1400:
             if (game.ParserVectors.prsa == (int)VerbIds.Walk
              || game.ParserVectors.prsa == (int)VerbIds.takew
-             || game.ParserVectors.prsa == (int)VerbIds.dropw
-             || game.ParserVectors.prsa == (int)VerbIds.putw
+             || game.ParserVectors.prsa == (int)VerbIds.Drop
+             || game.ParserVectors.prsa == (int)VerbIds.Put
              || game.ParserVectors.prsa == (int)VerbIds.pushw
-             || game.ParserVectors.prsa == (int)VerbIds.throww
+             || game.ParserVectors.prsa == (int)VerbIds.Throw
              || game.ParserVectors.prsa == (int)VerbIds.turnw
-             || game.ParserVectors.prsa == (int)VerbIds.leapw)
+             || game.ParserVectors.prsa == (int)VerbIds.Leap)
             {
                 goto L10;
             }
@@ -134,9 +134,9 @@ namespace Zork.Core
 
             i = 784;
             // !ASSUME WONT.
-            if (game.Player.Here == (int)RoomIds.scorr
+            if (game.Player.Here == RoomIds.scorr
                 && (game.ParserVectors.prso == (int)XSearch.xnorth || game.ParserVectors.prso == (int)XSearch.xenter)
-                || game.Player.Here == (int)RoomIds.ncorr
+                || game.Player.Here == RoomIds.ncorr
                 && (game.ParserVectors.prso == (int)XSearch.xsouth || game.ParserVectors.prso == (int)XSearch.xenter))
             {
                 i = 785;
@@ -147,9 +147,9 @@ namespace Zork.Core
 
             L2200:
             if (game.ParserVectors.prsa == (int)VerbIds.takew
-                || game.ParserVectors.prsa == (int)VerbIds.dropw
-                || game.ParserVectors.prsa == (int)VerbIds.putw
-                || game.ParserVectors.prsa == (int)VerbIds.throww
+                || game.ParserVectors.prsa == (int)VerbIds.Drop
+                || game.ParserVectors.prsa == (int)VerbIds.Put
+                || game.ParserVectors.prsa == (int)VerbIds.Throw
                 || game.ParserVectors.prsa == (int)VerbIds.pushw
                 || game.ParserVectors.prsa == (int)VerbIds.turnw
                 || game.ParserVectors.prsa == (int)VerbIds.spinw
@@ -187,7 +187,7 @@ namespace Zork.Core
             rhere = game.Objects.oroom[(int)ObjectIds.thief - 1];
             if (rhere != 0)
             {
-                game.Hack.ThiefPosition = rhere;
+                game.Hack.ThiefPosition = (RoomIds)rhere;
             }
 
             if (game.Hack.ThiefPosition == game.Player.Here)
@@ -196,7 +196,7 @@ namespace Zork.Core
             }
 
             // !THIEF IN WIN RM?
-            if (game.Hack.ThiefPosition != (int)RoomIds.Treasure)
+            if (game.Hack.ThiefPosition != RoomIds.Treasure)
             {
                 goto L1400;
             }
@@ -217,15 +217,15 @@ namespace Zork.Core
             if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, (int)RoomIds.Treasure)
                 || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             }
 
             L1050:
             i__1 = -(int)ObjectIds.thief;
-            i = dso4.RobAdventurer(game, i__1, game.Hack.ThiefPosition, 0, 0);
+            i = dso4.RobAdventurer(game, (ActorIds)i__1, game.Hack.ThiefPosition, 0, 0);
 
             // !DROP VALUABLES.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.Egg, game.Hack.ThiefPosition))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Egg, game.Hack.ThiefPosition, game))
             {
                 game.Objects.oflag2[(int)ObjectIds.Egg - 1] |= ObjectFlags2.IsOpen;
             }
@@ -235,13 +235,13 @@ namespace Zork.Core
             // THIEF AND WINNER IN SAME ROOM.
 
             L1100:
-            if (game.Hack.ThiefPosition == (int)RoomIds.Treasure)
+            if (game.Hack.ThiefPosition == RoomIds.Treasure)
             {
                 goto L1700;
             }
 
             // !IF TREAS ROOM, NOTHING.
-            if ((game.Rooms[game.Hack.ThiefPosition - 1].Flags & RoomFlags.LIGHT) != 0)
+            if ((game.Rooms[(int)game.Hack.ThiefPosition - 1].Flags & RoomFlags.LIGHT) != 0)
             {
                 goto L1400;
             }
@@ -284,10 +284,10 @@ namespace Zork.Core
             ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 584, 0, 0, 0, game);
             // !NO, VANISH THIEF.
             game.Objects.oflag2[(int)ObjectIds.thief - 1] &= ~ObjectFlags2.FITEBT;
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, game.Hack.ThiefPosition)
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.still, game.Hack.ThiefPosition, game)
                 || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             }
             return;
 
@@ -306,9 +306,9 @@ namespace Zork.Core
             // !IF VISIBLE AND 30%
             ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 585, 0, 0, 0, game);
             // !VANISH THIEF.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, game.Hack.ThiefPosition) || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.still, game.Hack.ThiefPosition, game) || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             }
             return;
 
@@ -327,7 +327,7 @@ namespace Zork.Core
             game.Hack.WasThiefIntroduced = true;
             i__1 = -(int)ObjectIds.thief;
             i__2 = -(int)ObjectIds.thief;
-            nr = dso4.RobRoom(game, game.Hack.ThiefPosition, 100, 0, 0, i__1) + dso4.RobAdventurer(game, game.Player.Winner, 0, 0, i__2);
+            nr = dso4.RobRoom(game, game.Hack.ThiefPosition, 100, 0, 0, i__1) + dso4.RobAdventurer(game, game.Player.Winner, 0, 0, (ActorIds)i__2);
             i = 586;
             // !ROBBED EM.
             if (rhere != 0)
@@ -342,10 +342,9 @@ namespace Zork.Core
             // !DID HE GET ANYTHING?
             ObjectHandler.SetNewObjectStatus(ObjectIds.thief, i, 0, 0, 0, game);
             // !VANISH THIEF.
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, game.Hack.ThiefPosition) || game.Objects.oadv[
-                (int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.still, game.Hack.ThiefPosition, game) || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             }
             if (nr != 0 && !RoomHandler.IsRoomLit(game.Hack.ThiefPosition, game))
             {
@@ -358,16 +357,16 @@ namespace Zork.Core
             // NOT IN ADVENTURERS ROOM.
 
             L1400:
-            ObjectHandler.SetNewObjectStatus(game, ObjectIds.thief, 0, 0, 0, 0);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 0, 0, 0, 0, game);
             // !VANISH.
             rhere = 0;
-            if (ObjectHandler.IsObjectInRoom(game, (int)ObjectIds.still, game.Hack.ThiefPosition)
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.still, game.Hack.ThiefPosition, game)
                 || game.Objects.oadv[(int)ObjectIds.still - 1] == -(int)ObjectIds.thief)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, (int)ObjectIds.thief, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.still, 0, 0, ObjectIds.thief, 0, game);
             }
 
-            if ((game.Rooms[game.Hack.ThiefPosition - 1].Flags & RoomFlags.SEEN) == 0)
+            if ((game.Rooms[(int)game.Hack.ThiefPosition - 1].Flags & RoomFlags.SEEN) == 0)
             {
                 goto L1700;
             }
@@ -375,10 +374,10 @@ namespace Zork.Core
             i__1 = -(int)ObjectIds.thief;
             i = dso4.RobRoom(game, game.Hack.ThiefPosition, 75, 0, 0, i__1);
             // !ROB ROOM 75%.
-            if (game.Hack.ThiefPosition < (int)RoomIds.maze1
-                || game.Hack.ThiefPosition > (int)RoomIds.maz15
-                || game.Player.Here < (int)RoomIds.maze1
-                || game.Player.Here > (int)RoomIds.maz15)
+            if (game.Hack.ThiefPosition < RoomIds.maze1
+                || game.Hack.ThiefPosition > RoomIds.maz15
+                || game.Player.Here < RoomIds.maze1
+                || game.Player.Here > RoomIds.maz15)
             {
                 goto L1500;
             }
@@ -387,7 +386,7 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !BOTH IN MAZE.
-                if (!ObjectHandler.IsObjectInRoom(game, i, game.Hack.ThiefPosition)
+                if (!ObjectHandler.IsObjectInRoom((ObjectIds)i, game.Hack.ThiefPosition, game)
                     || RoomHandler.prob_(game, 60, 60)
                     || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.IsTakeable) != (int)ObjectFlags.IsVisible + ObjectFlags.IsTakeable)
                 {
@@ -402,7 +401,7 @@ namespace Zork.Core
                 }
 
                 i__2 = -(int)ObjectIds.thief;
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, 0, 0, i__2, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, 0, 0, (ActorIds)i__2, game);
                 // !MOST OF THE TIME.
                 game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
                 goto L1700;
@@ -416,7 +415,7 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !NOT IN MAZE.
-                if (!ObjectHandler.IsObjectInRoom(game, i, game.Hack.ThiefPosition)
+                if (!ObjectHandler.IsObjectInRoom((ObjectIds)i, game.Hack.ThiefPosition, game)
                     || game.Objects.otval[i - 1] != 0
                     || RoomHandler.prob_(game, 80, 60)
                     || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.IsTakeable) != (int)ObjectFlags.IsVisible + ObjectFlags.IsTakeable)
@@ -424,7 +423,7 @@ namespace Zork.Core
                     goto L1550;
                 }
                 i__2 = -(int)ObjectIds.thief;
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, 0, 0, i__2, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, 0, 0, (ActorIds)i__2, game);
                 game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
                 goto L1700;
                 L1550:
@@ -448,9 +447,9 @@ namespace Zork.Core
             // !NEXT ROOM.
             if (game.Hack.ThiefPosition <= 0)
             {
-                game.Hack.ThiefPosition = game.Rooms.Count;
+                game.Hack.ThiefPosition = (RoomIds)game.Rooms.Count;
             }
-            if ((game.Rooms[game.Hack.ThiefPosition - 1].Flags & (int)RoomFlags.LAND + (int)RoomFlags.SACRED + RoomFlags.REND) != RoomFlags.LAND)
+            if ((game.Rooms[(int)game.Hack.ThiefPosition - 1].Flags & (int)RoomFlags.LAND + (int)RoomFlags.SACRED + RoomFlags.REND) != RoomFlags.LAND)
             {
                 goto L1750;
             }
@@ -462,7 +461,7 @@ namespace Zork.Core
             // ALL DONE.
 
             L1800:
-            if (game.Hack.ThiefPosition == (int)RoomIds.Treasure)
+            if (game.Hack.ThiefPosition == RoomIds.Treasure)
             {
                 return;
             }

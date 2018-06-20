@@ -130,12 +130,12 @@ namespace Zork.Core
             game.Time.smin = now.Minute;
             game.Time.ssec = now.Second;
 
-            game.Player.Winner = (int)ActorIds.Player;
+            game.Player.Winner = ActorIds.Player;
             game.Last.lastit = game.Adventurers.Objects[(int)(ActorIds.Player - 1)];
-            game.Player.Here = game.Adventurers.Rooms[game.Player.Winner - 1];
+            game.Player.Here = (RoomIds)game.Adventurers.Rooms[(int)game.Player.Winner - 1];
 
-            game.State.BalloonLocation = game.Objects.oroom[(int)(ObjectIds.Balloon - 1)];
-            game.Hack.ThiefPosition = game.Objects.oroom[(int)(ObjectIds.thief - 1)];
+            game.State.BalloonLocation = (RoomIds)game.Objects.oroom[(int)(ObjectIds.Balloon - 1)];
+            game.Hack.ThiefPosition = (RoomIds)game.Objects.oroom[(int)(ObjectIds.thief - 1)];
 
             return game;
         }

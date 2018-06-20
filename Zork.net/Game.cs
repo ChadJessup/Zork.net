@@ -38,7 +38,7 @@ namespace Zork.Core
             this.Switches.lcell = 1;
             this.Switches.pnumb = 1;
             this.Switches.mdir = 270;
-            this.Switches.mloc = (int)RoomIds.mrb;
+            this.Switches.mloc = RoomIds.mrb;
             this.Switches.cphere = 10;
 
             this.IsRunning = true;
@@ -118,7 +118,7 @@ namespace Zork.Core
                     continue;
                 }
 
-                this.Player.Winner = (int)ActorIds.Player;
+                this.Player.Winner = ActorIds.Player;
                 this.Player.TelFlag = false;
 
                 string input = string.Empty;
@@ -142,7 +142,7 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                if (this.ParserVectors.prsa == (int)VerbIds.tellw)
+                if (this.ParserVectors.prsa == (int)VerbIds.Tell)
                 {
                     //goto L2000;
                 }
@@ -159,12 +159,12 @@ namespace Zork.Core
                 }
 
                 L350:
-                if (!Flags.echof && this.Player.Here == (int)RoomIds.echor)
+                if (!Flags.echof && this.Player.Here == RoomIds.echor)
                 {
                     goto L1000;
                 }
 
-                f = RoomHandler.rappli_(this.Rooms[this.Player.Here - 1].Action, this);
+                f = RoomHandler.rappli_(this.Rooms[(int)this.Player.Here - 1].Action, this);
 
                 L400:
                 xendmv_(this.Player.TelFlag);
@@ -243,7 +243,7 @@ namespace Zork.Core
                 L2100:
                 this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.prso, this);
                 // !NEW PLAYER.
-                this.Player.Here = this.Adventurers.Rooms[this.Player.Winner - 1];
+                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
 
                 // !NEW LOCATION.
                 if (this.ParserVectors.prscon <= 1)
@@ -268,9 +268,9 @@ namespace Zork.Core
                 MessageHandler.Speak(i, this);
 
                 L2600:
-                this.Player.Winner = (int)ActorIds.Player;
+                this.Player.Winner = ActorIds.Player;
                 // !RESTORE STATE.
-                this.Player.Here = this.Adventurers.Rooms[this.Player.Winner - 1];
+                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
                 goto L350;
 
                 L2150:
@@ -296,7 +296,7 @@ namespace Zork.Core
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.rappli_(this.Rooms[this.Player.Here - 1].Action, this);
+                f = RoomHandler.rappli_(this.Rooms[(int)this.Player.Here - 1].Action, this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);
@@ -356,7 +356,7 @@ namespace Zork.Core
 
             ret_val = false;
             // !ASSUME LOSES.
-            av = this.Adventurers.Vehicles[this.Player.Winner - 1];
+            av = this.Adventurers.Vehicles[(int)this.Player.Winner - 1];
             // !GET VEHICLE.
             if (av != 0)
             {
@@ -375,7 +375,7 @@ namespace Zork.Core
     public class curxt_
     {
         public int xtype { get; set; }
-        public int xroom1 { get; set; }
+        public RoomIds xroom1 { get; set; }
         public int xstrng { get; set; }
         public int xactio { get; set; }
         public int xobj { get; set; }

@@ -2,8 +2,8 @@
 {
     public class Player
     {
-        public int Winner { get; set; }
-        public int Here { get; set; }
+        public ActorIds Winner { get; set; }
+        public RoomIds Here { get; set; }
         public bool TelFlag { get; set; }
     }
 }

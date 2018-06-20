@@ -4,7 +4,7 @@ namespace Zork.Core
 {
     public static class GlobalHandler
     {
-        public static bool ghere_(int obj, int rm, Game game)
+        public static bool ghere_(int obj, RoomIds roomId, Game game)
         {
             bool ret_val = true;
 
@@ -48,69 +48,72 @@ namespace Zork.Core
             // 2000--	BIRD
 
             L2000:
-            ret_val = rm >= (int)RoomIds.Forest1 && rm < (int)RoomIds.ForestClearing || rm == (int)RoomIds.mtree;
+            ret_val = roomId >= RoomIds.Forest1 && roomId < RoomIds.ForestClearing || roomId == RoomIds.mtree;
             return ret_val;
 
             // 3000--	TREE
 
             L3000:
-            ret_val = rm >= (int)RoomIds.Forest1 && rm < (int)RoomIds.ForestClearing && rm != (int)RoomIds.Forest3;
+            ret_val = roomId >= RoomIds.Forest1
+                && roomId < RoomIds.ForestClearing
+                && roomId != RoomIds.Forest3;
+
             return ret_val;
 
             // 4000--	NORTH WALL
 
             L4000:
-            ret_val = rm >= (int)RoomIds.bkvw && rm <= (int)RoomIds.bkbox || rm == (int)RoomIds.cpuzz;
+            ret_val = roomId >= RoomIds.bkvw && roomId <= RoomIds.bkbox || roomId == RoomIds.cpuzz;
             return ret_val;
 
             // 5000--	EAST, SOUTH, WEST WALLS
 
             L5000:
-            ret_val = rm >= (int)RoomIds.bkvw && rm < (int)RoomIds.bkbox || rm == (int)RoomIds.cpuzz;
+            ret_val = roomId >= RoomIds.bkvw && roomId < RoomIds.bkbox || roomId == RoomIds.cpuzz;
             return ret_val;
 
             // 6000--	GLOBAL WATER
 
             L6000:
-            ret_val = (game.Rooms[rm - 1].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
+            ret_val = (game.Rooms[(int)roomId - 1].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
             return ret_val;
 
             // 7000--	GLOBAL GUARDIANS
 
             L7000:
-            ret_val = rm >= (int)RoomIds.mrc && rm <= (int)RoomIds.mrd || rm >= (int)RoomIds.mrce && rm <= (int)RoomIds.mrdw || rm == (int)RoomIds.inmir;
+            ret_val = roomId >= RoomIds.mrc && roomId <= RoomIds.mrd || roomId >= RoomIds.mrce && roomId <= RoomIds.mrdw || roomId == RoomIds.inmir;
             return ret_val;
 
             // 8000--	ROSE/CHANNEL
 
             L8000:
-            ret_val = rm >= (int)RoomIds.mra && rm <= (int)RoomIds.mrd || rm == (int)RoomIds.inmir;
+            ret_val = roomId >= RoomIds.mra && roomId <= RoomIds.mrd || roomId == RoomIds.inmir;
             return ret_val;
 
             // 9000--	MIRROR
             // 9100		PANEL
 
             L9100:
-            if (rm == (int)RoomIds.fdoor)
+            if (roomId == RoomIds.fdoor)
             {
                 return ret_val;
             }
 
             // !PANEL AT FDOOR.
             L9000:
-            ret_val = rm >= (int)RoomIds.mra && rm <= (int)RoomIds.mrc || rm >= (int)RoomIds.mrae && rm <= (int)RoomIds.mrcw;
+            ret_val = roomId >= RoomIds.mra && roomId <= RoomIds.mrc || roomId >= RoomIds.mrae && roomId <= RoomIds.mrcw;
             return ret_val;
 
             // 10000--	MASTER
 
             L10000:
-            ret_val = rm == (int)RoomIds.fdoor || rm == (int)RoomIds.ncorr || rm == (int)RoomIds.parap || rm == (int)RoomIds.cell;
+            ret_val = roomId == RoomIds.fdoor || roomId == RoomIds.ncorr || roomId == RoomIds.parap || roomId == RoomIds.cell;
             return ret_val;
 
             // 11000--	LADDER
 
             L11000:
-            ret_val = rm == (int)RoomIds.cpuzz;
+            ret_val = roomId == RoomIds.cpuzz;
             return ret_val;
         }
     }

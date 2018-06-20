@@ -31,7 +31,7 @@ namespace Zork.Core
                 // !GET OBJECT NO.
                 ra = game.Objects.oactio[obj - 1];
                 // !GET HIS ACTION.
-                if (game.Player.Here != game.Objects.oroom[obj - 1])
+                if (game.Player.Here != (RoomIds)game.Objects.oroom[obj - 1])
                 {
                     goto L2200;
                 }
@@ -251,7 +251,7 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            att = dso4.ComputeFightStrength(game, h, true);
+            att = dso4.ComputeFightStrength(game, (ActorIds)h, true);
             // !GET HIS STRENGTH.
             oa = att;
             def = dso4.ComputeVillianStrength(game, v);
@@ -310,14 +310,14 @@ namespace Zork.Core
             att = dso4.ComputeVillianStrength(game, v);
             // !SET UP ATT, DEF.
             oa = att;
-            def = dso4.ComputeFightStrength(game, h, true);
+            def = dso4.ComputeFightStrength(game, (ActorIds)h, true);
             if (def <= 0)
             {
                 return ret_val;
             }
             // !DONT ALLOW DEAD DEF.
-            od = dso4.ComputeFightStrength(game, h, false);
-            i__1 = Parser.FindWhatIMean(0, (int)ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            od = dso4.ComputeFightStrength(game, (ActorIds)h, false);
+            i__1 = Parser.FindWhatIMean(0, (int)ObjectFlags2.WEAPBT, 0, 0, (ActorIds)h, true, game);
             dweap = Math.Abs(i__1);
             // !FIND A WEAPON.
             // BLOW, PAGE 4
@@ -489,7 +489,7 @@ namespace Zork.Core
             }
 
             // !IF HERO, DONE.
-            i__1 = Parser.FindWhatIMean(0, (int)ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            i__1 = Parser.FindWhatIMean(0, (int)ObjectFlags2.WEAPBT, 0, 0, (ActorIds)h, true, game);
             dweap = Math.Abs(i__1);
             // !GET NEW.
             if (dweap != 0)
@@ -555,12 +555,12 @@ namespace Zork.Core
             game.Clock.Flags[(int)ClockIndices.cevcur - 1] = true;
 
             L4600:
-            if (dso4.ComputeFightStrength(game, h, true) > 0)
+            if (dso4.ComputeFightStrength(game, (ActorIds)h, true) > 0)
             {
                 return ret_val;
             }
 
-            game.Adventurers.astren[h - 1] = 1 - dso4.ComputeFightStrength(game, h, false);
+            game.Adventurers.astren[h - 1] = 1 - dso4.ComputeFightStrength(game, (ActorIds)h, false);
 
             // !HE'S DEAD.
             AdventurerHandler.jigsup_(game, 596);
@@ -651,20 +651,20 @@ namespace Zork.Core
         /// infest_ - Test for infested room
         /// </summary>
         /// <param name="game"></param>
-        /// <param name="r"></param>
+        /// <param name="roomId"></param>
         /// <returns></returns>
-        public static bool infest_(Game game, int r)
+        public static bool infest_(Game game, RoomIds roomId)
         {
             // System generated locals
             bool ret_val;
 
             if (!game.Flags.EndGame)
             {
-                ret_val = game.Objects.oroom[(int)ObjectIds.cyclo - 1] == r || game.Objects.oroom[(int)ObjectIds.troll - 1] == r || game.Objects.oroom[(int)ObjectIds.thief - 1] == r && game.Hack.IsThiefActive;
+                ret_val = game.Objects.oroom[(int)ObjectIds.cyclo - 1] == (int)roomId || game.Objects.oroom[(int)ObjectIds.Troll - 1] == (int)roomId || game.Objects.oroom[(int)ObjectIds.thief - 1] == (int)roomId && game.Hack.IsThiefActive;
             }
             else
             {
-                ret_val = r == (int)RoomIds.mrg || r == (int)RoomIds.mrge || r == (int)RoomIds.mrgw || r == (int)RoomIds.inmir && game.Switches.mloc == (int)RoomIds.mrg;
+                ret_val = roomId == RoomIds.mrg || roomId == RoomIds.mrge || roomId == RoomIds.mrgw || roomId == RoomIds.inmir && game.Switches.mloc == RoomIds.mrg;
             }
 
             return ret_val;

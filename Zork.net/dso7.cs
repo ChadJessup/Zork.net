@@ -73,12 +73,12 @@ namespace Zork.Core
                 if (game.Objects.oroom[i - 1] == (int)RoomIds.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
                     i__2 = game.Switches.cphere * game.hyper_.hfactr;
-                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, i__2, 0, 0, game);
+                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)i__2, 0, 0, game);
                 }
 
                 if (game.Objects.oroom[i - 1] == st * game.hyper_.hfactr)
                 {
-                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (int)RoomIds.cpuzz, 0, 0, game);
+                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, RoomIds.cpuzz, 0, 0, game);
                 }
                 // L100:
             }
