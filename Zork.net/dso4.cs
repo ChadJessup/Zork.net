@@ -72,11 +72,14 @@ namespace Zork.Core
             return ret_val;
         } // robrm_
 
-        // WINNIN-- SEE IF VILLAIN IS WINNING
-
-        // DECLARATIONS
-
-        public static bool winnin_(Game game, int vl, int hr)
+        /// <summary>
+        /// winnin_ - See if Villian is winning
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="vl"></param>
+        /// <param name="hr"></param>
+        /// <returns></returns>
+        public static bool IsVillianWinning(Game game, int vl, int hr)
         {
             // System generated locals
             bool ret_val;
@@ -84,11 +87,10 @@ namespace Zork.Core
             // Local variables
             int ps, vs;
 
-
             // OBJECTS
             vs = game.Objects.ocapac[vl - 1];
             // !VILLAIN STRENGTH
-            ps = vs - fights_(game, hr, true);
+            ps = vs - ComputeFightStrength(game, hr, true);
             // !HIS MARGIN OVER HERO
             ret_val = RoomHandler.prob_(game, 90, 100);
             if (ps > 3) {
@@ -114,8 +116,14 @@ namespace Zork.Core
             return ret_val;
         } // winnin_
 
-        // FIGHTS-- COMPUTE FIGHT STRENGTH
-        public static int fights_(Game game, int h, bool flg)
+        /// <summary>
+        /// fights_ - Compute Fight Strength
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="h"></param>
+        /// <param name="flg"></param>
+        /// <returns></returns>
+        public static int ComputeFightStrength(Game game, int h, bool flg)
         {
             const int smin = 2;
             const int smax = 7;
@@ -130,9 +138,13 @@ namespace Zork.Core
             return ret_val;
         } // fights_
 
-        // VILSTR-	COMPUTE VILLAIN STRENGTH
-
-        public static int vilstr_(Game game, int v)
+        /// <summary>
+        /// vilstr_ - Compute Villain Strength
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="villianId"></param>
+        /// <returns></returns>
+        public static int ComputeVillianStrength(Game game, int villianId)
         {
             // System generated locals
             int ret_val, i__1, i__2, i__3;
@@ -140,26 +152,29 @@ namespace Zork.Core
             // Local variables
             int i;
 
-            ret_val = game.Objects.ocapac[v - 1];
+            ret_val = game.Objects.ocapac[villianId - 1];
             if (ret_val <= 0)
             {
                 return ret_val;
             }
 
-            if (v != (int)ObjectIndices.thief || !game.Flags.thfenf)
+            if (villianId != (int)ObjectIndices.thief || !game.Flags.thfenf)
             {
                 goto L100;
             }
-            game.Flags.thfenf = false;
+
             // !THIEF UNENGROSSED.
-            ret_val = Math.Min(ret_val, 2);
+            game.Flags.thfenf = false;
+
             // !NO BETTER THAN 2.
+            ret_val = Math.Min(ret_val, 2);
 
             L100:
             i__1 = game.Villians.Count;
-            for (i = 1; i <= i__1; ++i) {
+            for (i = 1; i <= i__1; ++i)
+            {
                 // !SEE IF  BEST WEAPON.
-                if (game.Villians.villns[i - 1] == v && game.ParserVectors.prsi == game.Villians.vbest[i - 1])
+                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.prsi == game.Villians.vbest[i - 1])
                 {
                     // Computing MAX
                     i__2 = 1;
@@ -170,6 +185,6 @@ namespace Zork.Core
             }
 
             return ret_val;
-        } // vilstr_
+        }
     }
 }

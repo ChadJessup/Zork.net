@@ -2,7 +2,7 @@
 
 namespace Zork.Core
 {
-    public static class actors
+    public static class Actors
     {
         // AAPPLI- APPLICABLES FOR ADVENTURERS
         public static bool aappli_(Game game, int ri)
@@ -39,14 +39,14 @@ namespace Zork.Core
             // A1--	ROBOT.  PROCESS MOST COMMANDS GIVEN TO ROBOT.
 
             L1000:
-            if (game.ParserVectors.prsa != (int)VIndices.raisew || game.ParserVectors.prso != (int)ObjectIndices.rcage)
+            if (game.ParserVectors.prsa != (int)VerbIndices.raisew || game.ParserVectors.prso != (int)ObjectIndices.rcage)
             {
 
                 goto L1200;
             }
             game.Clock.Flags[(int)ClockIndices.cevsph - 1] = false;
             // !ROBOT RAISED CAGE.
-            game.Player.Winner= (int)AIndices.player;
+            game.Player.Winner= (int)ActorIndices.Player;
             // !RESET FOR PLAYER.
             f = AdventurerHandler.moveto_(game, (int)RoomIndices.cager, game.Player.Winner);
             // !MOVE TO NEW ROOM.
@@ -54,7 +54,7 @@ namespace Zork.Core
             // !INSTALL CAGE IN ROOM.
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.robot, 0, (int)RoomIndices.cager, 0, 0);
             // !INSTALL ROBOT IN ROOM.
-            game.Adventurers.Rooms[(int)AIndices.arobot - 1] = (int)RoomIndices.cager;
+            game.Adventurers.Rooms[(int)ActorIndices.Robot - 1] = (int)RoomIndices.cager;
             // !ALSO MOVE ROBOT/ADV.
             game.Flags.cagesf = true;
             // !CAGE SOLVED.
@@ -63,7 +63,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            if (game.ParserVectors.prsa != (int)VIndices.drinkw && game.ParserVectors.prsa != (int)VIndices.eatw)
+            if (game.ParserVectors.prsa != (int)VerbIndices.drinkw && game.ParserVectors.prsa != (int)VerbIndices.eatw)
             {
                 goto L1300;
             }
@@ -73,7 +73,7 @@ namespace Zork.Core
             return ret_val;
 
             L1300:
-            if (game.ParserVectors.prsa != (int)VIndices.readw)
+            if (game.ParserVectors.prsa != (int)VerbIndices.Read)
             {
                 goto L1400;
             }
@@ -83,11 +83,11 @@ namespace Zork.Core
             return ret_val;
 
             L1400:
-            if (game.ParserVectors.prsa == (int)VIndices.walkw || game.ParserVectors.prsa == (int)VIndices.takew ||
-                game.ParserVectors.prsa == (int)VIndices.dropw || game.ParserVectors.prsa == (int)VIndices.putw
-                || game.ParserVectors.prsa == (int)VIndices.pushw || game.ParserVectors.prsa ==
-                (int)VIndices.throww || game.ParserVectors.prsa == (int)VIndices.turnw ||
-                game.ParserVectors.prsa == (int)VIndices.leapw)
+            if (game.ParserVectors.prsa == (int)VerbIndices.Walk || game.ParserVectors.prsa == (int)VerbIndices.takew ||
+                game.ParserVectors.prsa == (int)VerbIndices.dropw || game.ParserVectors.prsa == (int)VerbIndices.putw
+                || game.ParserVectors.prsa == (int)VerbIndices.pushw || game.ParserVectors.prsa ==
+                (int)VerbIndices.throww || game.ParserVectors.prsa == (int)VerbIndices.turnw ||
+                game.ParserVectors.prsa == (int)VerbIndices.leapw)
             {
                 goto L10;
             }
@@ -99,7 +99,7 @@ namespace Zork.Core
             // A2--	MASTER.  PROCESS MOST COMMANDS GIVEN TO MASTER.
 
             L2000:
-            if ((game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] & ObjectFlags2.OPENBT) != 0)
+            if ((game.Objects.oflag2[(int)ObjectIndices.qdoor - 1] & ObjectFlags2.IsOpen) != 0)
             {
                 goto L2100;
             }
@@ -108,7 +108,7 @@ namespace Zork.Core
             return ret_val;
 
             L2100:
-            if (game.ParserVectors.prsa != (int)VIndices.walkw)
+            if (game.ParserVectors.prsa != (int)VerbIndices.Walk)
             {
                 goto L2200;
             }
@@ -126,15 +126,15 @@ namespace Zork.Core
             return ret_val;
 
             L2200:
-            if (game.ParserVectors.prsa == (int)VIndices.takew || game.ParserVectors.prsa == (int)VIndices.dropw ||
-                game.ParserVectors.prsa == (int)VIndices.putw || game.ParserVectors.prsa ==
-                (int)VIndices.throww || game.ParserVectors.prsa == (int)VIndices.pushw ||
-                game.ParserVectors.prsa == (int)VIndices.turnw || game.ParserVectors.prsa ==
-                (int)VIndices.spinw || game.ParserVectors.prsa == (int)VIndices.trntow ||
-                game.ParserVectors.prsa == (int)VIndices.follow || game.ParserVectors.prsa ==
-                (int)VIndices.stayw || game.ParserVectors.prsa == (int)VIndices.openw ||
-                game.ParserVectors.prsa == (int)VIndices.closew || game.ParserVectors.prsa ==
-                (int)VIndices.killw)
+            if (game.ParserVectors.prsa == (int)VerbIndices.takew || game.ParserVectors.prsa == (int)VerbIndices.dropw ||
+                game.ParserVectors.prsa == (int)VerbIndices.putw || game.ParserVectors.prsa ==
+                (int)VerbIndices.throww || game.ParserVectors.prsa == (int)VerbIndices.pushw ||
+                game.ParserVectors.prsa == (int)VerbIndices.turnw || game.ParserVectors.prsa ==
+                (int)VerbIndices.spinw || game.ParserVectors.prsa == (int)VerbIndices.trntow ||
+                game.ParserVectors.prsa == (int)VerbIndices.follow || game.ParserVectors.prsa ==
+                (int)VerbIndices.stayw || game.ParserVectors.prsa == (int)VerbIndices.openw ||
+                game.ParserVectors.prsa == (int)VerbIndices.closew || game.ParserVectors.prsa ==
+                (int)VerbIndices.killw)
             {
                 goto L10;
             }
@@ -142,7 +142,7 @@ namespace Zork.Core
             // !MASTER CANT DO IT.
             return ret_val;
 
-        } // aappli_
+        }
 
         // THIEFD-	INTERMOVE THIEF DEMON
         public static void thiefd_(Game game)
@@ -170,64 +170,75 @@ namespace Zork.Core
             {
                 goto L1100;
             }
+
             // !THIEF IN WIN RM?
-            if (game.Hack.thfpos != (int)RoomIndices.treas)
+            if (game.Hack.thfpos != (int)RoomIndices.Treasure)
             {
                 goto L1400;
             }
+
             // !THIEF NOT IN TREAS?
 
             // THIEF IS IN TREASURE ROOM, AND WINNER IS NOT.
-
             if (rhere == 0)
             {
                 goto L1050;
             }
+
             // !VISIBLE?
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.thief, 0, 0, 0, 0);
             // !YES, VANISH.
             rhere = 0;
-            if (ObjectHandler.qhere_(game, (int)ObjectIndices.still, (int)RoomIndices.treas) || game.Objects.oadv[
-                (int)ObjectIndices.still - 1] == -(int)ObjectIndices.thief)
+
+            if (ObjectHandler.qhere_(game, (int)ObjectIndices.still, (int)RoomIndices.Treasure)
+                || game.Objects.oadv[(int)ObjectIndices.still - 1] == -(int)ObjectIndices.thief)
             {
                 ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.still, 0, 0, (int)ObjectIndices.thief, 0);
             }
+
             L1050:
             i__1 = -(int)ObjectIndices.thief;
             i = dso4.robadv_(game, i__1, game.Hack.thfpos, 0, 0);
+
             // !DROP VALUABLES.
-            if (ObjectHandler.qhere_(game, (int)ObjectIndices.egg, game.Hack.thfpos))
+            if (ObjectHandler.qhere_(game, (int)ObjectIndices.Egg, game.Hack.thfpos))
             {
-                game.Objects.oflag2[(int)ObjectIndices.egg - 1] |= ObjectFlags2.OPENBT;
+                game.Objects.oflag2[(int)ObjectIndices.Egg - 1] |= ObjectFlags2.IsOpen;
             }
+
             goto L1700;
 
             // THIEF AND WINNER IN SAME ROOM.
 
             L1100:
-            if (game.Hack.thfpos == (int)RoomIndices.treas)
+            if (game.Hack.thfpos == (int)RoomIndices.Treasure)
             {
                 goto L1700;
             }
+
             // !IF TREAS ROOM, NOTHING.
             if ((game.Rooms.Flags[game.Hack.thfpos - 1] & RoomFlags.LIGHT) != 0)
             {
                 goto L1400;
             }
+
             if (game.Hack.thfflg)
             {
                 goto L1300;
             }
+
             // !THIEF ANNOUNCED?
             if (rhere != 0 || RoomHandler.prob_(game, 70, 70))
             {
                 goto L1150;
             }
+
             // !IF INVIS AND 30%.
             if (game.Objects.ocan[(int)ObjectIndices.still - 1] != (int)ObjectIndices.thief)
             {
                 goto L1700;
             }
+
             // !ABORT IF NO STILLETTO.
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.thief, 583, game.Hack.thfpos, 0, 0);
             // !INSERT THIEF INTO ROOM.
@@ -236,12 +247,12 @@ namespace Zork.Core
             return;
 
             L1150:
-            if (rhere == 0 || (game.Objects.oflag2[(int)ObjectIndices.thief - 1] & ObjectFlags2.FITEBT)
-                == 0)
+            if (rhere == 0 || (game.Objects.oflag2[(int)ObjectIndices.thief - 1] & ObjectFlags2.FITEBT) == 0)
             {
                 goto L1200;
             }
-            if (dso4.winnin_(game, (int)ObjectIndices.thief, game.Player.Winner))
+
+            if (dso4.IsVillianWinning(game, (int)ObjectIndices.thief, game.Player.Winner))
             {
                 goto L1175;
             }
@@ -395,7 +406,7 @@ namespace Zork.Core
             // NOW MOVE TO NEW ROOM.
 
             L1700:
-            if (game.Objects.oadv[(int)ObjectIndices.rope - 1] == -(int)ObjectIndices.thief)
+            if (game.Objects.oadv[(int)ObjectIndices.Rope - 1] == -(int)ObjectIndices.thief)
             {
                 game.Flags.domef = false;
             }
@@ -411,7 +422,7 @@ namespace Zork.Core
             {
                 game.Hack.thfpos = game.Rooms.Count;
             }
-            if ((game.Rooms.Flags[game.Hack.thfpos - 1] & (int)RoomFlags.LAND + (int)RoomFlags.RSACRD + RoomFlags.REND) != RoomFlags.LAND)
+            if ((game.Rooms.Flags[game.Hack.thfpos - 1] & (int)RoomFlags.LAND + (int)RoomFlags.SACRED + RoomFlags.REND) != RoomFlags.LAND)
             {
                 goto L1750;
             }
@@ -423,7 +434,7 @@ namespace Zork.Core
             // ALL DONE.
 
             L1800:
-            if (game.Hack.thfpos == (int)RoomIndices.treas)
+            if (game.Hack.thfpos == (int)RoomIndices.Treasure)
             {
                 return;
             }

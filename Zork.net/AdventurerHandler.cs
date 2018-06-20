@@ -17,10 +17,11 @@ namespace Zork.Core
 
             i = 575;
             // !FIRST LINE.
-            if (adventurer != (int)AIndices.player)
+            if (adventurer != (int)ActorIndices.Player)
             {
                 i = 576;
             }
+
             // !IF NOT ME.
             i__1 = game.Objects.Count;
             for (j = 1; j <= i__1; ++j)
@@ -45,7 +46,7 @@ namespace Zork.Core
             }
 
             // !ANY OBJECTS?
-            if (adventurer == (int)AIndices.player)
+            if (adventurer == (int)ActorIndices.Player)
             {
                 MessageHandler.Speak(578, game);
             }
@@ -58,13 +59,14 @@ namespace Zork.Core
             for (j = 1; j <= i__1; ++j)
             {
                 // !LOOP.
-                if (game.Objects.oadv[j - 1] != adventurer || (game.Objects.oflag1[j - 1] &
-                    ObjectFlags.VISIBT) == 0 || (game.Objects.oflag1[j - 1] &
-                    ObjectFlags.TRANBT) == 0 && (game.Objects.oflag2[j - 1] &
-                    ObjectFlags2.OPENBT) == 0)
+                if (game.Objects.oadv[j - 1] != adventurer
+                    || (game.Objects.oflag1[j - 1] & ObjectFlags.VISIBT) == 0
+                    || (game.Objects.oflag1[j - 1] & ObjectFlags.IsTransparent) == 0
+                    && (game.Objects.oflag2[j - 1] & ObjectFlags2.IsOpen) == 0)
                 {
                     goto L100;
                 }
+
                 if (!ObjectHandler.IsObjectEmpty(j, game))
                 {
                     ObjectHandler.PrintDescription(j, 573, game);
@@ -89,37 +91,41 @@ namespace Zork.Core
             bool f;
             int i, j;
 
-            MessageHandler.Speak(desc, game);
             // !DESCRIBE SAD STATE.
-            game.ParserVectors.prscon = 1;
+            MessageHandler.Speak(desc, game);
+
             // !STOP PARSER.
-            //            if (debug_1.dbgflg != 0)
-            //            {
-            //                return;
-            //            }
+            game.ParserVectors.prscon = 1;
 
             // !IF DBG, EXIT.
+            //if (debug_1.dbgflg != 0)
+            //{
+            //    return;
+            //}
+
             game.Adventurers.Vehicles[game.Player.Winner - 1] = 0;
 
             // !GET RID OF VEHICLE.
-            if (game.Player.Winner == (int)AIndices.player)
+            if (game.Player.Winner == (int)ActorIndices.Player)
             {
                 goto L100;
             }
 
             // !HIMSELF?
-            MessageHandler.rspsub_(432, game.Objects.odesc2[game.Adventurers.Objects[game.Player.Winner - 1] - 1], game);
             // !NO, SAY WHO DIED.
-            ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
+            MessageHandler.rspsub_(432, game.Objects.odesc2[game.Adventurers.Objects[game.Player.Winner - 1] - 1], game);
+
             // !SEND TO HYPER SPACE.
+            ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
+
             return;
 
             L100:
+            // !NO RECOVERY IN END GAME.
             if (game.Flags.endgmf)
             {
                 goto L900;
             }
-            // !NO RECOVERY IN END GAME.
 
             // always exit for plopbot's purposes
             goto L1000;
@@ -146,23 +152,23 @@ namespace Zork.Core
             }
 
             ++game.State.Deaths;
-            AdventurerHandler.ScoreUpdate(game, -10);
             // !CHARGE TEN POINTS.
-            f = AdventurerHandler.moveto_(game, RoomIndices.Forest1, game.Player.Winner);
+            AdventurerHandler.ScoreUpdate(game, -10);
             // !REPOSITION HIM.
-            game.Flags.egyptf = true;
+            f = AdventurerHandler.moveto_(game, RoomIndices.Forest1, game.Player.Winner);
             // !RESTORE COFFIN.
-            if (game.Objects.oadv[(int)ObjectIndices.coffi - 1] == game.Player.Winner)
+            game.Flags.egyptf = true;
+            if (game.Objects.oadv[(int)ObjectIndices.Coffin - 1] == game.Player.Winner)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.coffi, 0, RoomIndices.Egypt, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIndices.Coffin, 0, RoomIndices.Egypt, 0, 0, game);
             }
 
             game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
             game.Objects.oflag1[(int)ObjectIndices.robot - 1] = (game.Objects.oflag1[(int)ObjectIndices.robot - 1] | ObjectFlags.VISIBT) & ~ObjectFlags.NDSCBT;
 
-            if (game.Objects.oroom[(int)ObjectIndices.lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIndices.lamp - 1] == game.Player.Winner)
+            if (game.Objects.oroom[(int)ObjectIndices.Lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIndices.Lamp - 1] == game.Player.Winner)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.lamp, 0, RoomIndices.LivingRoom, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIndices.Lamp, 0, RoomIndices.LivingRoom, 0, 0, game);
             }
 
             // NOW REDISTRIBUTE HIS VALUABLES AND OTHER BELONGINGS.
@@ -198,7 +204,7 @@ namespace Zork.Core
             i = game.Rooms.Count + 1;
 
             // !NOW MOVE VALUABLES.
-            nonofl = (int)(RoomFlags.AIR + (int)RoomFlags.WATER + (int)RoomFlags.RSACRD + (int)RoomFlags.REND);
+            nonofl = (int)(RoomFlags.AIR + (int)RoomFlags.WATER + (int)RoomFlags.SACRED + (int)RoomFlags.REND);
             // !DONT MOVE HERE.
             i__1 = game.Objects.Count;
             for (j = 1; j <= i__1; ++j)
@@ -229,6 +235,7 @@ namespace Zork.Core
                 {
                     goto L500;
                 }
+
                 L450:
                 --i;
                 // !FIND NEXT ROOM.
@@ -277,8 +284,9 @@ namespace Zork.Core
             // !ASSUME FAILS.
             lhr = (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) != 0;
             lnr = (game.Rooms.Flags[nr - 1] & RoomFlags.LAND) != 0;
-            j = game.Adventurers.Vehicles[who - 1];
+
             // !HIS VEHICLE
+            j = game.Adventurers.Vehicles[who - 1];
 
             if (j != 0)
             {
@@ -305,7 +313,7 @@ namespace Zork.Core
             }
 
             // !IN BOAT?
-            if (j == (int)ObjectIndices.ballo)
+            if (j == (int)ObjectIndices.Balloon)
             {
                 bits = (int)RoomFlags.AIR;
             }
@@ -336,7 +344,7 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (who != (int)AIndices.player)
+            if (who != (int)ActorIndices.Player)
             {
                 ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[who - 1], 0, nr, 0, 0, game);
             }

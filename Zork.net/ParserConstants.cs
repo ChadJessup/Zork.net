@@ -2,7 +2,7 @@
 {
     public class ParserConstants
     {
-        // VERBS--	MAPS VERBS TO SYNTAX SLOTS
+        // VERBS-- MAPS VERBS TO SYNTAX SLOTS
 
         // EACH ENTRY IS VARIABLE LENGTH AND CONSISTS OF ONE OR MORE
         // TWO WORD VERBS IN RADIX-50 FOLLOWED BY A SYNTAX WORD COUNT
@@ -42,7 +42,7 @@
         // 	BIT 12	BIT 11	MDLDESC		INTERPRETATION
         // 	------	------	-------		---------------
 
-        // 	  0	  0	 --		NO PARSER ACTION
+        // 	  0	  0	 ---		NO PARSER ACTION
         // 	  0	  1	 HAVE		ADVENTURER MUST HAVE OBJECT
         // 	  1	  0	 TRY		TRY TO TAKE, DONT CARE IF FAIL
         // 	  1	  1	 TAKE		TRY TO TAKE, CARE IF FAIL
@@ -170,7 +170,7 @@
         // &		"40150,"20007,"40,0,
         // &	 3RWAV,1RE,3RFLA,3RUNT,3RBRA,3RNDI,4,"40154,"40000,-1,-1,
         // &	 3RWIN,1RD,5,"50233,"40233,"61007,-1,-1/
-        public static readonly int[] vvoc =
+        public static readonly int[] Verbs =
         {
             3929, 8240, 1, 70, 35418, 3819, 1, 71, 31256, 8722, 1, 72,
             31201, 40000, 1, 73, 35418, 30775, 1, 74, 31329, 20800, 3260,
@@ -304,7 +304,7 @@
         // &	 3RNOR,2RTH,205,3RNOR,3RTHE,205,3RSOU,2RTH,206,
         // &	 3RSOU,3RTHE,206,3REAS,1RT,207,3REAS,3RTER,207,
         // &	 3RWES,1RT,208,3RWES,3RTER,208,3RDUN,3RGEO,215/
-        public static readonly int[] avoc = {
+        public static readonly int[] Adjectives = {
             3935, 37360, 1, 81, 8495, 22681, 1, 13420, 0, 3, 25816,
             25818, 3, 35580, 29015, 4, 16044, 8000, 6, 13647, 8000, 8, 8575,
             29335, 8, 122, 32735, 25945, 9, 5285, 2320, 10, 19258, 11400, 12,
@@ -460,7 +460,7 @@
         // &	 3RGUA,2RRD,210,3RGUA,3RRDI,210,3RROS,1RE,211,
         // &	 3RSTR,3RUCT,212,3RCHA,3RNNE,214,
         // &	 3RKEE,3RPER,215,3RLAD,3RDER,216/
-        public static readonly int[] ovoc =
+        public static readonly int[] Objects =
         {
             3247, 0, 1, 25, 100, 30443, 17600, 1, 11258, 19563, 2, 5295,
             35400, 2, 10215, 6400, 3, 30454, 7329, 3, 20054, 5120, 3, 6774,
@@ -559,18 +559,24 @@
         // &		3RDOW,1RN,6,2RUP,0,7,3RUND,2RER,8,2ROF,0,9,2RON,0,10,
         // &		3ROFF,0,11/
         // chadj: 06/05/2018 - padded with two zeros since the C code goes out of bounds.
-        public static readonly int[] pvoc =
+        public static readonly int[] Prepositions =
         {
             24885, 28800, 1, 37180, 12800, 2, 34369, 22680, 2, 32338,
             24847, 2, 2400, 0, 3, 32600, 0, 4, 14960, 0, 5, 14979, 14565, 5,
             14980, 0, 5, 7023, 22400, 6, 34240, 0, 7, 34164, 8720, 8, 24240,
             0, 9, 24560, 0, 10, 24246, 0, 11, 0, 0
         };
+        public static readonly string[] NewPrepositions =
+        {
+            "OVER", "WITH", "USING", "THROUGH", "AT",
+            "TO", "IN", "INSIDE", "INTO", "DOWN",
+            "UP", "UNDER", "OF", "ON", "OFF"
+        };
 
         // buzzwords - ignored during processing
         // 	DATA BVOC/3RAND,0,2RBY,0,2RIS,0,1RA,0,
         // &		2RAN,0,3RTHE,0,3RRUN,0,2RGO,0,3RPRO,3RCEE,0,0/
-        public static readonly int[] bvoc =
+        public static readonly int[] Buzzwords =
         {
             2164, 0, 4200, 0, 15160, 0, 1600, 0, 2160, 0, 32325, 0,
             29654, 0, 11800, 0, 26335, 5005, 0, 0
@@ -587,7 +593,7 @@
         // &	 3RTRA,3RVEL,"36000,3RSOU,2RTH,"12000,
         // &	 2RIN,0,"32000,
         // &	 3RCRO,2RSS,"36000/
-        public static readonly int[] dvoc =
+        public static readonly int[] Directions =
         {
             22400, 0, 1024, 23018, 32320, 1024, 30400, 0, 5120, 8000, 0,
             3072, 8059, 32000, 3072, 36800, 0, 7168, 37019, 32000, 7168,

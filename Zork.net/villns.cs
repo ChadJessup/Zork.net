@@ -15,7 +15,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.ParserVectors.prsa != (int)VIndices.fightw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.Fight) {
                 goto L1100;
             }
             // !FIGHT?
@@ -41,7 +41,7 @@ namespace Zork.Core
             return ret_val;
 
             L1100:
-            if (game.ParserVectors.prsa != (int)VIndices.deadxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.deadxw) {
                 goto L1200;
             }
             // !DEAD?
@@ -50,7 +50,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            if (game.ParserVectors.prsa != (int)VIndices.outxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.outxw) {
                 goto L1300;
             }
             // !OUT?
@@ -62,7 +62,7 @@ namespace Zork.Core
             return ret_val;
 
             L1300:
-            if (game.ParserVectors.prsa != (int)VIndices.inxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.inxw) {
                 goto L1400;
             }
             // !WAKE UP?
@@ -77,7 +77,7 @@ namespace Zork.Core
             return ret_val;
 
             L1400:
-            if (game.ParserVectors.prsa != (int)VIndices.frstqw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.frstqw) {
                 goto L1500;
             }
             // !FIRST ENCOUNTER?
@@ -86,9 +86,9 @@ namespace Zork.Core
             return ret_val;
 
             L1500:
-            if (game.ParserVectors.prsa != (int)VIndices.movew && game.ParserVectors.prsa != (int)VIndices.takew &&
-                game.ParserVectors.prsa != (int)VIndices.mungw && game.ParserVectors.prsa !=
-                (int)VIndices.throww && game.ParserVectors.prsa != (int)VIndices.givew) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.movew && game.ParserVectors.prsa != (int)VerbIndices.takew &&
+                game.ParserVectors.prsa != (int)VerbIndices.mungw && game.ParserVectors.prsa !=
+                (int)VerbIndices.throww && game.ParserVectors.prsa != (int)VerbIndices.givew) {
                 goto L2000;
             }
             if (game.Objects.ocapac[(int)ObjectIndices.troll - 1] >= 0) {
@@ -104,7 +104,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(game, 437);
 
             L1550:
-            if (game.ParserVectors.prsa != (int)VIndices.takew && game.ParserVectors.prsa != (int)VIndices.movew) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.takew && game.ParserVectors.prsa != (int)VerbIndices.movew) {
                 goto L1600;
             }
             MessageHandler.rspsub_(game, 438);
@@ -112,7 +112,7 @@ namespace Zork.Core
             return ret_val;
 
             L1600:
-            if (game.ParserVectors.prsa != (int)VIndices.mungw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.mungw) {
                 goto L1700;
             }
             // !MUNG?
@@ -127,13 +127,13 @@ namespace Zork.Core
             // !NO OBJECT?
             i = 440;
             // !ASSUME THROW.
-            if (game.ParserVectors.prsa == (int)VIndices.givew) {
+            if (game.ParserVectors.prsa == (int)VerbIndices.givew) {
                 i = 441;
             }
             // !GIVE?
             MessageHandler.rspsub_(game, i, game.Objects.odesc2[game.ParserVectors.prso - 1]);
             // !TROLL TAKES.
-            if (game.ParserVectors.prso == (int)ObjectIndices.knife) {
+            if (game.ParserVectors.prso == (int)ObjectIndices.Knife) {
                 goto L1900;
             }
             // !OBJ KNIFE?
@@ -148,7 +148,7 @@ namespace Zork.Core
             return ret_val;
 
             L2000:
-            if (!game.Flags.trollf || game.ParserVectors.prsa != (int)VIndices.hellow) {
+            if (!game.Flags.trollf || game.ParserVectors.prsa != (int)VerbIndices.hellow) {
                 goto L10;
             }
             MessageHandler.rspeak_(game, 366);
@@ -181,10 +181,10 @@ namespace Zork.Core
             }
 
             // !ASLEEP?
-            if (game.ParserVectors.prsa != (int)VIndices.alarmw && game.ParserVectors.prsa != (int)VIndices.mungw &&
-                 game.ParserVectors.prsa != (int)VIndices.hellow && game.ParserVectors.prsa !=
-                (int)VIndices.burnw && game.ParserVectors.prsa != (int)VIndices.killw &&
-                game.ParserVectors.prsa != (int)VIndices.attacw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.alarmw && game.ParserVectors.prsa != (int)VerbIndices.mungw &&
+                 game.ParserVectors.prsa != (int)VerbIndices.hellow && game.ParserVectors.prsa !=
+                (int)VerbIndices.burnw && game.ParserVectors.prsa != (int)VerbIndices.killw &&
+                game.ParserVectors.prsa != (int)VerbIndices.attacw) {
                 goto L10;
             }
             game.Flags.cyclof = false;
@@ -196,7 +196,7 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            if (game.ParserVectors.prsa == (int)VIndices.fightw || game.ParserVectors.prsa == (int)VIndices.frstqw)
+            if (game.ParserVectors.prsa == (int)VerbIndices.Fight || game.ParserVectors.prsa == (int)VerbIndices.frstqw)
             {
                 goto L10;
             }
@@ -211,7 +211,7 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if (game.ParserVectors.prsa != (int)VIndices.givew) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.givew) {
                 goto L500;
             }
             // !GIVE?
@@ -229,7 +229,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prso != (int)ObjectIndices.water) {
+            if (game.ParserVectors.prso != (int)ObjectIndices.Water) {
                 goto L400;
             }
             // !DRINK WHEN THIRSTY?
@@ -277,18 +277,18 @@ namespace Zork.Core
             L500:
             i = 0;
             // !ASSUME NOT HANDLED.
-            if (game.ParserVectors.prsa == (int)VIndices.hellow) {
+            if (game.ParserVectors.prsa == (int)VerbIndices.hellow) {
                 goto L450;
             }
             // !HELLO IS NO GO.
-            if (game.ParserVectors.prsa == (int)VIndices.throww || game.ParserVectors.prsa == (int)VIndices.mungw) {
+            if (game.ParserVectors.prsa == (int)VerbIndices.throww || game.ParserVectors.prsa == (int)VerbIndices.mungw) {
 
                 i = game.rnd_(2) + 200;
             }
-            if (game.ParserVectors.prsa == (int)VIndices.takew) {
+            if (game.ParserVectors.prsa == (int)VerbIndices.takew) {
                 i = 202;
             }
-            if (game.ParserVectors.prsa == (int)VIndices.tiew) {
+            if (game.ParserVectors.prsa == (int)VerbIndices.tiew) {
                 i = 203;
             }
             if (i <= 0) {
@@ -315,7 +315,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.ParserVectors.prsa != (int)VIndices.fightw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.Fight) {
                 goto L100;
             }
             // !FIGHT?
@@ -345,7 +345,7 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            if (game.ParserVectors.prsa != (int)VIndices.deadxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.deadxw) {
                 goto L200;
             }
             // !DEAD?
@@ -371,7 +371,7 @@ namespace Zork.Core
                 // !LOOP.
                 if (i == (int)ObjectIndices.chali
                     || i == (int)ObjectIndices.thief
-                    || game.Player.Here != (int)RoomIndices.treas
+                    || game.Player.Here != (int)RoomIndices.Treasure
                     || !ObjectHandler.qhere_(game, i, game.Player.Here))
                 {
                     goto L135;
@@ -393,7 +393,7 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if (game.ParserVectors.prsa != (int)VIndices.frstqw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.frstqw) {
                 goto L250;
             }
             // !FIRST ENCOUNTER?
@@ -401,7 +401,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.ParserVectors.prsa != (int)VIndices.hellow || game.Objects.odesc1[(int)ObjectIndices.thief -
+            if (game.ParserVectors.prsa != (int)VerbIndices.hellow || game.Objects.odesc1[(int)ObjectIndices.thief -
                 1] != 504) {
                 goto L300;
             }
@@ -409,7 +409,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VIndices.outxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.outxw) {
                 goto L400;
             }
             // !OUT?
@@ -422,7 +422,7 @@ namespace Zork.Core
             return ret_val;
 
             L400:
-            if (game.ParserVectors.prsa != (int)VIndices.inxw) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.inxw) {
                 goto L500;
             }
             // !IN?
@@ -435,7 +435,7 @@ namespace Zork.Core
             game.Objects.odesc1[(int)ObjectIndices.thief - 1] = 503;
             // !CHANGE DESCRIPTION.
             game.Objects.oflag1[(int)ObjectIndices.still - 1] |= ObjectFlags.VISIBT;
-            if (game.Player.Here == (int)RoomIndices.treas
+            if (game.Player.Here == (int)RoomIndices.Treasure
                 && ObjectHandler.qhere_(game, (int)ObjectIndices.chali, game.Player.Here))
             {
                 game.Objects.oflag1[(int)ObjectIndices.chali - 1] &= ~ObjectFlags.TAKEBT;
@@ -443,7 +443,7 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.ParserVectors.prsa != (int)VIndices.takew) {
+            if (game.ParserVectors.prsa != (int)VerbIndices.takew) {
                 goto L600;
             }
             // !TAKE?
@@ -452,7 +452,7 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VIndices.throww || game.ParserVectors.prso != (int)ObjectIndices.knife ||
+            if (game.ParserVectors.prsa != (int)VerbIndices.throww || game.ParserVectors.prso != (int)ObjectIndices.Knife ||
                 (game.Objects.oflag2[(int)ObjectIndices.thief - 1] & ObjectFlags2.FITEBT) != 0) {
                 goto L700;
             }
@@ -484,7 +484,7 @@ namespace Zork.Core
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa != (int)VIndices.throww && game.ParserVectors.prsa != (int)VIndices.givew ||
+            if (game.ParserVectors.prsa != (int)VerbIndices.throww && game.ParserVectors.prsa != (int)VerbIndices.givew ||
                 game.ParserVectors.prso == 0 || game.ParserVectors.prso == (int)ObjectIndices.thief) {
                 goto L10;
             }

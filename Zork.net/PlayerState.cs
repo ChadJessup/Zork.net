@@ -10,7 +10,12 @@
         public int ltshft { get; set; }
         public int bloc { get; set; }
         public int mungrm { get; set; }
-        public int hs { get; set; }
+
+        /// <summary>
+        /// Gets or set Hello Sailor count. (???)
+        /// </summary>
+        public int HelloSailor { get; set; }
+
         public int egscor { get; set; }
         public int egmxsc { get; set; }
     }

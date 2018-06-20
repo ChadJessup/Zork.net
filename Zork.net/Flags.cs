@@ -16,7 +16,7 @@
         public bool cyclof { get; set; }
         public bool magicf { get; set; }
         public bool litldf { get; set; }
-        public bool safef { get; set; }
+        public bool WasSafeBlown { get; set; }
         public bool gnomef { get; set; }
         public bool gnodrf { get; set; }
         public bool mirrmf { get; set; }
@@ -52,8 +52,8 @@
 
     public class Switches
     {
-        public int btief { get; set; }
-        public int binff { get; set; }
+        public int IsBalloonTiedUp { get; set; }
+        public int IsBalloonInflated { get; set; }
         public int rvmnt { get; set; }
         public int rvclr { get; set; }
         public int rvcyc { get; set; }

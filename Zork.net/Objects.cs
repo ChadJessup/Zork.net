@@ -13,7 +13,7 @@ namespace Zork.Core
         public List<ObjectFlags2> oflag2 = new List<ObjectFlags2>(220);
         public List<int> ofval = new List<int>(220);
         public List<int> otval = new List<int>(220);
-        public List<int> osize = new List<int>(220);
+        public List<int> Sizes = new List<int>(220);
         public List<int> ocapac = new List<int>(220);
         public List<int> oroom = new List<int>(220);
         public List<int> oadv = new List<int>(220);

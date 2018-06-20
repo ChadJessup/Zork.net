@@ -15,12 +15,13 @@ namespace Zork.Core
                 goto L200;
             }
             // !READOUT?
-            if (game.ParserVectors.prsa != (int)VIndices.lookw)
+            if (game.ParserVectors.prsa != (int)VerbIndices.lookw)
             {
                 goto L10;
             }
+
             // !ONLY PROCESS LOOK.
-            if (game.Switches.binff != 0)
+            if (game.Switches.IsBalloonInflated != 0)
             {
                 goto L50;
             }
@@ -29,13 +30,14 @@ namespace Zork.Core
             // !NO.
             goto L100;
             L50:
-            MessageHandler.rspsub_(game, 544, game.Objects.odesc2[game.Switches.binff - 1]);
+            MessageHandler.rspsub_(game, 544, game.Objects.odesc2[game.Switches.IsBalloonInflated - 1]);
             // !YES.
             L100:
-            if (game.Switches.btief != 0)
+            if (game.Switches.IsBalloonTiedUp != 0)
             {
                 MessageHandler.Speak(game, 545);
             }
+
             // !HOOKED?
             return ret_val;
 
@@ -45,12 +47,12 @@ namespace Zork.Core
                 goto L500;
             }
             // !READIN?
-            if (game.ParserVectors.prsa != (int)VIndices.walkw)
+            if (game.ParserVectors.prsa != (int)VerbIndices.Walk)
             {
                 goto L300;
             }
             // !WALK?
-            if (dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
+            if (dso3.FindExit(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L250;
             }
@@ -60,7 +62,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.Switches.btief == 0)
+            if (game.Switches.IsBalloonTiedUp == 0)
             {
                 goto L275;
             }
@@ -84,16 +86,16 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VIndices.takew || game.ParserVectors.prso != game.Switches.binff)
+            if (game.ParserVectors.prsa != (int)VerbIndices.takew || game.ParserVectors.prso != game.Switches.IsBalloonInflated)
             {
                 goto L350;
             }
-            MessageHandler.rspsub_(game, 548, game.Objects.odesc2[game.Switches.binff - 1]);
+            MessageHandler.rspsub_(game, 548, game.Objects.odesc2[game.Switches.IsBalloonInflated - 1]);
             // !RECEP CONT TOO HOT.
             return ret_val;
 
             L350:
-            if (game.ParserVectors.prsa != (int)VIndices.putw
+            if (game.ParserVectors.prsa != (int)VerbIndices.putw
                 || game.ParserVectors.prsi != (int)ObjectIndices.recep
                 || ObjectHandler.qempty_(game, ObjectIndices.recep))
             {
@@ -104,11 +106,12 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.ParserVectors.prsa != (int)VIndices.unboaw || (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) == 0)
+            if (game.ParserVectors.prsa != (int)VerbIndices.unboaw || (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) == 0)
             {
                 goto L600;
             }
-            if (game.Switches.binff != 0)
+
+            if (game.Switches.IsBalloonInflated != 0)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             }
@@ -116,32 +119,35 @@ namespace Zork.Core
             goto L10;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VIndices.burnw || game.Objects.ocan[game.ParserVectors.prso - 1] != (int)ObjectIndices.recep)
+            if (game.ParserVectors.prsa != (int)VerbIndices.burnw || game.Objects.ocan[game.ParserVectors.prso - 1] != (int)ObjectIndices.recep)
             {
                 goto L700;
             }
 
             MessageHandler.rspsub_(game, 550, game.Objects.odesc2[game.ParserVectors.prso - 1]);
             // !LIGHT FIRE IN RECEP.
-            game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects.osize[game.ParserVectors.prso - 1] * 20;
+            game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects.Sizes[game.ParserVectors.prso - 1] * 20;
             game.Objects.oflag1[game.ParserVectors.prso - 1] |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.TAKEBT + ObjectFlags.READBT);
 
-            if (game.Switches.binff != 0)
+            if (game.Switches.IsBalloonInflated != 0)
             {
                 return ret_val;
             }
+
             if (!game.Flags.blabf)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.blabe, 0, 0, ObjectIndices.ballo, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIndices.blabe, 0, 0, ObjectIndices.Balloon, 0, game);
             }
+
             game.Flags.blabf = true;
-            game.Switches.binff = game.ParserVectors.prso;
+            game.Switches.IsBalloonInflated = game.ParserVectors.prso;
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             MessageHandler.Speak(game, 551);
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa == (int)VIndices.unboaw && game.Switches.binff != 0
+            if (game.ParserVectors.prsa == (int)VerbIndices.unboaw
+                && game.Switches.IsBalloonInflated != 0
                 && (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) != 0)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;

@@ -9,12 +9,14 @@ namespace Zork.Core
     public enum RoomFlags
     {
         REND = 16,
-        RNWALL = 32,
-        RHOUSE = 64,
+
+        // I think this is for no walls...was RNWALL
+        NOWALL = 32,
+        HOUSE = 64,
         RBUCK = 128,
         RMUNG = 256,
         RFILL = 512,
-        RSACRD = 1024,
+        SACRED = 1024,
         AIR = 2048,
         WATER = 4096,
         LAND = 8192,

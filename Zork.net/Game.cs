@@ -18,7 +18,7 @@ namespace Zork.Core
             this.State.Moves = 0;
             this.Time.pltime = 0;
             this.State.mungrm = 0;
-            this.State.hs = 0;
+            this.State.HelloSailor = 0;
             this.ParserVectors.prsa = 0;
 
             this.Hack.thfflg = false;
@@ -119,7 +119,7 @@ namespace Zork.Core
                     continue;
                 }
 
-                this.Player.Winner = (int)AIndices.player;
+                this.Player.Winner = (int)ActorIndices.Player;
                 this.Player.TelFlag = false;
 
                 string input = string.Empty;
@@ -143,7 +143,7 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                if (this.ParserVectors.prsa == (int)VIndices.tellw)
+                if (this.ParserVectors.prsa == (int)VerbIndices.tellw)
                 {
                     //goto L2000;
                 }
@@ -208,11 +208,11 @@ namespace Zork.Core
 
                 L1300:
                 this.ParserVectors.prswon = Parser.Parse(input, false, this);
-                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != (int)VIndices.walkw)
+                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != (int)VerbIndices.Walk)
                 {
                     goto L1400;
                 }
-                if (dso3.findxt_(this, this.ParserVectors.prso, this.Player.Here))
+                if (dso3.FindExit(this, this.ParserVectors.prso, this.Player.Here))
                 {
                     goto L300;
                 }
@@ -268,7 +268,7 @@ namespace Zork.Core
                 MessageHandler.Speak(i, this);
 
                 L2600:
-                this.Player.Winner = (int)AIndices.player;
+                this.Player.Winner = (int)ActorIndices.Player;
                 // !RESTORE STATE.
                 this.Player.Here = this.Adventurers.Rooms[this.Player.Winner - 1];
                 goto L350;
@@ -323,7 +323,7 @@ namespace Zork.Core
             // !DEFAULT REMARK.
             if (this.Hack.thfact)
             {
-                actors.thiefd_(this);
+                Actors.thiefd_(this);
             }
             // !THIEF DEMON.
             if (this.ParserVectors.prswon)

@@ -45,6 +45,20 @@ namespace Zork.Core
                 game.Rooms.Flags.Add((RoomFlags)tempFlags[idx]);
             }
 
+            for (int ridx = 0; ridx < game.Rooms.Count; ridx++)
+            {
+                var room = new Room();
+                room.Id = ridx;
+                room.Action = game.Rooms.Actions[i];
+                room.Description1 = game.Rooms.Descriptions1[i];
+                room.Description2 = game.Rooms.Descriptions2[i];
+                room.Exit = game.Rooms.Exits[i];
+                room.Flags = game.Rooms.Flags[i];
+                room.Value = game.Rooms.Values[i];
+
+                game.NewRooms.Add(room);
+            }
+
             game.Exits.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
 
@@ -72,7 +86,7 @@ namespace Zork.Core
 
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ofval, bytes, game);
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.otval, bytes, game);
-            DataLoader.ReadInts(game.Objects.Count, game.Objects.osize, bytes, game);
+            DataLoader.ReadInts(game.Objects.Count, game.Objects.Sizes, bytes, game);
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.ocapac, bytes, game);
             DataLoader.ReadInts(game.Objects.Count, game.Objects.oroom, bytes, game);
             DataLoader.ReadPartialInts(game.Objects.Count, game.Objects.oadv, bytes, game);
@@ -116,11 +130,11 @@ namespace Zork.Core
             game.Time.smin = now.Minute;
             game.Time.ssec = now.Second;
 
-            game.Player.Winner = (int)AIndices.player;
-            game.Last.lastit = game.Adventurers.Objects[(int)(AIndices.player - 1)];
+            game.Player.Winner = (int)ActorIndices.Player;
+            game.Last.lastit = game.Adventurers.Objects[(int)(ActorIndices.Player - 1)];
             game.Player.Here = game.Adventurers.Rooms[game.Player.Winner - 1];
 
-            game.State.bloc = game.Objects.oroom[(int)(ObjectIndices.ballo - 1)];
+            game.State.bloc = game.Objects.oroom[(int)(ObjectIndices.Balloon - 1)];
             game.Hack.thfpos = game.Objects.oroom[(int)(ObjectIndices.thief - 1)];
 
             return game;

@@ -11,7 +11,7 @@ namespace Zork.Core
         /// <param name="dir"></param>
         /// <param name="rm"></param>
         /// <returns></returns>
-        public static bool findxt_(Game game, int dir, int rm)
+        public static bool FindExit(Game game, int dir, int rm)
         {
             // System generated locals
             bool ret_val;
@@ -124,7 +124,7 @@ namespace Zork.Core
                 // DOES OBJECT CONTAIN A MATCH?
 
                 L500:
-                if ((game.Objects.oflag2[i - 1] & ObjectFlags2.OPENBT) == 0)
+                if ((game.Objects.oflag2[i - 1] & ObjectFlags2.IsOpen) == 0)
                 {
                     goto L1000;
                 }

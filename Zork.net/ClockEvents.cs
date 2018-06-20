@@ -106,11 +106,11 @@ namespace Zork.Core
             L1000:
             // Computing MIN
             i__1 = 0;
-            i__2 = game.Adventurers.astren[(int)AIndices.player - 1] + 1;
-            game.Adventurers.astren[(int)AIndices.player - 1] = Math.Min(i__1, i__2);
+            i__2 = game.Adventurers.astren[(int)ActorIndices.Player - 1] + 1;
+            game.Adventurers.astren[(int)ActorIndices.Player - 1] = Math.Min(i__1, i__2);
 
             // !RECOVER.
-            if (game.Adventurers.astren[(int)AIndices.player - 1] >= 0)
+            if (game.Adventurers.astren[(int)ActorIndices.Player - 1] >= 0)
             {
                 return;
             }
@@ -155,7 +155,7 @@ namespace Zork.Core
             // CEV3--	LANTERN.  DESCRIBE GROWING DIMNESS.
 
             L3000:
-            litint_(game, (int)ObjectIndices.lamp, game.Switches.orlamp, (int)ClockIndices.cevlnt, lmptck, 12);
+            litint_(game, (int)ObjectIndices.Lamp, game.Switches.orlamp, (int)ClockIndices.cevlnt, lmptck, 12);
             // !DO LIGHT INTERRUPT.
             return;
 
@@ -170,7 +170,7 @@ namespace Zork.Core
             // CEV5--	CANDLE.  DESCRIBE GROWING DIMNESS.
 
             L5000:
-            litint_(game, (int)ObjectIndices.candl, game.Switches.orcand, (int)ClockIndices.cevcnd, cndtck, 10);
+            litint_(game, (int)ObjectIndices.Candle, game.Switches.orcand, (int)ClockIndices.cevcnd, cndtck, 10);
             // !DO CANDLE INTERRUPT.
             return;
             // CEVAPP, PAGE 3
@@ -180,7 +180,7 @@ namespace Zork.Core
             L6000:
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             // !RESCHEDULE INTERRUPT.
-            f = game.Adventurers.Vehicles[game.Player.Winner - 1] == (int)ObjectIndices.ballo;
+            f = game.Adventurers.Vehicles[game.Player.Winner - 1] == (int)ObjectIndices.Balloon;
             // !SEE IF IN BALLOON.
             if (game.State.bloc == (int)RoomIndices.vlbot)
             {
@@ -194,7 +194,7 @@ namespace Zork.Core
             }
 
             // !ON LEDGE?
-            if ((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0 && game.Switches.binff != 0) {
+            if ((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.IsOpen) != 0 && game.Switches.IsBalloonInflated != 0) {
                 goto L6500;
             }
 
@@ -207,7 +207,7 @@ namespace Zork.Core
             // !IN VAIR1?
             game.State.bloc = (int)RoomIndices.vlbot;
             // !YES, NOW AT VLBOT.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, game.State.bloc, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, game.State.bloc, 0, 0);
             if (f) {
                 goto L6200;
             }
@@ -225,7 +225,7 @@ namespace Zork.Core
             L6200:
             f = AdventurerHandler.moveto_(game, game.State.bloc, game.Player.Winner);
             // !MOVE HIM.
-            if (game.Switches.binff == 0) {
+            if (game.Switches.IsBalloonInflated == 0) {
                 goto L6250;
             }
             // !IN BALLOON.  INFLATED?
@@ -236,7 +236,7 @@ namespace Zork.Core
             return;
 
             L6250:
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 532, 0, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 532, 0, 0, 0);
             // !NO, BALLOON & CONTENTS DIE.
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.dball, 0, game.State.bloc, 0, 0);
             // !INSERT DEAD BALLOON.
@@ -245,14 +245,14 @@ namespace Zork.Core
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             // !DISABLE INTERRUPTS.
             game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
-            game.Switches.binff = 0;
-            game.Switches.btief = 0;
+            game.Switches.IsBalloonInflated = 0;
+            game.Switches.IsBalloonTiedUp = 0;
             return;
 
             L6300:
             --game.State.bloc;
             // !NOT IN VAIR1, DESCEND.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, game.State.bloc, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, game.State.bloc, 0, 0);
             if (f) {
                 goto L6400;
             }
@@ -285,11 +285,11 @@ namespace Zork.Core
             // !AT VAIR4?
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = 0;
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 0;
-            game.Switches.binff = 0;
-            game.Switches.btief = 0;
+            game.Switches.IsBalloonInflated = 0;
+            game.Switches.IsBalloonTiedUp = 0;
             game.State.bloc = (int)RoomIndices.vlbot;
             // !FALL TO BOTTOM.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, 0, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, 0, 0, 0);
             // !BALLOON & CONTENTS DIE.
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.dball, 0, game.State.bloc, 0, 0);
             // !SUBSTITUTE DEAD BALLOON.
@@ -312,7 +312,7 @@ namespace Zork.Core
             L6600:
             ++game.State.bloc;
             // !NOT AT VAIR4, GO UP.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, game.State.bloc, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, game.State.bloc, 0, 0);
             if (f)
             {
                 goto L6650;
@@ -340,7 +340,7 @@ namespace Zork.Core
             L6700:
             game.State.bloc += (int)RoomIndices.vair2 - (int)RoomIndices.ledg2;
             // !MOVE TO MIDAIR.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, game.State.bloc, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, game.State.bloc, 0, 0);
             if (f) {
                 goto L6750;
             }
@@ -365,14 +365,14 @@ namespace Zork.Core
             // AT BOTTOM, GO UP IF INFLATED, DO NOTHING IF DEFLATED.
 
             L6800:
-            if (game.Switches.binff == 0 || !((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.OPENBT) != 0))
+            if (game.Switches.IsBalloonInflated == 0 || !((game.Objects.oflag2[(int)ObjectIndices.recep - 1] & ObjectFlags2.IsOpen) != 0))
             {
                 return;
             }
 
             game.State.bloc = (int)RoomIndices.vair1;
             // !INFLATED AND OPEN,
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, game.State.bloc, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, game.State.bloc, 0, 0);
             // !GO UP TO VAIR1.
             if (f) {
                 goto L6850;
@@ -413,7 +413,7 @@ namespace Zork.Core
             L7200:
             ObjectHandler.SetNewObjectStatus(game, i, 0, 0, 0, 0);
             // !VANISH OBJECT.
-            game.Switches.binff = 0;
+            game.Switches.IsBalloonInflated = 0;
             // !UNINFLATED.
             if (game.Player.Here == game.State.bloc)
             {
@@ -445,33 +445,39 @@ namespace Zork.Core
             }
             // !BRICK ELSEWHERE?
 
+            // !MUNG ROOM.
             game.Rooms.Flags[game.Player.Here - 1] |= RoomFlags.RMUNG;
             game.Rooms.Actions[game.Player.Here - 1] = 114;
-            // !MUNG ROOM.
-            AdventurerHandler.jigsup_(game, 150);
+
             // !DEAD.
+            AdventurerHandler.jigsup_(game, 150);
             return;
 
             L8100:
-            MessageHandler.rspeak_(game, 151);
             // !BOOM.
-            game.State.mungrm = br;
+            MessageHandler.rspeak_(game, 151);
+
             // !SAVE ROOM THAT BLEW.
+            game.State.mungrm = br;
             game.Clock.Ticks[(int)ClockIndices.cevsaf - 1] = 5;
             // !SET SAFE INTERRUPT.
-            if (br != (int)RoomIndices.msafe) {
+            if (br != (int)RoomIndices.Safe)
+            {
                 goto L8200;
             }
+
             // !BLEW SAFE ROOM?
-            if (bc != (int)ObjectIndices.sslot) {
+            if (bc != (int)ObjectIndices.sslot)
+            {
                 return;
             }
+
             // !WAS BRICK IN SAFE?
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.sslot, 0, 0, 0, 0);
             // !KILL SLOT.
-            game.Objects.oflag2[(int)ObjectIndices.safe - 1] |= ObjectFlags2.OPENBT;
-            game.Flags.safef = true;
+            game.Objects.oflag2[(int)ObjectIndices.safe - 1] |= ObjectFlags2.IsOpen;
             // !INDICATE SAFE BLOWN.
+            game.Flags.WasSafeBlown = true;
             return;
 
             L8200:
@@ -490,11 +496,12 @@ namespace Zork.Core
             {
                 return;
             }
+
             // !BLEW LIVING ROOM?
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
-                if (game.Objects.ocan[i - 1] == (int)ObjectIndices.tcase)
+                if (game.Objects.ocan[i - 1] == (int)ObjectIndices.TrophyCase)
                 {
                     ObjectHandler.SetNewObjectStatus(game, i, 0, 0, 0, 0);
                 }
@@ -540,7 +547,7 @@ namespace Zork.Core
             return;
 
             L9200:
-            if (game.Switches.btief != 0)
+            if (game.Switches.IsBalloonTiedUp != 0)
             {
                 goto L9300;
             }
@@ -552,12 +559,12 @@ namespace Zork.Core
             L9300:
             game.State.bloc = (int)RoomIndices.vlbot;
             // !YES, CRASH BALLOON.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.ballo, 0, 0, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Balloon, 0, 0, 0, 0);
             // !BALLOON & CONTENTS DIE.
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.dball, 0, game.State.bloc, 0, 0);
             // !INSERT DEAD BALLOON.
-            game.Switches.btief = 0;
-            game.Switches.binff = 0;
+            game.Switches.IsBalloonTiedUp = 0;
+            game.Switches.IsBalloonInflated = 0;
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
             AdventurerHandler.jigsup_(game, 113);
@@ -577,7 +584,7 @@ namespace Zork.Core
             // !IS HE PRESENT?
             MessageHandler.rspeak_(game, 115);
             // !LET HIM KNOW.
-            if (game.State.mungrm == (int)RoomIndices.msafe)
+            if (game.State.mungrm == (int)RoomIndices.Safe)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevled - 1] = 8;
             }
@@ -587,7 +594,7 @@ namespace Zork.Core
             L10100:
             i = 116;
             // !HE'S DEAD,
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.RHOUSE) != 0)
+            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.HOUSE) != 0)
             {
                 i = 117;
             }
@@ -610,22 +617,22 @@ namespace Zork.Core
             return;
 
             L11100:
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.gnome, 118, game.Player.Here, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Gnome, 118, game.Player.Here, 0, 0);
             // !YES, MATERIALIZE GNOME.
             return;
 
             // CEV12--	VOLCANO GNOME DISAPPEARS
 
             L12000:
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.gnome, 149, 0, 0, 0);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Gnome, 149, 0, 0, 0);
             // !DISAPPEAR THE GNOME.
             return;
 
             // CEV13--	BUCKET.
 
             L13000:
-            if (game.Objects.ocan[(int)ObjectIndices.water - 1] == (int)ObjectIndices.bucke) {
-                ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.water, 0, 0, 0, 0);
+            if (game.Objects.ocan[(int)ObjectIndices.Water - 1] == (int)ObjectIndices.bucke) {
+                ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Water, 0, 0, 0, 0);
             }
             return;
 
@@ -732,18 +739,18 @@ namespace Zork.Core
                 ObjectHandler.SetNewObjectStatus(game, i, 0, game.Objects.oroom[i - 1], game.Objects.ocan[i - 1], 0);
                 // L20300:
             }
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.lamp, 0, 0, 0, (int)AIndices.player);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Lamp, 0, 0, 0, (int)ActorIndices.Player);
             // !GIVE HIM LAMP.
-            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.sword, 0, 0, 0, (int)AIndices.player);
+            ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.Sword, 0, 0, 0, (int)ActorIndices.Player);
             // !GIVE HIM SWORD.
 
-            game.Objects.oflag1[(int)ObjectIndices.lamp - 1] = (game.Objects.oflag1[(int)ObjectIndices.lamp - 1] | ObjectFlags.LITEBT) & ~ObjectFlags.ONBT;
-            game.Objects.oflag2[(int)ObjectIndices.lamp - 1] |= ObjectFlags2.TCHBT;
+            game.Objects.oflag1[(int)ObjectIndices.Lamp - 1] = (game.Objects.oflag1[(int)ObjectIndices.Lamp - 1] | ObjectFlags.LITEBT) & ~ObjectFlags.ONBT;
+            game.Objects.oflag2[(int)ObjectIndices.Lamp - 1] |= ObjectFlags2.TCHBT;
             game.Clock.Flags[(int)ClockIndices.cevlnt - 1] = false;
             // !LAMP IS GOOD AS NEW.
             game.Clock.Ticks[(int)ClockIndices.cevlnt - 1] = 350;
             game.Switches.orlamp = 0;
-            game.Objects.oflag2[(int)ObjectIndices.sword - 1] |= ObjectFlags2.TCHBT;
+            game.Objects.oflag2[(int)ObjectIndices.Sword - 1] |= ObjectFlags2.TCHBT;
             game.Hack.swdact = true;
             game.Hack.swdsta = 0;
 
@@ -802,7 +809,7 @@ namespace Zork.Core
             // CEV23--	INQUISITOR'S QUESTION
 
             L23000:
-            if (game.Adventurers.Rooms[(int)AIndices.player - 1] != (int)RoomIndices.fdoor) {
+            if (game.Adventurers.Rooms[(int)ActorIndices.Player - 1] != (int)RoomIndices.fdoor) {
                 return;
             }
             // !IF PLAYER LEFT, DIE.
@@ -815,7 +822,7 @@ namespace Zork.Core
             // CEV24--	MASTER FOLLOWS
 
             L24000:
-            if (game.Adventurers.Rooms[(int)AIndices.amastr - 1] == game.Player.Here) {
+            if (game.Adventurers.Rooms[(int)ActorIndices.Master - 1] == game.Player.Here) {
                 return;
             }
             // !NO MOVEMENT, DONE.
@@ -842,7 +849,7 @@ namespace Zork.Core
             i__2 = (int)XSearch.xmin;
             for (j = (int)XSearch.xmin; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2)
             {
-                if (dso3.findxt_(game, j, game.Adventurers.Rooms[(int)AIndices.amastr - 1]) && game.curxt_.xroom1 == game.Player.Here)
+                if (dso3.FindExit(game, j, game.Adventurers.Rooms[(int)ActorIndices.Master - 1]) && game.curxt_.xroom1 == game.Player.Here)
                 {
                     i = 813;
                 }
@@ -852,7 +859,7 @@ namespace Zork.Core
             MessageHandler.rspeak_(game, i);
             ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.master, 0, game.Player.Here, 0, 0);
             // !MOVE MASTER OBJECT.
-            game.Adventurers.Rooms[(int)AIndices.amastr - 1] = game.Player.Here;
+            game.Adventurers.Rooms[(int)ActorIndices.Master - 1] = game.Player.Here;
             // !MOVE MASTER PLAYER.
             return;
 

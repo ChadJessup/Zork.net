@@ -195,12 +195,12 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.Player.Winner != (int)AIndices.player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
+            if (game.Player.Winner != (int)ActorIndices.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
             }
 
-            if (!dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
+            if (!dso3.FindExit(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L450;
             }
@@ -241,7 +241,7 @@ namespace Zork.Core
                 goto L400;
             }
             // !DOOR... RETURNED ROOM?
-            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.OPENBT) != 0)
+            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.IsOpen) != 0)
             {
                 goto L400;
             }
@@ -266,7 +266,7 @@ namespace Zork.Core
             // ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE).
 
             L500:
-            if (dso3.findxt_(game, game.ParserVectors.prso, game.Player.Here))
+            if (dso3.FindExit(game, game.ParserVectors.prso, game.Player.Here))
             {
                 goto L550;
             }
@@ -284,7 +284,7 @@ namespace Zork.Core
                 game.curxt_.xstrng = 680;
             }
             // !IF DOWN, CANT.
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.RNWALL) != 0)
+            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.NOWALL) != 0)
             {
                 game.curxt_.xstrng = 524;
             }
@@ -336,7 +336,7 @@ namespace Zork.Core
                 goto L900;
             }
             // !DOOR... RETURNED ROOM?
-            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.OPENBT) != 0)
+            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.IsOpen) != 0)
             {
                 goto L900;
             }
@@ -401,7 +401,7 @@ namespace Zork.Core
             // C1- COFFIN-CURE
 
             L1000:
-            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIndices.coffi - 1] != game.Player.Winner;
+            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIndices.Coffin - 1] != game.Player.Winner;
             // !T IF NO COFFIN.
             return ret_val;
 
@@ -445,13 +445,13 @@ namespace Zork.Core
             // !CARRYING TOO MUCH?
             game.curxt_.xstrng = 446;
             // !ASSUME NO LAMP.
-            if (game.Objects.oadv[(int)ObjectIndices.lamp - 1] != game.Player.Winner) {
+            if (game.Objects.oadv[(int)ObjectIndices.Lamp - 1] != game.Player.Winner) {
                 return ret_val;
             }
             // !NO LAMP?
             game.Flags.litldf = true;
             // !HE CAN DO IT.
-            if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.OPENBT) == 0) {
+            if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.IsOpen) == 0) {
                 game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
             }
             return ret_val;

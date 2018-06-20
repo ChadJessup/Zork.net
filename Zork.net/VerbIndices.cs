@@ -1,6 +1,6 @@
 ﻿namespace Zork.Core
 {
-    public enum VIndices
+    public enum VerbIndices
     {
         cintw = 1,
         deadxw = 2,
@@ -8,12 +8,12 @@
         inxw = 4,
         outxw = 5,
         walkiw = 6,
-        fightw = 7,
+        Fight = 7,
         foow = 8,
         meltw = 101,
-        readw = 100,
-        inflaw = 102,
-        deflaw = 103,
+        Read = 100,
+        Inflate = 102,
+        Deflate = 103,
         alarmw = 104,
         exorcw = 105,
         plugw = 106,
@@ -30,14 +30,14 @@
         breatw = 117,
         knockw = 118,
         lookw = 119,
-        examiw = 120,
+        Examine = 120,
         shakew = 121,
         movew = 122,
         trnonw = 123,
         trnofw = 124,
         openw = 125,
         closew = 126,
-        findw = 127,
+        Find = 127,
         waitw = 128,
         spinw = 129,
         boardw = 130,
@@ -52,7 +52,7 @@
         killw = 139,
         attacw = 141,
         swingw = 140,
-        walkw = 142,
+        Walk = 142,
         tellw = 143,
         putw = 144,
         dropw = 145,
@@ -68,9 +68,9 @@
         lookuw = 153,
         pumpw = 154,
         windw = 155,
-        clmbw = 156,
-        clmbuw = 157,
-        clmbdw = 158,
+        Climb = 156,
+        ClimbUp = 157,
+        ClimbDown = 158,
         trntow = 159,
     }
 }
