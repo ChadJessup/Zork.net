@@ -140,8 +140,8 @@ namespace Zork.Core
             // !IF NOT FULL, EXIT.
             game.Clock.Ticks[(int)ClockIndices.cevmnt - 1] = 0;
             // !FULL, DISABLE CLOCK.
-            game.Rooms.Flags[(int)RoomIndices.maint - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[(int)RoomIndices.maint - 1] = 80;
+            game.Rooms[(int)RoomIndices.maint - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[(int)RoomIndices.maint - 1].Action = 80;
 
             // !SAY IT IS FULL OF WATER.
             if (game.Player.Here == (int)RoomIndices.maint)
@@ -446,8 +446,8 @@ namespace Zork.Core
             // !BRICK ELSEWHERE?
 
             // !MUNG ROOM.
-            game.Rooms.Flags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[game.Player.Here - 1] = 114;
+            game.Rooms[game.Player.Here - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[game.Player.Here - 1].Action = 114;
 
             // !DEAD.
             AdventurerHandler.jigsup_(game, 150);
@@ -523,8 +523,8 @@ namespace Zork.Core
             // CEV9--	LEDGE MUNGE.
 
             L9000:
-            game.Rooms.Flags[(int)RoomIndices.ledg4 - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[(int)RoomIndices.ledg4 - 1] = 109;
+            game.Rooms[(int)RoomIndices.ledg4 - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[(int)RoomIndices.ledg4 - 1].Action = 109;
             if (game.Player.Here == (int)RoomIndices.ledg4)
             {
                 goto L9100;
@@ -574,8 +574,8 @@ namespace Zork.Core
             // CEV10--	SAFE MUNG.
 
             L10000:
-            game.Rooms.Flags[game.State.mungrm - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[game.State.mungrm - 1] = 114;
+            game.Rooms[game.State.mungrm - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[game.State.mungrm - 1].Action = 114;
             if (game.Player.Here == game.State.mungrm)
             {
                 goto L10100;
@@ -594,7 +594,7 @@ namespace Zork.Core
             L10100:
             i = 116;
             // !HE'S DEAD,
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.HOUSE) != 0)
+            if ((game.Rooms[game.Player.Here - 1].Flags & RoomFlags.HOUSE) != 0)
             {
                 i = 117;
             }
@@ -639,8 +639,8 @@ namespace Zork.Core
             // CEV14--	SPHERE.  IF EXPIRES, HE'S TRAPPED.
 
             L14000:
-            game.Rooms.Flags[(int)RoomIndices.cager - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[(int)RoomIndices.cager - 1] = 147;
+            game.Rooms[(int)RoomIndices.cager - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[(int)RoomIndices.cager - 1].Action = 147;
             AdventurerHandler.jigsup_(game, 148);
             // !MUNG PLAYER.
             return;
@@ -648,7 +648,7 @@ namespace Zork.Core
             // CEV15--	END GAME HERALD.
 
             L15000:
-            game.Flags.endgmf = true;
+            game.Flags.EndGame = true;
             // !WE'RE IN ENDGAME.
             MessageHandler.rspeak_(game, 119);
             // !INFORM OF ENDGAME.
@@ -756,16 +756,16 @@ namespace Zork.Core
 
             game.Hack.thfact = false;
             // !THIEF GONE.
-            game.Flags.endgmf = true;
+            game.Flags.EndGame = true;
             // !ENDGAME RUNNING.
             game.Clock.Flags[(int)ClockIndices.cevmat - 1] = false;
             // !MATCHES GONE,
             game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
             // !CANDLES GONE.
 
-            AdventurerHandler.ScoreUpdate(game, game.Rooms.Values[(int)RoomIndices.Crypt - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Rooms[(int)RoomIndices.Crypt - 1].Score);
             // !SCORE CRYPT,
-            game.Rooms.Values[(int)RoomIndices.Crypt - 1] = 0;
+            game.Rooms[(int)RoomIndices.Crypt - 1].Score = 0;
             // !BUT ONLY ONCE.
             f = AdventurerHandler.moveto_(game, (int)RoomIndices.tstrs, game.Player.Winner);
             // !TO TOP OF STAIRS,

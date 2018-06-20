@@ -77,7 +77,7 @@ namespace Zork.Core
                 goto L10;
             }
             // !NORMAL EXIT?
-            if ((game.Rooms.Flags[game.curxt_.xroom1 - 1] & RoomFlags.RMUNG) == 0)
+            if ((game.Rooms[game.curxt_.xroom1 - 1].Flags & RoomFlags.RMUNG) == 0)
             {
                 game.State.bloc = game.curxt_.xroom1;
             }
@@ -106,7 +106,7 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.ParserVectors.prsa != (int)VerbIndices.unboaw || (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) == 0)
+            if (game.ParserVectors.prsa != (int)VerbIndices.unboaw || (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) == 0)
             {
                 goto L600;
             }
@@ -148,7 +148,7 @@ namespace Zork.Core
             L700:
             if (game.ParserVectors.prsa == (int)VerbIndices.unboaw
                 && game.Switches.IsBalloonInflated != 0
-                && (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) != 0)
+                && (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) != 0)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             }

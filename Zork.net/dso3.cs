@@ -22,7 +22,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            xi = game.Rooms.Exits[rm - 1];
+            xi = game.Rooms[rm - 1].Exit;
             // !FIND FIRST ENTRY.
             if (xi == 0)
             {
@@ -35,7 +35,7 @@ namespace Zork.Core
             // !GET ENTRY.
             game.curxt_.xroom1 = i & xpars_.xrmask;
             // mask to 16-bits to get rid of sign extension problems with 32-bit ints
-           
+
             xxxflg = ~xpars_.xlflag & 65535;
             game.curxt_.xtype = ((i & xxxflg) / xpars_.xfshft & xpars_.xfmask) + 1;
             switch (game.curxt_.xtype)
@@ -95,7 +95,7 @@ namespace Zork.Core
 
                 // OBJECT IS ON LIST... IS IT A MATCH?
 
-                if ((game.Objects.oflag1[i - 1] & ObjectFlags.VISIBT) == 0)
+                if ((game.Objects.oflag1[i - 1] & ObjectFlags.IsVisible) == 0)
                 {
                     goto L1000;
                 }
@@ -133,7 +133,7 @@ namespace Zork.Core
                 {
                     // !NO, SEARCH CONTENTS.
                     if (game.Objects.ocan[j - 1] != i
-                        || (game.Objects.oflag1[j - 1] & ObjectFlags.VISIBT) == 0
+                        || (game.Objects.oflag1[j - 1] & ObjectFlags.IsVisible) == 0
                         || (game.Objects.oflag1[j - 1] & (ObjectFlags)f1) == 0
                         && (game.Objects.oflag2[j - 1] & (ObjectFlags2)f2) == 0)
                     {

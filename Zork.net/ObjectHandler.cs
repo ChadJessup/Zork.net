@@ -654,7 +654,7 @@ namespace Zork.Core
             return ret_val;
 
             L7100:
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.NOWALL) == 0)
+            if ((game.Rooms[game.Player.Here - 1].Flags & RoomFlags.NOWALL) == 0)
             {
                 goto L10;
             }
@@ -761,7 +761,7 @@ namespace Zork.Core
             // !DESCRIBE.
             RoomHandler.PrintRoomContents(true, game.Player.Here, game);
             // !PRINT ROOMS CONTENTS.
-            game.Rooms.Flags[game.Player.Here - 1] |= RoomFlags.SEEN;
+            game.Rooms[game.Player.Here - 1].Flags |= RoomFlags.SEEN;
             return ret_val;
 
             L9500:
@@ -1070,10 +1070,10 @@ namespace Zork.Core
 
             game.Objects.oflag2[(int)ObjectIndices.odoor - 1] &= ~ObjectFlags2.IsOpen;
             game.Objects.oflag2[(int)ObjectIndices.cdoor - 1] &= ~ObjectFlags2.IsOpen;
-            game.Objects.oflag1[(int)ObjectIndices.odoor - 1] &= ~ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.odoor - 1] &= ~ObjectFlags.IsVisible;
             if (game.Switches.pnumb == 4)
             {
-                game.Objects.oflag1[(int)ObjectIndices.odoor - 1] |= ObjectFlags.VISIBT;
+                game.Objects.oflag1[(int)ObjectIndices.odoor - 1] |= ObjectFlags.IsVisible;
             }
 
             if (game.Adventurers.Rooms[(int)ActorIndices.Player - 1] != (int)RoomIndices.cell)
@@ -1086,7 +1086,7 @@ namespace Zork.Core
                 goto L17200;
             }
             // !IN RIGHT CELL?
-            game.Objects.oflag1[(int)ObjectIndices.odoor - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.odoor - 1] |= ObjectFlags.IsVisible;
             f = AdventurerHandler.moveto_(game, RoomIndices.ncell, (int)ActorIndices.Player);
             // !YES, MOVETO NCELL.
             goto L17400;
@@ -1188,7 +1188,7 @@ namespace Zork.Core
             // !KILL CARD.
             game.Flags.cpoutf = true;
             // !OPEN DOOR.
-            game.Objects.oflag1[(int)ObjectIndices.stldr - 1] &= ~ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.stldr - 1] &= ~ObjectFlags.IsVisible;
             return ret_val;
 
             L21100:
@@ -1793,7 +1793,7 @@ namespace Zork.Core
             return ret_val;
 
             L39200:
-            game.Objects.oflag1[(int)ObjectIndices.pot - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.pot - 1] |= ObjectFlags.IsVisible;
             game.Flags.rainbf = !game.Flags.rainbf;
             // !COMPLEMENT RAINBOW.
             i = 245;
@@ -1879,8 +1879,8 @@ namespace Zork.Core
             L47200:
             SetNewObjectStatus(ObjectIndices.spher, 0, 0, 0, 0, game);
             // !YOURE DEAD.
-            game.Rooms.Flags[(int)RoomIndices.cager - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[(int)RoomIndices.cager - 1] = 147;
+            game.Rooms[(int)RoomIndices.cager - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[(int)RoomIndices.cager - 1].Action = 147;
             AdventurerHandler.jigsup_(game, 148);
             // !MUNG PLAYER.
             return ret_val;
@@ -1954,10 +1954,10 @@ namespace Zork.Core
             // !IRON BOX IN CAROUSEL?
             MessageHandler.Speak(269, game);
             // !YES, THUMP.
-            game.Objects.oflag1[(int)ObjectIndices.irbox - 1] ^= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.irbox - 1] ^= ObjectFlags.IsVisible;
             if (game.Flags.caroff)
             {
-                game.Rooms.Flags[(int)RoomIndices.carou - 1] &= ~RoomFlags.SEEN;
+                game.Rooms[(int)RoomIndices.carou - 1].Flags &= ~RoomFlags.SEEN;
             }
             return ret_val;
 
@@ -1977,8 +1977,8 @@ namespace Zork.Core
             SetNewObjectStatus(ObjectIndices.flask, 270, 0, 0, 0, game);
             // !KILL FLASK.
             L49100:
-            game.Rooms.Flags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[game.Player.Here - 1] = 271;
+            game.Rooms[game.Player.Here - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[game.Player.Here - 1].Action = 271;
             AdventurerHandler.jigsup_(game, 272);
             // !POISONED.
             return ret_val;
@@ -2037,7 +2037,7 @@ namespace Zork.Core
             }
             SetNewObjectStatus(ObjectIndices.ecake, 273, 0, 0, 0, game);
             // !VANISH CAKE.
-            game.Objects.oflag1[(int)ObjectIndices.robot - 1] &= ~ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.robot - 1] &= ~ObjectFlags.IsVisible;
             ret_val = AdventurerHandler.moveto_(game, RoomIndices.alism, game.Player.Winner);
             // !MOVE TO ALICE SMALL.
             iz = 64;
@@ -2085,7 +2085,7 @@ namespace Zork.Core
 
             SetNewObjectStatus(ObjectIndices.pool, 280, 0, 0, 0, game);
             // !VANISH POOL.
-            game.Objects.oflag1[(int)ObjectIndices.saffr - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.saffr - 1] |= ObjectFlags.IsVisible;
             return ret_val;
 
             L52300:
@@ -2103,8 +2103,8 @@ namespace Zork.Core
 
             SetNewObjectStatus(ObjectIndices.orice, 0, 0, 0, 0, game);
             // !VANISH ORANGE ICE.
-            game.Rooms.Flags[game.Player.Here - 1] |= RoomFlags.RMUNG;
-            game.Rooms.Actions[game.Player.Here - 1] = 281;
+            game.Rooms[game.Player.Here - 1].Flags |= RoomFlags.RMUNG;
+            game.Rooms[game.Player.Here - 1].Action = 281;
             AdventurerHandler.jigsup_(game, 282);
             // !VANISH ADVENTURER.
             return ret_val;
@@ -2121,7 +2121,7 @@ namespace Zork.Core
                 goto L52500;
             }
             // !IN REDUCED ROOM?
-            game.Objects.oflag1[(int)ObjectIndices.robot - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.robot - 1] |= ObjectFlags.IsVisible;
             io = game.Player.Here;
             ret_val = AdventurerHandler.moveto_(game, RoomIndices.alice, game.Player.Winner);
             iz = 0;
@@ -2438,7 +2438,7 @@ namespace Zork.Core
             // O130--	CRYPT FUNCTION
 
             L61000:
-            if (!game.Flags.endgmf)
+            if (!game.Flags.EndGame)
             {
                 goto L45000;
             }
@@ -2679,7 +2679,7 @@ namespace Zork.Core
             game.Flags.domef = true;
             // !NO, TIE IT.
             game.Objects.oflag1[(int)ObjectIndices.Rope - 1] |= ObjectFlags.NDSCBT;
-            game.Objects.oflag2[(int)ObjectIndices.Rope - 1] |= ObjectFlags2.CLMBBT;
+            game.Objects.oflag2[(int)ObjectIndices.Rope - 1] |= ObjectFlags2.IsClimbable;
             SetNewObjectStatus((int)ObjectIndices.Rope, 137, (int)RoomIndices.dome, 0, 0, game);
             return ret_val;
 
@@ -2707,7 +2707,7 @@ namespace Zork.Core
             game.Flags.domef = false;
             // !YES, UNTIE IT.
             game.Objects.oflag1[(int)ObjectIndices.Rope - 1] &= ~ObjectFlags.NDSCBT;
-            game.Objects.oflag2[(int)ObjectIndices.Rope - 1] &= ~ObjectFlags2.CLMBBT;
+            game.Objects.oflag2[(int)ObjectIndices.Rope - 1] &= ~ObjectFlags2.IsClimbable;
             MessageHandler.Speak(139, game);
             return ret_val;
 
@@ -2796,7 +2796,7 @@ namespace Zork.Core
             i__1 = game.Switches.orrug + 145;
             MessageHandler.Speak(i__1, game);
             game.Switches.orrug = 1;
-            game.Objects.oflag1[(int)ObjectIndices.door - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.door - 1] |= ObjectFlags.IsVisible;
             return ret_val;
 
             L9300:
@@ -3065,8 +3065,8 @@ namespace Zork.Core
             // !NO, EMPTY DAM.
             MessageHandler.Speak(211, game);
             game.Objects.oflag2[(int)ObjectIndices.Coffin - 1] &= ~ObjectFlags2.SCRDBT;
-            game.Objects.oflag1[(int)ObjectIndices.trunk - 1] |= ObjectFlags.VISIBT;
-            game.Rooms.Flags[(int)RoomIndices.reser - 1] = (game.Rooms.Flags[(int)RoomIndices.reser - 1] | RoomFlags.LAND) & ~((int)RoomFlags.WATER + RoomFlags.SEEN);
+            game.Objects.oflag1[(int)ObjectIndices.trunk - 1] |= ObjectFlags.IsVisible;
+            game.Rooms[(int)RoomIndices.reser - 1].Flags = (game.Rooms[(int)RoomIndices.reser - 1].Flags | RoomFlags.LAND) & ~((int)RoomFlags.WATER + RoomFlags.SEEN);
             return ret_val;
 
             L27200:
@@ -3075,10 +3075,10 @@ namespace Zork.Core
             MessageHandler.Speak(212, game);
             if (ObjectHandler.IsObjectInRoom((int)ObjectIndices.trunk, (int)RoomIndices.reser, game))
             {
-                game.Objects.oflag1[(int)ObjectIndices.trunk - 1] &= ~ObjectFlags.VISIBT;
+                game.Objects.oflag1[(int)ObjectIndices.trunk - 1] &= ~ObjectFlags.IsVisible;
             }
 
-            game.Rooms.Flags[(int)RoomIndices.reser - 1] = (game.Rooms.Flags[(int)RoomIndices.reser - 1] | RoomFlags.WATER) & ~RoomFlags.LAND;
+            game.Rooms[(int)RoomIndices.reser - 1].Flags = (game.Rooms[(int)RoomIndices.reser - 1].Flags | RoomFlags.WATER) & ~RoomFlags.LAND;
             return ret_val;
 
             L27500:
@@ -3113,10 +3113,10 @@ namespace Zork.Core
             // !VIEW FROM BELOW.
             ret_val = RoomHandler.OpenCloseDoor((int)ObjectIndices.grate, i, 885, game);
             // !OPEN/CLOSE.
-            game.Rooms.Flags[(int)RoomIndices.mgrat - 1] &= ~RoomFlags.LIGHT;
+            game.Rooms[(int)RoomIndices.mgrat - 1].Flags &= ~RoomFlags.LIGHT;
             if ((game.Objects.oflag2[(int)ObjectIndices.grate - 1] & ObjectFlags2.IsOpen) != 0)
             {
-                game.Rooms.Flags[(int)RoomIndices.mgrat - 1] |= RoomFlags.LIGHT;
+                game.Rooms[(int)RoomIndices.mgrat - 1].Flags |= RoomFlags.LIGHT;
             }
             if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
@@ -3292,9 +3292,9 @@ namespace Zork.Core
             // !NOT A BUTTON.
 
             L34100:
-            game.Rooms.Flags[game.Player.Here - 1] ^= RoomFlags.LIGHT;
+            game.Rooms[game.Player.Here - 1].Flags ^= RoomFlags.LIGHT;
             i = 230;
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LIGHT) != 0)
+            if ((game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LIGHT) != 0)
             {
                 i = 231;
             }

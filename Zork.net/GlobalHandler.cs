@@ -72,7 +72,7 @@ namespace Zork.Core
             // 6000--	GLOBAL WATER
 
             L6000:
-            ret_val = (game.Rooms.Flags[rm - 1] & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
+            ret_val = (game.Rooms[rm - 1].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
             return ret_val;
 
             // 7000--	GLOBAL GUARDIANS

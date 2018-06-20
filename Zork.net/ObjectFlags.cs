@@ -5,7 +5,7 @@ namespace Zork.Core
     [Flags]
     public enum ObjectFlags : int
     {
-        VISIBT = 32768,
+        IsVisible = 32768,
         READBT = 16384,
         TAKEBT = 8192,
         DOORBT = 4096,
@@ -30,7 +30,7 @@ namespace Zork.Core
         SLEPBT = 16384,
         SCRDBT = 8192,
         TIEBT = 4096,
-        CLMBBT = 2048,
+        IsClimbable = 2048,
         ACTRBT = 1024,
         WEAPBT = 512,
         FITEBT = 256,

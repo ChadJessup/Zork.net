@@ -56,7 +56,7 @@ namespace Zork.Core
             // !OUT?
             game.Flags.trollf = true;
             // !PERMIT EXITS.
-            game.Objects.oflag1[(int)ObjectIndices.axe - 1] &= ~ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.axe - 1] &= ~ObjectFlags.IsVisible;
             game.Objects.odesc1[(int)ObjectIndices.troll - 1] = 435;
             // !TROLL OUT.
             return ret_val;
@@ -68,7 +68,7 @@ namespace Zork.Core
             // !WAKE UP?
             game.Flags.trollf = false;
             // !FORBID EXITS.
-            game.Objects.oflag1[(int)ObjectIndices.axe - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.axe - 1] |= ObjectFlags.IsVisible;
             game.Objects.odesc1[(int)ObjectIndices.troll - 1] = 436;
             // !TROLL IN.
             if (ObjectHandler.qhere_(game, (int)ObjectIndices.troll, game.Player.Here)) {
@@ -98,7 +98,7 @@ namespace Zork.Core
             game.Objects.ocapac[(int)ObjectIndices.troll - 1] = -game.Objects.ocapac[(int)ObjectIndices.troll - 1]
                 ;
             // !YES, WAKE HIM.
-            game.Objects.oflag1[(int)ObjectIndices.axe - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.axe - 1] |= ObjectFlags.IsVisible;
             game.Flags.trollf = false;
             game.Objects.odesc1[(int)ObjectIndices.troll - 1] = 436;
             MessageHandler.rspsub_(game, 437);
@@ -376,7 +376,7 @@ namespace Zork.Core
                 {
                     goto L135;
                 }
-                game.Objects.oflag1[i - 1] |= ObjectFlags.VISIBT;
+                game.Objects.oflag1[i - 1] |= ObjectFlags.IsVisible;
                 MessageHandler.rspsub_(game, j, game.Objects.odesc2[i - 1]);
                 // !DESCRIBE.
                 j = 502;
@@ -417,7 +417,7 @@ namespace Zork.Core
             // !DISABLE DEMON.
             game.Objects.odesc1[(int)ObjectIndices.thief - 1] = 504;
             // !CHANGE DESCRIPTION.
-            game.Objects.oflag1[(int)ObjectIndices.still - 1] &= ~ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.still - 1] &= ~ObjectFlags.IsVisible;
             game.Objects.oflag1[(int)ObjectIndices.chali - 1] |= ObjectFlags.TAKEBT;
             return ret_val;
 
@@ -434,7 +434,7 @@ namespace Zork.Core
             // !ENABLE DEMON.
             game.Objects.odesc1[(int)ObjectIndices.thief - 1] = 503;
             // !CHANGE DESCRIPTION.
-            game.Objects.oflag1[(int)ObjectIndices.still - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.still - 1] |= ObjectFlags.IsVisible;
             if (game.Player.Here == (int)RoomIndices.Treasure
                 && ObjectHandler.qhere_(game, (int)ObjectIndices.chali, game.Player.Here))
             {
@@ -494,7 +494,7 @@ namespace Zork.Core
             // !WAKE HIM UP.
             game.Objects.ocapac[(int)ObjectIndices.thief - 1] = -game.Objects.ocapac[(int)ObjectIndices.thief - 1];
             game.Hack.thfact = true;
-            game.Objects.oflag1[(int)ObjectIndices.still - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.still - 1] |= ObjectFlags.IsVisible;
             game.Objects.odesc1[(int)ObjectIndices.thief - 1] = 503;
             MessageHandler.rspeak_(game, 510);
 

@@ -217,7 +217,7 @@ namespace Zork.Core
             }
 
             // !IF TREAS ROOM, NOTHING.
-            if ((game.Rooms.Flags[game.Hack.thfpos - 1] & RoomFlags.LIGHT) != 0)
+            if ((game.Rooms[game.Hack.thfpos - 1].Flags & RoomFlags.LIGHT) != 0)
             {
                 goto L1400;
             }
@@ -343,7 +343,7 @@ namespace Zork.Core
             {
                 ObjectHandler.SetNewObjectStatus(game, (int)ObjectIndices.still, 0, 0, (int)ObjectIndices.thief, 0);
             }
-            if ((game.Rooms.Flags[game.Hack.thfpos - 1] & RoomFlags.SEEN) == 0)
+            if ((game.Rooms[game.Hack.thfpos - 1].Flags & RoomFlags.SEEN) == 0)
             {
                 goto L1700;
             }
@@ -362,7 +362,7 @@ namespace Zork.Core
                 // !BOTH IN MAZE.
                 if (!ObjectHandler.qhere_(game, i, game.Hack.thfpos)
                     || RoomHandler.prob_(game, 60, 60)
-                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.VISIBT + ObjectFlags.TAKEBT) != (int)ObjectFlags.VISIBT + ObjectFlags.TAKEBT)
+                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.TAKEBT) != (int)ObjectFlags.IsVisible + ObjectFlags.TAKEBT)
                 {
                     goto L1450;
                 }
@@ -391,7 +391,7 @@ namespace Zork.Core
                 if (!ObjectHandler.qhere_(game, i, game.Hack.thfpos)
                     || game.Objects.otval[i - 1] != 0
                     || RoomHandler.prob_(game, 80, 60)
-                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.VISIBT + ObjectFlags.TAKEBT) != (int)ObjectFlags.VISIBT + ObjectFlags.TAKEBT)
+                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.TAKEBT) != (int)ObjectFlags.IsVisible + ObjectFlags.TAKEBT)
                 {
                     goto L1550;
                 }
@@ -422,7 +422,7 @@ namespace Zork.Core
             {
                 game.Hack.thfpos = game.Rooms.Count;
             }
-            if ((game.Rooms.Flags[game.Hack.thfpos - 1] & (int)RoomFlags.LAND + (int)RoomFlags.SACRED + RoomFlags.REND) != RoomFlags.LAND)
+            if ((game.Rooms[game.Hack.thfpos - 1].Flags & (int)RoomFlags.LAND + (int)RoomFlags.SACRED + RoomFlags.REND) != RoomFlags.LAND)
             {
                 goto L1750;
             }

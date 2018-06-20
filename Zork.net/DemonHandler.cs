@@ -627,7 +627,7 @@ namespace Zork.Core
             // System generated locals
             bool ret_val;
 
-            if (!game.Flags.endgmf)
+            if (!game.Flags.EndGame)
             {
                 ret_val = game.Objects.oroom[(int)ObjectIndices.cyclo - 1] == r || game.Objects.oroom[(int)ObjectIndices.troll - 1] == r || game.Objects.oroom[(int)ObjectIndices.thief - 1] == r && game.Hack.thfact;
             }

@@ -51,7 +51,7 @@ namespace Zork.Core
                     goto L100;
                 }
 
-                if (game.Objects.otval[i - 1] <= 0 || (game.Objects.oflag2[i - 1] & ObjectFlags2.SCRDBT) != 0 || (game.Objects.oflag1[i - 1] & ObjectFlags.VISIBT) == 0 || !RoomHandler.prob_(game, pr, pr))
+                if (game.Objects.otval[i - 1] <= 0 || (game.Objects.oflag2[i - 1] & ObjectFlags2.SCRDBT) != 0 || (game.Objects.oflag1[i - 1] & ObjectFlags.IsVisible) == 0 || !RoomHandler.prob_(game, pr, pr))
                 {
                     goto L50;
                 }

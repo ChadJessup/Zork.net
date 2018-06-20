@@ -27,7 +27,7 @@ namespace Zork.Core
             for (j = 1; j <= i__1; ++j)
             {
                 // !LOOP
-                if (game.Objects.oadv[j - 1] != adventurer || (game.Objects.oflag1[j - 1] & ObjectFlags.VISIBT) == 0)
+                if (game.Objects.oadv[j - 1] != adventurer || (game.Objects.oflag1[j - 1] & ObjectFlags.IsVisible) == 0)
                 {
                     goto L10;
                 }
@@ -60,7 +60,7 @@ namespace Zork.Core
             {
                 // !LOOP.
                 if (game.Objects.oadv[j - 1] != adventurer
-                    || (game.Objects.oflag1[j - 1] & ObjectFlags.VISIBT) == 0
+                    || (game.Objects.oflag1[j - 1] & ObjectFlags.IsVisible) == 0
                     || (game.Objects.oflag1[j - 1] & ObjectFlags.IsTransparent) == 0
                     && (game.Objects.oflag2[j - 1] & ObjectFlags2.IsOpen) == 0)
                 {
@@ -122,7 +122,7 @@ namespace Zork.Core
 
             L100:
             // !NO RECOVERY IN END GAME.
-            if (game.Flags.endgmf)
+            if (game.Flags.EndGame)
             {
                 goto L900;
             }
@@ -164,7 +164,7 @@ namespace Zork.Core
             }
 
             game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
-            game.Objects.oflag1[(int)ObjectIndices.robot - 1] = (game.Objects.oflag1[(int)ObjectIndices.robot - 1] | ObjectFlags.VISIBT) & ~ObjectFlags.NDSCBT;
+            game.Objects.oflag1[(int)ObjectIndices.robot - 1] = (game.Objects.oflag1[(int)ObjectIndices.robot - 1] | ObjectFlags.IsVisible) & ~ObjectFlags.NDSCBT;
 
             if (game.Objects.oroom[(int)ObjectIndices.Lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIndices.Lamp - 1] == game.Player.Winner)
             {
@@ -216,7 +216,7 @@ namespace Zork.Core
                 L250:
                 --i;
                 // !FIND NEXT ROOM.
-                if ((game.Rooms.Flags[i - 1] & (RoomFlags)nonofl) != 0)
+                if ((game.Rooms[i - 1].Flags & (RoomFlags)nonofl) != 0)
                 {
                     goto L250;
                 }
@@ -239,7 +239,7 @@ namespace Zork.Core
                 L450:
                 --i;
                 // !FIND NEXT ROOM.
-                if ((game.Rooms.Flags[i - 1] & (RoomFlags)nonofl) != 0)
+                if ((game.Rooms[i - 1].Flags & (RoomFlags)nonofl) != 0)
                 {
                     goto L450;
                 }
@@ -263,7 +263,7 @@ namespace Zork.Core
 
             L1100:
             // !TELL SCORE.
-            AdventurerHandler.score_(game, false);
+            AdventurerHandler.PrintScore(game, false);
 
             game.Exit();
         }
@@ -282,8 +282,8 @@ namespace Zork.Core
 
             ret_val = false;
             // !ASSUME FAILS.
-            lhr = (game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.LAND) != 0;
-            lnr = (game.Rooms.Flags[nr - 1] & RoomFlags.LAND) != 0;
+            lhr = (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) != 0;
+            lnr = (game.Rooms[nr - 1].Flags & RoomFlags.LAND) != 0;
 
             // !HIS VEHICLE
             j = game.Adventurers.Vehicles[who - 1];
@@ -325,7 +325,7 @@ namespace Zork.Core
             }
 
             // !IN BUCKET?
-            nlv = (game.Rooms.Flags[nr - 1] & (RoomFlags)bits) == 0;
+            nlv = (game.Rooms[nr - 1].Flags & (RoomFlags)bits) == 0;
             if (!lnr && nlv || lnr && lhr && nlv && bits != (int)RoomFlags.LAND)
             {
                 goto L800;
@@ -334,12 +334,12 @@ namespace Zork.Core
             L500:
             ret_val = true;
             // !MOVE SHOULD SUCCEED.
-            if ((game.Rooms.Flags[nr - 1] & RoomFlags.RMUNG) == 0)
+            if ((game.Rooms[nr - 1].Flags & RoomFlags.RMUNG) == 0)
             {
                 goto L600;
             }
 
-            MessageHandler.Speak(game.Rooms.Actions[nr - 1], game);
+            MessageHandler.Speak(game.Rooms[nr - 1].Action, game);
             // !YES, TELL HOW.
             return ret_val;
 
@@ -356,9 +356,9 @@ namespace Zork.Core
 
             game.Player.Here = nr;
             game.Adventurers.Rooms[who - 1] = game.Player.Here;
-            AdventurerHandler.ScoreUpdate(game, game.Rooms.Values[nr - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Rooms[nr - 1].Score);
             // !SCORE ROOM
-            game.Rooms.Values[nr - 1] = 0;
+            game.Rooms[nr - 1].Score = 0;
             return ret_val;
 
             L800:
@@ -372,7 +372,7 @@ namespace Zork.Core
         /// </summary>
         /// <param name="game"></param>
         /// <param name="isFutureTense"></param>
-        public static void score_(Game game, bool isFutureTense)
+        public static void PrintScore(Game game, bool isFutureTense)
         {
             int[] rank = { 20, 19, 18, 16, 12, 8, 4, 2, 1, 0 };
             int[] erank = { 20, 15, 10, 5, 0 };
@@ -383,7 +383,7 @@ namespace Zork.Core
 
             intAs = game.Adventurers.Scores[game.Player.Winner - 1];
 
-            if (game.Flags.endgmf)
+            if (game.Flags.EndGame)
             {
                 goto L60;
             }
@@ -460,30 +460,32 @@ namespace Zork.Core
         /// <param name="incrementAmount"></param>
         public static void ScoreUpdate(Game game, int incrementAmount)
         {
-            if (game.Flags.endgmf)
+            // !ENDGAME?
+            if (game.Flags.EndGame)
             {
                 goto L100;
             }
 
-            // !ENDGAME?
-            game.Adventurers.Scores[game.Player.Winner - 1] += incrementAmount;
             // !UPDATE SCORE
-            game.State.RawScore += incrementAmount;
+            game.Adventurers.Scores[game.Player.Winner - 1] += incrementAmount;
+
             // !UPDATE RAW SCORE
+            game.State.RawScore += incrementAmount;
+
             if (game.Adventurers.Scores[game.Player.Winner - 1] < game.State.MaxScore - game.State.Deaths * 10)
             {
                 return;
             }
 
+            // !TURN ON END GAME
             game.Clock.Flags[(int)ClockIndices.cevegh - 1] = true;
 
-            // !TURN ON END GAME
             game.Clock.Ticks[(int)ClockIndices.cevegh - 1] = 15;
             return;
 
             L100:
-            game.State.egscor += incrementAmount;
             // !UPDATE EG SCORE.
+            game.State.egscor += incrementAmount;
         }
     }
 }

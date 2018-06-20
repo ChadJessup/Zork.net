@@ -65,7 +65,7 @@ namespace Zork.Core
             int i__1, i__2;
             int i;
 
-            game.Rooms.Flags[(int)RoomIndices.cpuzz - 1] &= ~RoomFlags.SEEN;
+            game.Rooms[(int)RoomIndices.cpuzz - 1].Flags &= ~RoomFlags.SEEN;
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {

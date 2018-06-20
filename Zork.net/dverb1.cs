@@ -382,7 +382,7 @@ namespace Zork.Core
             for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
             {
                 // !LOOP THRU OBJECTS.
-                if (!ObjectHandler.qhere_(game, game.ParserVectors.prso, game.Player.Here) || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.VISIBT) == 0
+                if (!ObjectHandler.qhere_(game, game.ParserVectors.prso, game.Player.Here) || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsVisible) == 0
                     || (game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.ACTRBT) != 0
                     || savep == v && game.Objects.otval[game.ParserVectors.prso - 1] <= 0)
                 {
@@ -445,7 +445,7 @@ namespace Zork.Core
                 // !LOOP THRU OBJECTS.
                 if (game.Objects.oadv[game.ParserVectors.prso - 1] != game.Player.Winner ||
                     game.ParserVectors.prso == game.ParserVectors.prsi || savep == v &&
-                    game.Objects.otval[game.ParserVectors.prso - 1] <= 0 || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.VISIBT) == 0)
+                    game.Objects.otval[game.ParserVectors.prso - 1] <= 0 || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsVisible) == 0)
                 {
                     goto L2500;
                 }

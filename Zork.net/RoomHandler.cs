@@ -58,7 +58,8 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            ra = game.Rooms.Actions[game.Player.Here - 1];
+            //ra = game.NewRooms.Actions[game.Player.Here - 1];
+            ra = game.Rooms[game.Player.Here - 1].Action;
 
             // !GET ROOM ACTION.
             if (full == 1)
@@ -67,12 +68,11 @@ namespace Zork.Core
             }
 
             // !OBJ ONLY?
-            i = game.Rooms.Descriptions2[game.Player.Here - 1];
+            i = game.Rooms[game.Player.Here - 1].Description2;
 
             // !ASSUME SHORT DESC.
             if (full == 0
-                && (game.Flags.superf || (game.Rooms.Flags[game.Player.Here - 1].HasFlag(RoomFlags.SEEN)
-                && game.Flags.brieff)))
+                && (game.Flags.SuperBriefDescriptions || (game.Rooms[game.Player.Here - 1].Flags.HasFlag(RoomFlags.SEEN) && game.Flags.BriefDescriptions)))
             {
                 goto L400;
             }
@@ -83,7 +83,7 @@ namespace Zork.Core
             //  all the time.			jmh@ukc.ac.uk 22/10/87
 
             // & .AND.(BRIEFF.OR.PROB(80,80)))))       GO TO 400
-            i = game.Rooms.Descriptions1[game.Player.Here - 1];
+            i = game.Rooms[game.Player.Here - 1].Description1;
 
             // !USE LONG.
             if (i != 0 || ra == 0)
@@ -123,7 +123,7 @@ namespace Zork.Core
                 RoomHandler.PrintRoomContents(L__1, game.Player.Here, game);
             }
 
-            game.Rooms.Flags[(int)(game.Player.Here - 1)] |= RoomFlags.SEEN;
+            game.Rooms[(int)(game.Player.Here - 1)].Flags |= RoomFlags.SEEN;
             if (full != 0 || ra == 0)
             {
                 return ret_val;
@@ -162,13 +162,13 @@ namespace Zork.Core
             {
                 // !LOOP ON OBJECTS
                 if (!ObjectHandler.IsInRoom(roomId, i, game)
-                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.VISIBT + ObjectFlags.NDSCBT) != ObjectFlags.VISIBT
+                    || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.NDSCBT) != ObjectFlags.IsVisible
                     || (game.Adventurers.Vehicles.Any() && i == game.Adventurers.Vehicles[game.Player.Winner - 1]))
                 {
                     goto L500;
                 }
-                if (!(full) && (game.Flags.superf || game.Flags.brieff && (
-                    game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.SEEN) != 0))
+                if (!(full) && (game.Flags.SuperBriefDescriptions || game.Flags.BriefDescriptions && (
+                    game.Rooms[game.Player.Here - 1].Flags & RoomFlags.SEEN) != 0))
                 {
                     goto L200;
                 }
@@ -203,34 +203,38 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !LOOP ON OBJECTS
-                if (!ObjectHandler.IsInRoom(roomId, i, game) || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.VISIBT + ObjectFlags.NDSCBT) != ObjectFlags.VISIBT)
+                if (!ObjectHandler.IsInRoom(roomId, i, game) || (game.Objects.oflag1[i - 1] & (int)ObjectFlags.IsVisible + ObjectFlags.NDSCBT) != ObjectFlags.IsVisible)
                 {
                     goto L1000;
                 }
+
                 if ((game.Objects.oflag2[i - 1] & ObjectFlags2.ACTRBT) != 0)
                 {
                     i__2 = ObjectHandler.GetActor(i, game);
                     AdventurerHandler.PrintContents(i__2, game);
                 }
+
+                // OBJECT IS NOT EMPTY AND IS OPEN OR TRANSPARENT
                 if ((game.Objects.oflag1[i - 1] & ObjectFlags.IsTransparent) == 0
-                    && (game.Objects.oflag2[i - 1] & ObjectFlags2.IsOpen) == 0 || ObjectHandler.IsObjectEmpty(i, game))
+                    && (game.Objects.oflag2[i - 1] & ObjectFlags2.IsOpen) == 0
+                    || ObjectHandler.IsObjectEmpty(i, game))
                 {
                     goto L1000;
                 }
 
-                // OBJECT IS NOT EMPTY AND IS OPEN OR TRANSPARENT
-
                 j = 573;
+                // !TROPHY CASE?
                 if (i != (int)ObjectIndices.TrophyCase)
                 {
                     goto L600;
                 }
-                // !TROPHY CASE?
+
                 j = 574;
-                if ((game.Flags.brieff || game.Flags.superf) && !(full))
+                if ((game.Flags.BriefDescriptions || game.Flags.SuperBriefDescriptions) && !(full))
                 {
                     goto L1000;
                 }
+
                 L600:
                 ObjectHandler.PrintDescription(i, j, game);
                 // !PRINT CONTENTS
@@ -252,7 +256,7 @@ namespace Zork.Core
             ret_val = true;
 
             // !ASSUME WINS
-            if ((game.Rooms.Flags[roomId - 1] & RoomFlags.LIGHT) != 0)
+            if ((game.Rooms[roomId - 1].Flags & RoomFlags.LIGHT) != 0)
             {
                 return ret_val;
             }
@@ -261,12 +265,12 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !LOOK FOR LIT OBJ
+                // !IN ROOM?
                 if (ObjectHandler.IsInRoom(roomId, i, game))
                 {
                     goto L100;
                 }
 
-                // !IN ROOM?
                 oa = game.Objects.oadv[i - 1];
                 // !NO
                 if (oa <= 0)
@@ -290,7 +294,7 @@ namespace Zork.Core
                     return ret_val;
                 }
 
-                if ((game.Objects.oflag1[i - 1] & ObjectFlags.VISIBT) == 0
+                if ((game.Objects.oflag1[i - 1] & ObjectFlags.IsVisible) == 0
                     || (game.Objects.oflag1[i - 1] & ObjectFlags.IsTransparent) == 0
                     && (game.Objects.oflag2[i - 1] & ObjectFlags2.IsOpen) == 0)
                 {
@@ -301,7 +305,8 @@ namespace Zork.Core
                 i__2 = game.Objects.Count;
                 for (j = 1; j <= i__2; ++j)
                 {
-                    if (game.Objects.ocan[j - 1] == i && (game.Objects.oflag1[j - 1] & ObjectFlags.ONBT) != 0)
+                    if (game.Objects.ocan[j - 1] == i
+                    && (game.Objects.oflag1[j - 1] & ObjectFlags.ONBT) != 0)
                     {
                         return ret_val;
                     }
@@ -316,7 +321,7 @@ namespace Zork.Core
         }
 
         /// <summary>
-        /// ROUTING ROUTINE FOR ROOM APPLICABLES
+        /// rappli_ - ROUTING ROUTINE FOR ROOM APPLICABLES
         /// </summary>
         /// <param name="ri"></param>
         /// <returns></returns>
@@ -1176,7 +1181,7 @@ namespace Zork.Core
                 }
                 j = 83;
                 // !FLAG BYEBYE.
-                game.Objects.oflag1[i - 1] &= ~ObjectFlags.VISIBT;
+                game.Objects.oflag1[i - 1] &= ~ObjectFlags.IsVisible;
                 L27200:
                 ;
             }
@@ -1245,13 +1250,13 @@ namespace Zork.Core
             L31400:
             i = 89;
             // !ASSUME DISCOVERY.
-            if ((game.Objects.oflag1[(int)ObjectIndices.statu - 1] & ObjectFlags.VISIBT) != 0)
+            if ((game.Objects.oflag1[(int)ObjectIndices.statu - 1] & ObjectFlags.IsVisible) != 0)
             {
                 i = 88;
             }
 
             MessageHandler.Speak(i, game);
-            game.Objects.oflag1[(int)ObjectIndices.statu - 1] |= ObjectFlags.VISIBT;
+            game.Objects.oflag1[(int)ObjectIndices.statu - 1] |= ObjectFlags.IsVisible;
             return ret_val;
 
             L31500:
@@ -1322,7 +1327,7 @@ namespace Zork.Core
             // !DESCRIBE.
             i = 102;
             // !ASSUME SAFE ROOM OK.
-            if ((game.Rooms.Flags[(int)RoomIndices.Safe - 1] & RoomFlags.RMUNG) != 0)
+            if ((game.Rooms[(int)RoomIndices.Safe - 1].Flags & RoomFlags.RMUNG) != 0)
             {
                 i = 101;
             }
@@ -1788,7 +1793,7 @@ namespace Zork.Core
             }
             // !WALKIN?
             MessageHandler.Speak(726, game);
-            AdventurerHandler.score_(game, false);
+            AdventurerHandler.PrintScore(game, false);
             //  moved to exit routine	CLOSE(DBCH)
             //exit_();
             throw new ApplicationException("Exit");

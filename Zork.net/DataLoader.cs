@@ -30,33 +30,33 @@ namespace Zork.Core
             game.Star.strbit = DataLoader.ReadInt(bytes, game);
             game.State.egmxsc = DataLoader.ReadInt(bytes, game);
 
-            game.Rooms.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Descriptions1, bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Descriptions2, bytes, game);
-            DataLoader.ReadInts(game.Rooms.Count, game.Rooms.Exits, bytes, game);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.Actions, bytes, game);
-            DataLoader.ReadPartialInts(game.Rooms.Count, game.Rooms.Values, bytes, game);
+            var roomCount = DataLoader.ReadInt(bytes, game);
+            var desc1 = new List<int>();
+            var desc2 = new List<int>();
+            var exits = new List<int>();
+            var actions = new List<int>();
+            var values = new List<int>();
+            DataLoader.ReadInts(roomCount, desc1, bytes, game);
+            DataLoader.ReadInts(roomCount, desc2, bytes, game);
+            DataLoader.ReadInts(roomCount, exits, bytes, game);
+            DataLoader.ReadPartialInts(roomCount, actions, bytes, game);
+            DataLoader.ReadPartialInts(roomCount, values, bytes, game);
 
             var tempFlags = new List<int>();
-            DataLoader.ReadInts(game.Rooms.Count, tempFlags, bytes, game);
+            DataLoader.ReadInts(roomCount, tempFlags, bytes, game);
 
-            for (int idx = 0; idx < tempFlags.Count; idx++)
-            {
-                game.Rooms.Flags.Add((RoomFlags)tempFlags[idx]);
-            }
-
-            for (int ridx = 0; ridx < game.Rooms.Count; ridx++)
+            for (int ridx = 0; ridx < roomCount; ridx++)
             {
                 var room = new Room();
-                room.Id = ridx;
-                room.Action = game.Rooms.Actions[i];
-                room.Description1 = game.Rooms.Descriptions1[i];
-                room.Description2 = game.Rooms.Descriptions2[i];
-                room.Exit = game.Rooms.Exits[i];
-                room.Flags = game.Rooms.Flags[i];
-                room.Value = game.Rooms.Values[i];
+                room.Id = ridx + 1;
+                room.Action = actions[ridx];
+                room.Description1 = desc1[ridx];
+                room.Description2 = desc2[ridx];
+                room.Exit = exits[ridx];
+                room.Flags = (RoomFlags)tempFlags[ridx];
+                room.Score = values[ridx];
 
-                game.NewRooms.Add(room);
+                game.Rooms.Add(room);
             }
 
             game.Exits.Count = DataLoader.ReadInt(bytes, game);

@@ -10,7 +10,7 @@ namespace Zork.Core
         public int Description2 { get; set; }
         public int Exit { get; set; }
         public int Action { get; set; }
-        public int Value { get; set; }
+        public int Score { get; set; }
         public RoomFlags Flags { get; set;}
         public List<int> Travel { get; set; }
     }

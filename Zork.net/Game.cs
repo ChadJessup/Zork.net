@@ -44,7 +44,7 @@ namespace Zork.Core
             this.isRunning = true;
         }
 
-        public List<Room> NewRooms { get; } = new List<Room>();
+        public List<Room> Rooms { get; } = new List<Room>();
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
@@ -52,7 +52,6 @@ namespace Zork.Core
         public Flags Flags { get; } = new Flags();
         public Random Random { get; } = new Random(DateTime.Now.Millisecond);
         public Exits Exits { get; } = new Exits();
-        public Rooms Rooms { get; } = new Rooms();
         public Switches Switches { get; } = new Switches();
         public Screen Screen { get; } = new Screen();
         public Rooms2 Rooms2 { get; } = new Rooms2();
@@ -165,7 +164,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                f = RoomHandler.rappli_(this.Rooms.Actions[this.Player.Here - 1], this);
+                f = RoomHandler.rappli_(this.Rooms[this.Player.Here - 1].Action, this);
 
                 L400:
                 xendmv_(this.Player.TelFlag);
@@ -212,6 +211,7 @@ namespace Zork.Core
                 {
                     goto L1400;
                 }
+
                 if (dso3.FindExit(this, this.ParserVectors.prso, this.Player.Here))
                 {
                     goto L300;
@@ -296,7 +296,7 @@ namespace Zork.Core
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.rappli_(this.Rooms.Actions[this.Player.Here - 1], this);
+                f = RoomHandler.rappli_(this.Rooms[this.Player.Here - 1].Action, this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);

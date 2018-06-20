@@ -23,8 +23,8 @@
         public bool egyptf { get; set; }
         public bool onpolf { get; set; }
         public bool blabf { get; set; }
-        public bool brieff { get; set; }
-        public bool superf { get; set; }
+        public bool BriefDescriptions { get; set; }
+        public bool SuperBriefDescriptions { get; set; }
         public bool buoyf { get; set; }
         public bool grunlf { get; set; }
         public bool gatef { get; set; }
@@ -34,7 +34,7 @@
         public bool deflaf { get; set; }
         public bool glacmf { get; set; }
         public bool frobzf { get; set; }
-        public bool endgmf { get; set; }
+        public bool EndGame { get; set; }
         public bool badlkf { get; set; }
         public bool thfenf { get; set; }
         public bool singsf { get; set; }

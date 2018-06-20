@@ -64,8 +64,8 @@ namespace Zork.Core
             //do_uio(220, &game.Objects.oadv[0], sizeof(int));
             //do_uio(220, &game.Objects.ocan[0], sizeof(int));
             //
-            //do_uio(200, &game.Rooms.rval[0], sizeof(int));
-            //do_uio(200, &game.Rooms.RoomFlags[0], sizeof(int));
+            //do_uio(200, &game.NewRooms.rval[0], sizeof(int));
+            //do_uio(200, &game.NewRooms.RoomFlags[0], sizeof(int));
             //
             //do_uio(4, &game.Adventurers.aroom[0], sizeof(int));
             //do_uio(4, &game.Adventurers.ascore[0], sizeof(int));
@@ -156,8 +156,8 @@ namespace Zork.Core
             //do_uio(220, game.Objects.oadv[0], sizeof(int));
             //do_uio(220, game.Objects.ocan[0], sizeof(int));
             //
-            //do_uio(200, game.Rooms.rval[0], sizeof(int));
-            //do_uio(200, game.Rooms.RoomFlags[0], sizeof(int));
+            //do_uio(200, game.NewRooms.rval[0], sizeof(int));
+            //do_uio(200, game.NewRooms.RoomFlags[0], sizeof(int));
 
             //do_uio(4, game.Adventurers.aroom[0], sizeof(int));
             //do_uio(4, game.Adventurers.ascore[0], sizeof(int));
@@ -284,7 +284,7 @@ namespace Zork.Core
                 game.curxt_.xstrng = 680;
             }
             // !IF DOWN, CANT.
-            if ((game.Rooms.Flags[game.Player.Here - 1] & RoomFlags.NOWALL) != 0)
+            if ((game.Rooms[game.Player.Here - 1].Flags & RoomFlags.NOWALL) != 0)
             {
                 game.curxt_.xstrng = 524;
             }
@@ -419,7 +419,7 @@ namespace Zork.Core
             L5000:
             i = xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8);
             // !CHOOSE RANDOM EXIT.
-            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms.Exits[game.Player.Here - 1] + i - 1] & xpars_.xrmask;
+            game.curxt_.xroom1 = game.Exits.Travel[game.Rooms[game.Player.Here - 1].Exit + i - 1] & xpars_.xrmask;
             ret_val = game.curxt_.xroom1;
             // !RETURN EXIT.
             return ret_val;
