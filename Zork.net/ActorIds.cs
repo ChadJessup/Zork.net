@@ -1,6 +1,6 @@
 ﻿namespace Zork.Core
 {
-    public enum ActorIndices : int
+    public enum ActorIds : int
     {
         Player = 1,
         Robot = 2,

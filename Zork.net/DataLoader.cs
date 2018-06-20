@@ -130,12 +130,12 @@ namespace Zork.Core
             game.Time.smin = now.Minute;
             game.Time.ssec = now.Second;
 
-            game.Player.Winner = (int)ActorIndices.Player;
-            game.Last.lastit = game.Adventurers.Objects[(int)(ActorIndices.Player - 1)];
+            game.Player.Winner = (int)ActorIds.Player;
+            game.Last.lastit = game.Adventurers.Objects[(int)(ActorIds.Player - 1)];
             game.Player.Here = game.Adventurers.Rooms[game.Player.Winner - 1];
 
-            game.State.bloc = game.Objects.oroom[(int)(ObjectIndices.Balloon - 1)];
-            game.Hack.thfpos = game.Objects.oroom[(int)(ObjectIndices.thief - 1)];
+            game.State.BalloonLocation = game.Objects.oroom[(int)(ObjectIds.Balloon - 1)];
+            game.Hack.ThiefPosition = game.Objects.oroom[(int)(ObjectIds.thief - 1)];
 
             return game;
         }
@@ -169,7 +169,6 @@ namespace Zork.Core
                 int value = ReadInt(bytes, game);
                 list[index] = value;
             }
-
         }
 
         private static void ReadFlags(int count, List<bool> flags, byte[] bytes, Game game)
@@ -177,11 +176,6 @@ namespace Zork.Core
             while (count-- != 0)
             {
                 byte value = bytes[game.DataPosition++];
-                if (value != 0 && value != 1)
-                {
-
-                }
-
                 flags.Add(value == 0 ? false : true);
             }
         }

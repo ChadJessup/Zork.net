@@ -1,6 +1,6 @@
 ﻿namespace Zork.Core
 {
-    public enum RoomIndices
+    public enum RoomIds
     {
         WhiteHouse = 2,
         LivingRoom = 8,
@@ -26,7 +26,7 @@
         lld2  = 94,
         temp1 = 96,
         temp2 = 97,
-        maint = 100,
+        Maintenance = 100,
         blroo = 102,
         Treasure = 103,
         rivr1 = 107,
@@ -41,13 +41,13 @@
         mrain = 121,
         pog   = 122,
         vlbot = 126,
-        vair1 = 127,
-        vair2 = 128,
-        vair3 = 129,
-        vair4 = 130,
-        ledg2 = 131,
-        ledg3 = 132,
-        ledg4 = 133,
+        InAir1 = 127,
+        InAir2 = 128,
+        InAir3 = 129,
+        InAir4 = 130,
+        Ledge2 = 131,
+        Ledge3 = 132,
+        Ledge4 = 133,
         Safe = 135,
         cager = 140,
         caged = 141,

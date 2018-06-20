@@ -195,7 +195,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.Player.Winner != (int)ActorIndices.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
+            if (game.Player.Winner != (int)ActorIds.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
             }
@@ -401,7 +401,7 @@ namespace Zork.Core
             // C1- COFFIN-CURE
 
             L1000:
-            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIndices.Coffin - 1] != game.Player.Winner;
+            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIds.Coffin - 1] != game.Player.Winner;
             // !T IF NO COFFIN.
             return ret_val;
 
@@ -445,14 +445,14 @@ namespace Zork.Core
             // !CARRYING TOO MUCH?
             game.curxt_.xstrng = 446;
             // !ASSUME NO LAMP.
-            if (game.Objects.oadv[(int)ObjectIndices.Lamp - 1] != game.Player.Winner) {
+            if (game.Objects.oadv[(int)ObjectIds.Lamp - 1] != game.Player.Winner) {
                 return ret_val;
             }
             // !NO LAMP?
             game.Flags.litldf = true;
             // !HE CAN DO IT.
-            if ((game.Objects.oflag2[(int)ObjectIndices.door - 1] & ObjectFlags2.IsOpen) == 0) {
-                game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
+            if ((game.Objects.oflag2[(int)ObjectIds.door - 1] & ObjectFlags2.IsOpen) == 0) {
+                game.Objects.oflag2[(int)ObjectIds.door - 1] &= ~ObjectFlags2.TCHBT;
             }
             return ret_val;
 
@@ -480,8 +480,8 @@ namespace Zork.Core
             // C7-	FROBOZZ FLAG (BANK ALARM)
 
             L7000:
-            game.Flags.frobzf = game.Objects.oroom[(int)ObjectIndices.bills - 1] != 0 &
-                game.Objects.oroom[(int)ObjectIndices.portr - 1] != 0;
+            game.Flags.frobzf = game.Objects.oroom[(int)ObjectIds.bills - 1] != 0 &
+                game.Objects.oroom[(int)ObjectIds.portr - 1] != 0;
             return ret_val;
             // CXAPPL, PAGE 3
 
@@ -503,7 +503,7 @@ namespace Zork.Core
             }
 
             // !MIRROR MUST BE N-S.
-            game.curxt_.xroom1 = (game.curxt_.xroom1 - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae;
+            game.curxt_.xroom1 = (game.curxt_.xroom1 - (int)RoomIds.mra << 1) + (int)RoomIds.mrae;
             // !CALC EAST ROOM.
             if (game.ParserVectors.prso > (int)XSearch.xsouth)
             {
@@ -577,7 +577,7 @@ namespace Zork.Core
                 goto L10200;
             }
 
-            game.curxt_.xroom1 = (game.Switches.mloc - (int)RoomIndices.mra << 1) + (int)RoomIndices.mrae + 1
+            game.curxt_.xroom1 = (game.Switches.mloc - (int)RoomIds.mra << 1) + (int)RoomIds.mrae + 1
                 - game.Switches.mdir / 180;
             // !ASSUME E-W EXIT.
             if (game.Switches.mdir % 180 == 0)
@@ -706,7 +706,7 @@ namespace Zork.Core
             L14500:
             dso7.cpgoto_(game, nxt);
             // !MOVE TO STATE.
-            game.curxt_.xroom1 = (int)RoomIndices.cpuzz;
+            game.curxt_.xroom1 = (int)RoomIds.cpuzz;
             // !STAY IN ROOM.
             ret_val = game.curxt_.xroom1;
             return ret_val;

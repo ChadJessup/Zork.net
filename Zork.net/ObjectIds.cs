@@ -1,6 +1,6 @@
 ﻿namespace Zork.Core
 {
-    public enum ObjectIndices
+    public enum ObjectIds
     {
         garli = 2,
         food = 3,
@@ -35,6 +35,7 @@
         Book = 47,
         Candle = 48,
         match = 51,
+        Leaflet = 52,
         tube = 54,
         putty = 55,
         wrenc = 56,
@@ -58,7 +59,7 @@
         rboat = 90,
         stick = 92,
         buoy = 94,
-        shove = 96,
+        Shovel = 96,
         Balloon = 98,
         recep = 99,
         guano = 97,

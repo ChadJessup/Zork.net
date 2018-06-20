@@ -65,20 +65,20 @@ namespace Zork.Core
             int i__1, i__2;
             int i;
 
-            game.Rooms[(int)RoomIndices.cpuzz - 1].Flags &= ~RoomFlags.SEEN;
+            game.Rooms[(int)RoomIds.cpuzz - 1].Flags &= ~RoomFlags.SEEN;
             i__1 = game.Objects.Count;
             for (i = 1; i <= i__1; ++i)
             {
                 // !RELOCATE OBJECTS.
-                if (game.Objects.oroom[i - 1] == (int)RoomIndices.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
+                if (game.Objects.oroom[i - 1] == (int)RoomIds.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
                     i__2 = game.Switches.cphere * game.hyper_.hfactr;
-                    ObjectHandler.SetNewObjectStatus(game, i, 0, i__2, 0, 0);
+                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, i__2, 0, 0, game);
                 }
 
                 if (game.Objects.oroom[i - 1] == st * game.hyper_.hfactr)
                 {
-                    ObjectHandler.SetNewObjectStatus(game, i, 0, (int)RoomIndices.cpuzz, 0, 0);
+                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (int)RoomIds.cpuzz, 0, 0, game);
                 }
                 // L100:
             }

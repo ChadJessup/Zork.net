@@ -15,7 +15,7 @@ namespace Zork.Core
                 goto L200;
             }
             // !READOUT?
-            if (game.ParserVectors.prsa != (int)VerbIndices.lookw)
+            if (game.ParserVectors.prsa != (int)VerbIds.lookw)
             {
                 goto L10;
             }
@@ -47,7 +47,7 @@ namespace Zork.Core
                 goto L500;
             }
             // !READIN?
-            if (game.ParserVectors.prsa != (int)VerbIndices.Walk)
+            if (game.ParserVectors.prsa != (int)VerbIds.Walk)
             {
                 goto L300;
             }
@@ -79,14 +79,14 @@ namespace Zork.Core
             // !NORMAL EXIT?
             if ((game.Rooms[game.curxt_.xroom1 - 1].Flags & RoomFlags.RMUNG) == 0)
             {
-                game.State.bloc = game.curxt_.xroom1;
+                game.State.BalloonLocation = game.curxt_.xroom1;
             }
             L10:
             ret_val = false;
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VerbIndices.takew || game.ParserVectors.prso != game.Switches.IsBalloonInflated)
+            if (game.ParserVectors.prsa != (int)VerbIds.takew || game.ParserVectors.prso != game.Switches.IsBalloonInflated)
             {
                 goto L350;
             }
@@ -95,9 +95,9 @@ namespace Zork.Core
             return ret_val;
 
             L350:
-            if (game.ParserVectors.prsa != (int)VerbIndices.putw
-                || game.ParserVectors.prsi != (int)ObjectIndices.recep
-                || ObjectHandler.qempty_(game, ObjectIndices.recep))
+            if (game.ParserVectors.prsa != (int)VerbIds.putw
+                || game.ParserVectors.prsi != (int)ObjectIds.recep
+                || ObjectHandler.IsObjectEmpty(game, ObjectIds.recep))
             {
                 goto L10;
             }
@@ -106,7 +106,7 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.ParserVectors.prsa != (int)VerbIndices.unboaw || (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) == 0)
+            if (game.ParserVectors.prsa != (int)VerbIds.unboaw || (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) == 0)
             {
                 goto L600;
             }
@@ -119,7 +119,7 @@ namespace Zork.Core
             goto L10;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VerbIndices.burnw || game.Objects.ocan[game.ParserVectors.prso - 1] != (int)ObjectIndices.recep)
+            if (game.ParserVectors.prsa != (int)VerbIds.burnw || game.Objects.ocan[game.ParserVectors.prso - 1] != (int)ObjectIds.recep)
             {
                 goto L700;
             }
@@ -127,7 +127,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(game, 550, game.Objects.odesc2[game.ParserVectors.prso - 1]);
             // !LIGHT FIRE IN RECEP.
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects.Sizes[game.ParserVectors.prso - 1] * 20;
-            game.Objects.oflag1[game.ParserVectors.prso - 1] |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.TAKEBT + ObjectFlags.READBT);
+            game.Objects.oflag1[game.ParserVectors.prso - 1] |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.IsTakeable + ObjectFlags.READBT);
 
             if (game.Switches.IsBalloonInflated != 0)
             {
@@ -136,7 +136,7 @@ namespace Zork.Core
 
             if (!game.Flags.blabf)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.blabe, 0, 0, ObjectIndices.Balloon, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.blabe, 0, 0, ObjectIds.Balloon, 0, game);
             }
 
             game.Flags.blabf = true;
@@ -146,7 +146,7 @@ namespace Zork.Core
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa == (int)VerbIndices.unboaw
+            if (game.ParserVectors.prsa == (int)VerbIds.unboaw
                 && game.Switches.IsBalloonInflated != 0
                 && (game.Rooms[game.Player.Here - 1].Flags & RoomFlags.LAND) != 0)
             {

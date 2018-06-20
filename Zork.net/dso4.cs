@@ -4,9 +4,16 @@ namespace Zork.Core
 {
     public static class dso4
     {
-        // ROBADV-- STEAL WINNER'S VALUABLES
-
-        public static int robadv_(Game game, int adv, int nr, ObjectIndices nc, int na)
+        /// <summary>
+        /// robadv_ - Steal Winner's Valuables
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="adv"></param>
+        /// <param name="nr"></param>
+        /// <param name="nc"></param>
+        /// <param name="na"></param>
+        /// <returns></returns>
+        public static int RobAdventurer(Game game, int adv, int nr, ObjectIds nc, int na)
         {
             int ret_val, i__1;
             int i;
@@ -22,20 +29,26 @@ namespace Zork.Core
                     goto L100;
                 }
 
-                ObjectHandler.SetNewObjectStatus(i, 0, nr, (int)nc, na, game);
                 // !STEAL OBJECT
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, (int)nc, na, game);
                 ++ret_val;
                 L100:
                 ;
             }
             return ret_val;
-        } // robadv_
+        }
 
-        // ROBRM-- STEAL ROOM VALUABLES
-
-        // DECLARATIONS
-
-        public static int robrm_(Game game, int rm, int pr, int nr, int nc, int na)
+        /// <summary>
+        /// robrm_ - Steal Room's Valuables
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="rm"></param>
+        /// <param name="pr"></param>
+        /// <param name="nr"></param>
+        /// <param name="nc"></param>
+        /// <param name="na"></param>
+        /// <returns></returns>
+        public static int RobRoom(Game game, int rm, int pr, int nr, int nc, int na)
         {
             int ret_val, i__1, i__2;
             int i;
@@ -56,7 +69,7 @@ namespace Zork.Core
                     goto L50;
                 }
 
-                ObjectHandler.SetNewObjectStatus(i, 0, nr, nc, na, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, nc, na, game);
                 ++ret_val;
                 game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
                 goto L100;
@@ -64,13 +77,13 @@ namespace Zork.Core
                 if ((game.Objects.oflag2[i - 1] & ObjectFlags2.ACTRBT) != 0)
                 {
                     i__2 = ObjectHandler.GetActor(i, game);
-                    ret_val += robadv_(game, i__2, nr, (ObjectIndices)nc, na);
+                    ret_val += RobAdventurer(game, i__2, nr, (ObjectIds)nc, na);
                 }
                 L100:
                 ;
             }
             return ret_val;
-        } // robrm_
+        }
 
         /// <summary>
         /// winnin_ - See if Villian is winning
@@ -93,28 +106,36 @@ namespace Zork.Core
             ps = vs - ComputeFightStrength(game, hr, true);
             // !HIS MARGIN OVER HERO
             ret_val = RoomHandler.prob_(game, 90, 100);
-            if (ps > 3) {
+            if (ps > 3)
+            {
                 return ret_val;
             }
+
             // !+3... 90% WINNING
             ret_val = RoomHandler.prob_(game, 75, 85);
-            if (ps > 0) {
+            if (ps > 0)
+            {
                 return ret_val;
             }
+
             // !>0... 75% WINNING
             ret_val = RoomHandler.prob_(game, 50, 30);
-            if (ps == 0) {
+            if (ps == 0)
+            {
                 return ret_val;
             }
+
             // !=0... 50% WINNING
             ret_val = RoomHandler.prob_(game, 25, 25);
-            if (vs > 1) {
+            if (vs > 1)
+            {
                 return ret_val;
             }
+
             // !ANY VILLAIN STRENGTH.
             ret_val = RoomHandler.prob_(game, 10, 0);
             return ret_val;
-        } // winnin_
+        }
 
         /// <summary>
         /// fights_ - Compute Fight Strength
@@ -136,7 +157,7 @@ namespace Zork.Core
                 ret_val += game.Adventurers.astren[h - 1];
             }
             return ret_val;
-        } // fights_
+        }
 
         /// <summary>
         /// vilstr_ - Compute Villain Strength
@@ -158,7 +179,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            if (villianId != (int)ObjectIndices.thief || !game.Flags.thfenf)
+            if (villianId != (int)ObjectIds.thief || !game.Flags.thfenf)
             {
                 goto L100;
             }

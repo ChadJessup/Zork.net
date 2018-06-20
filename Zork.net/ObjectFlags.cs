@@ -7,7 +7,7 @@ namespace Zork.Core
     {
         IsVisible = 32768,
         READBT = 16384,
-        TAKEBT = 8192,
+        IsTakeable = 8192,
         DOORBT = 4096,
         IsTransparent = 2048,
         FOODBT = 1024,
@@ -18,7 +18,7 @@ namespace Zork.Core
         VICTBT = 32,
         BURNBT = 16,
         FLAMBT = 8,
-        TOOLBT = 4,
+        IsTool = 4,
         TURNBT = 2,
         ONBT = 1,
     }

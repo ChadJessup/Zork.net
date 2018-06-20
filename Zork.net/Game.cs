@@ -21,10 +21,10 @@ namespace Zork.Core
             this.State.HelloSailor = 0;
             this.ParserVectors.prsa = 0;
 
-            this.Hack.thfflg = false;
-            this.Hack.thfact = true;
-            this.Hack.swdact = false;
-            this.Hack.swdsta = 0;
+            this.Hack.WasThiefIntroduced = false;
+            this.Hack.IsThiefActive = true;
+            this.Hack.IsSwordActive = false;
+            this.Hack.SwordStatus = 0;
 
             this.Star.mbase = 0;
 
@@ -38,13 +38,15 @@ namespace Zork.Core
             this.Switches.lcell = 1;
             this.Switches.pnumb = 1;
             this.Switches.mdir = 270;
-            this.Switches.mloc = (int)RoomIndices.mrb;
+            this.Switches.mloc = (int)RoomIds.mrb;
             this.Switches.cphere = 10;
 
-            this.isRunning = true;
+            this.IsRunning = true;
         }
 
         public List<Room> Rooms { get; } = new List<Room>();
+        public List<Object> NewObjects { get; } = new List<Object>();
+
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
@@ -68,8 +70,6 @@ namespace Zork.Core
 
         public hyper_ hyper_ { get; } = new hyper_();
 
-        // TODO: Figure out naming later...
-        //public ParserVector ParserVector { get; } = new ParserVector();
         public ParserVectors ParserVectors { get; } = new ParserVectors();
 
         public pv pv_1 { get; set; } = new pv();
@@ -95,11 +95,11 @@ namespace Zork.Core
 
         public int rnd_(int maxVal) => this.Random.Next(maxVal);
 
-        private bool isRunning = true;
+        public bool IsRunning { get; set; } = true;
         public void Exit()
         {
             this.WriteOutput("The game is over.");
-            isRunning = false;
+            this.IsRunning = false;
         }
 
         public void Play()
@@ -109,16 +109,16 @@ namespace Zork.Core
             bool f = false;
             int i = 0;
 
-            while (this.isRunning)
+            while (this.IsRunning)
             {
                 L100:
-                if (!this.isRunning)
+                if (!this.IsRunning)
                 {
                     // Game is over, exit this game loop.
                     continue;
                 }
 
-                this.Player.Winner = (int)ActorIndices.Player;
+                this.Player.Winner = (int)ActorIds.Player;
                 this.Player.TelFlag = false;
 
                 string input = string.Empty;
@@ -142,13 +142,13 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                if (this.ParserVectors.prsa == (int)VerbIndices.tellw)
+                if (this.ParserVectors.prsa == (int)VerbIds.tellw)
                 {
                     //goto L2000;
                 }
 
                 L300:
-                if (this.ParserVectors.prso == (int)ObjectIndices.valua || this.ParserVectors.prso == (int)ObjectIndices.every)
+                if (this.ParserVectors.prso == (int)ObjectIds.valua || this.ParserVectors.prso == (int)ObjectIds.every)
                 {
                     goto L900;
                 }
@@ -159,7 +159,7 @@ namespace Zork.Core
                 }
 
                 L350:
-                if (!Flags.echof && this.Player.Here == (int)RoomIndices.echor)
+                if (!Flags.echof && this.Player.Here == (int)RoomIds.echor)
                 {
                     goto L1000;
                 }
@@ -178,7 +178,7 @@ namespace Zork.Core
                 goto L100;
 
                 L900:
-                dverb1.valuac_(this, (int)ObjectIndices.valua);
+                dverb1.valuac_(this, (int)ObjectIds.valua);
                 goto L350;
                 // GAME, PAGE 3
 
@@ -198,7 +198,7 @@ namespace Zork.Core
 
                 // !KILL THE ECHO.
                 Flags.echof = true;
-                this.Objects.oflag2[(int)ObjectIndices.bar - 1] &= ~ObjectFlags2.SCRDBT;
+                this.Objects.oflag2[(int)ObjectIds.bar - 1] &= ~ObjectFlags2.SCRDBT;
                 this.ParserVectors.prswon = true;
                 // !FAKE OUT PARSER.
                 this.ParserVectors.prscon = 1;
@@ -207,7 +207,7 @@ namespace Zork.Core
 
                 L1300:
                 this.ParserVectors.prswon = Parser.Parse(input, false, this);
-                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != (int)VerbIndices.Walk)
+                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != (int)VerbIds.Walk)
                 {
                     goto L1400;
                 }
@@ -268,7 +268,7 @@ namespace Zork.Core
                 MessageHandler.Speak(i, this);
 
                 L2600:
-                this.Player.Winner = (int)ActorIndices.Player;
+                this.Player.Winner = (int)ActorIds.Player;
                 // !RESTORE STATE.
                 this.Player.Here = this.Adventurers.Rooms[this.Player.Winner - 1];
                 goto L350;
@@ -286,7 +286,7 @@ namespace Zork.Core
                 //}
 
                 // !VEHICLE HANDLE?
-                if (this.ParserVectors.prso == (int)ObjectIndices.valua || this.ParserVectors.prso == (int)ObjectIndices.every)
+                if (this.ParserVectors.prso == (int)ObjectIds.valua || this.ParserVectors.prso == (int)ObjectIds.every)
                 {
                     goto L2900;
                 }
@@ -305,7 +305,7 @@ namespace Zork.Core
                 // !DONE.
 
                 L2900:
-                dverb1.valuac_(this, (int)ObjectIndices.valua);
+                dverb1.valuac_(this, (int)ObjectIds.valua);
                 // !ALL OR VALUABLES.
                 goto L350;
             }
@@ -321,7 +321,7 @@ namespace Zork.Core
                 MessageHandler.rspeak_(this, 341);
             }
             // !DEFAULT REMARK.
-            if (this.Hack.thfact)
+            if (this.Hack.IsThiefActive)
             {
                 Actors.thiefd_(this);
             }
@@ -331,7 +331,7 @@ namespace Zork.Core
                 DemonHandler.fightd_(this);
             }
             // !FIGHT DEMON.
-            if (this.Hack.swdact)
+            if (this.Hack.IsSwordActive)
             {
                 DemonHandler.swordd_(this);
             }

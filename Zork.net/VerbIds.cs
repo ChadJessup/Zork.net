@@ -1,6 +1,6 @@
 ﻿namespace Zork.Core
 {
-    public enum VerbIndices
+    public enum VerbIds
     {
         cintw = 1,
         deadxw = 2,

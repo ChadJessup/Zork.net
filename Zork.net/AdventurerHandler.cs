@@ -17,7 +17,7 @@ namespace Zork.Core
 
             i = 575;
             // !FIRST LINE.
-            if (adventurer != (int)ActorIndices.Player)
+            if (adventurer != (int)ActorIds.Player)
             {
                 i = 576;
             }
@@ -46,7 +46,7 @@ namespace Zork.Core
             }
 
             // !ANY OBJECTS?
-            if (adventurer == (int)ActorIndices.Player)
+            if (adventurer == (int)ActorIds.Player)
             {
                 MessageHandler.Speak(578, game);
             }
@@ -106,7 +106,7 @@ namespace Zork.Core
             game.Adventurers.Vehicles[game.Player.Winner - 1] = 0;
 
             // !GET RID OF VEHICLE.
-            if (game.Player.Winner == (int)ActorIndices.Player)
+            if (game.Player.Winner == (int)ActorIds.Player)
             {
                 goto L100;
             }
@@ -116,7 +116,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(432, game.Objects.odesc2[game.Adventurers.Objects[game.Player.Winner - 1] - 1], game);
 
             // !SEND TO HYPER SPACE.
-            ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus((ObjectIds)game.Adventurers.Objects[game.Player.Winner - 1], 0, 0, 0, 0, game);
 
             return;
 
@@ -134,7 +134,7 @@ namespace Zork.Core
             //    }
 
             // !DEAD TWICE? KICK HIM OFF.
-            if (!dso3.yesno_(game, 10, 9, 8))
+            if (!MessageHandler.AskYesNoQuestion(game, 10, 9, 8))
             {
                 goto L1100;
             }
@@ -155,20 +155,20 @@ namespace Zork.Core
             // !CHARGE TEN POINTS.
             AdventurerHandler.ScoreUpdate(game, -10);
             // !REPOSITION HIM.
-            f = AdventurerHandler.moveto_(game, RoomIndices.Forest1, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, RoomIds.Forest1, game.Player.Winner);
             // !RESTORE COFFIN.
             game.Flags.egyptf = true;
-            if (game.Objects.oadv[(int)ObjectIndices.Coffin - 1] == game.Player.Winner)
+            if (game.Objects.oadv[(int)ObjectIds.Coffin - 1] == game.Player.Winner)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.Coffin, 0, RoomIndices.Egypt, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.Coffin, 0, RoomIds.Egypt, 0, 0, game);
             }
 
-            game.Objects.oflag2[(int)ObjectIndices.door - 1] &= ~ObjectFlags2.TCHBT;
-            game.Objects.oflag1[(int)ObjectIndices.robot - 1] = (game.Objects.oflag1[(int)ObjectIndices.robot - 1] | ObjectFlags.IsVisible) & ~ObjectFlags.NDSCBT;
+            game.Objects.oflag2[(int)ObjectIds.door - 1] &= ~ObjectFlags2.TCHBT;
+            game.Objects.oflag1[(int)ObjectIds.robot - 1] = (game.Objects.oflag1[(int)ObjectIds.robot - 1] | ObjectFlags.IsVisible) & ~ObjectFlags.NDSCBT;
 
-            if (game.Objects.oroom[(int)ObjectIndices.Lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIndices.Lamp - 1] == game.Player.Winner)
+            if (game.Objects.oroom[(int)ObjectIds.Lamp - 1] != 0 || game.Objects.oadv[(int)ObjectIds.Lamp - 1] == game.Player.Winner)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIndices.Lamp, 0, RoomIndices.LivingRoom, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.Lamp, 0, RoomIds.LivingRoom, 0, 0, game);
             }
 
             // NOW REDISTRIBUTE HIS VALUABLES AND OTHER BELONGINGS.
@@ -195,7 +195,7 @@ namespace Zork.Core
                 }
                 // !MOVE TO RANDOM LOCATIONS.
 
-                ObjectHandler.SetNewObjectStatus(j, 0, rlist[i - 1], 0, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)j, 0, rlist[i - 1], 0, 0, game);
                 L200:
                 ;
             }
@@ -221,7 +221,7 @@ namespace Zork.Core
                     goto L250;
                 }
 
-                ObjectHandler.SetNewObjectStatus(j, 0, i, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)j, 0, i, 0, 0, game);
                 // !YES, MOVE.
                 L300:
                 ;
@@ -244,7 +244,7 @@ namespace Zork.Core
                     goto L450;
                 }
 
-                ObjectHandler.SetNewObjectStatus(j, 0, i, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)j, 0, i, 0, 0, game);
                 L500:
                 ;
             }
@@ -268,7 +268,7 @@ namespace Zork.Core
             game.Exit();
         }
 
-        public static bool moveto_(Game game, RoomIndices nr, int who) => moveto_(game, (int)nr, who);
+        public static bool moveto_(Game game, RoomIds nr, int who) => moveto_(game, (int)nr, who);
         public static bool moveto_(Game game, int nr, int who)
         {
             // System generated locals
@@ -307,19 +307,19 @@ namespace Zork.Core
             L100:
             bits = 0;
             // !ASSUME NOWHERE.
-            if (j == (int)ObjectIndices.rboat)
+            if (j == (int)ObjectIds.rboat)
             {
                 bits = (int)RoomFlags.WATER;
             }
 
             // !IN BOAT?
-            if (j == (int)ObjectIndices.Balloon)
+            if (j == (int)ObjectIds.Balloon)
             {
                 bits = (int)RoomFlags.AIR;
             }
 
             // !IN BALLOON?
-            if (j == (int)ObjectIndices.bucke)
+            if (j == (int)ObjectIds.bucke)
             {
                 bits = (int)RoomFlags.RBUCK;
             }
@@ -344,14 +344,14 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (who != (int)ActorIndices.Player)
+            if (who != (int)ActorIds.Player)
             {
-                ObjectHandler.SetNewObjectStatus(game.Adventurers.Objects[who - 1], 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)game.Adventurers.Objects[who - 1], 0, nr, 0, 0, game);
             }
 
             if (j != 0)
             {
-                ObjectHandler.SetNewObjectStatus(j, 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)j, 0, nr, 0, 0, game);
             }
 
             game.Player.Here = nr;

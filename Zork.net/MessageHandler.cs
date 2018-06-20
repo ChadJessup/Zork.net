@@ -120,5 +120,63 @@ namespace Zork.Core
                 game.WriteOutput(Environment.NewLine);
             }
         }
+
+        /// <summary>
+        /// yesno_ - Obtain Yes/No answer.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="questionStringId"></param>
+        /// <param name="yesStringId"></param>
+        /// <param name="noStringId"></param>
+        /// <returns></returns>
+        public static bool AskYesNoQuestion(Game game, int questionStringId, int yesStringId, int noStringId)
+        {
+            // System generated locals
+            bool ret_val;
+
+            // Local variables
+            string ans = " ";
+
+            L100:
+            // !ASK
+            MessageHandler.rspeak_(game, questionStringId);
+
+            ans = game.ReadInput();
+            MessageHandler.more_input();
+
+            if (string.IsNullOrWhiteSpace(ans))
+            {
+                ans = " ";
+            }
+
+            // !GET ANSWER
+            if (ans[0] == 'Y' || ans[0] == 'y')
+            {
+                goto L200;
+            }
+
+            if (ans[0] == 'N' || ans[0] == 'n')
+            {
+                goto L300;
+            }
+
+            MessageHandler.rspeak_(game, 6);
+            // !SCOLD.
+            goto L100;
+
+            L200:
+            // !YES,
+            ret_val = true;
+            // !OUT WITH IT.
+            MessageHandler.rspeak_(game, yesStringId);
+            return ret_val;
+
+            L300:
+            // !NO,
+            ret_val = false;
+            // !LIKEWISE.
+            MessageHandler.rspeak_(game, noStringId);
+            return ret_val;
+        }
     }
 }
