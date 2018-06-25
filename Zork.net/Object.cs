@@ -2,19 +2,22 @@
 {
     public class Object
     {
-        public int odesc1 { get; set; }
-        public int odesc2 { get; set; }
+        public ObjectIds Id { get; set; }
+        public int Description1 { get; set; }
+        public int Description2 { get; set; }
         public int odesco { get; set; }
         public int oactio { get; set; }
-        public ObjectFlags oflag1 { get; set; }
-        public ObjectFlags2 oflag2 { get; set; }
+        public ObjectFlags Flag1 { get; set; }
+        public ObjectFlags2 Flag2 { get; set; }
         public int ofval { get; set; }
         public int otval { get; set; }
-        public int Sizes { get; set; }
+        public int Size { get; set; }
         public int ocapac { get; set; }
-        public int oroom { get; set; }
-        public int oadv { get; set; }
-        public int ocan { get; set; }
+        public RoomIds Room { get; set; }
+        public ActorIds Adventurer { get; set; }
+        public ObjectIds Container { get; set; }
         public int oread { get; set; }
+
+        public override string ToString() => $"{this.Id} at {this.Room} and held by {this.Adventurer}";
     }
 }

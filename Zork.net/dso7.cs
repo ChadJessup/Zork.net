@@ -63,22 +63,22 @@ namespace Zork.Core
         public static void cpgoto_(Game game, int st)
         {
             int i__1, i__2;
-            int i;
+            ObjectIds i;
 
-            game.Rooms[(int)RoomIds.cpuzz - 1].Flags &= ~RoomFlags.SEEN;
+            game.Rooms[RoomIds.cpuzz].Flags &= ~RoomFlags.SEEN;
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !RELOCATE OBJECTS.
-                if (game.Objects.oroom[i - 1] == (int)RoomIds.cpuzz && (game.Objects.oflag2[i - 1] & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
+                if (game.Objects[i].Room == RoomIds.cpuzz && (game.Objects[i].Flag2 & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
                     i__2 = game.Switches.cphere * game.hyper_.hfactr;
-                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)i__2, 0, 0, game);
+                    ObjectHandler.SetNewObjectStatus(i, 0, (RoomIds)i__2, 0, 0, game);
                 }
 
-                if (game.Objects.oroom[i - 1] == st * game.hyper_.hfactr)
+                if (game.Objects[i].Room == (RoomIds)(st * game.hyper_.hfactr))
                 {
-                    ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, RoomIds.cpuzz, 0, 0, game);
+                    ObjectHandler.SetNewObjectStatus(i, 0, RoomIds.cpuzz, 0, 0, game);
                 }
                 // L100:
             }

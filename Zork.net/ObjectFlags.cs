@@ -27,7 +27,7 @@ namespace Zork.Core
     public enum ObjectFlags2
     {
         FINDBT = 32768,
-        SLEPBT = 16384,
+        IsSleeping = 16384,
         SCRDBT = 8192,
         TIEBT = 4096,
         IsClimbable = 2048,
@@ -41,7 +41,8 @@ namespace Zork.Core
         IsOpen = 8,
         TCHBT = 4,
         VEHBT = 2,
-        SCHBT = 1,
+        // Was SCHBT - I believe that means 'searchable'.
+        IsSearchable = 1,
     }
 
     public enum SyntaxObjectFlags

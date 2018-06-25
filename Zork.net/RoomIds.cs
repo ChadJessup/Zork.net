@@ -2,6 +2,8 @@
 {
     public enum RoomIds
     {
+        UNKNOWN = -1,
+        NoWhere = 0,
         WhiteHouse = 2,
         LivingRoom = 8,
         Cellar = 9,
@@ -21,7 +23,7 @@
         mmach = 77,
         dome  = 79,
         mtorc = 80,
-        carou = 83,
+        Carousel = 83,
         riddl = 91,
         lld2  = 94,
         temp1 = 96,

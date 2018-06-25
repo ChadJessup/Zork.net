@@ -52,17 +52,17 @@ namespace Zork.Core
             //do_uio(1, &game.Screen.scolrm, sizeof(int));
             //do_uio(1, &game.Screen.scolac, sizeof(int));
             //
-            //do_uio(220, &game.Objects.odesc1[0], sizeof(int));
-            //do_uio(220, &game.Objects.odesc2[0], sizeof(int));
-            //do_uio(220, &game.Objects.oflag1[0], sizeof(int));
-            //do_uio(220, &game.Objects.oflag2[0], sizeof(int));
-            //do_uio(220, &game.Objects.ofval[0], sizeof(int));
-            //do_uio(220, &game.Objects.otval[0], sizeof(int));
-            //do_uio(220, &game.Objects.osize[0], sizeof(int));
-            //do_uio(220, &game.Objects.ocapac[0], sizeof(int));
-            //do_uio(220, &game.Objects.oroom[0], sizeof(int));
-            //do_uio(220, &game.Objects.oadv[0], sizeof(int));
-            //do_uio(220, &game.Objects.ocan[0], sizeof(int));
+            //do_uio(220, &game.Objects[0].odesc1, sizeof(int));
+            //do_uio(220, &game.Objects[0].odesc2, sizeof(int));
+            //do_uio(220, &game.Objects[0].oflag1, sizeof(int));
+            //do_uio(220, &game.Objects[0].oflag2, sizeof(int));
+            //do_uio(220, &game.Objects[0].ofval, sizeof(int));
+            //do_uio(220, &game.Objects[0].otval, sizeof(int));
+            //do_uio(220, &game.Objects[0].osize, sizeof(int));
+            //do_uio(220, &game.Objects[0].ocapac, sizeof(int));
+            //do_uio(220, &game.Objects[0].oroom, sizeof(int));
+            //do_uio(220, &game.Objects[0].oadv, sizeof(int));
+            //do_uio(220, &game.Objects[0].ocan, sizeof(int));
             //
             //do_uio(200, &game.NewRooms.rval[0], sizeof(int));
             //do_uio(200, &game.NewRooms.RoomFlags[0], sizeof(int));
@@ -144,17 +144,17 @@ namespace Zork.Core
             //do_uio(1, game.Screen.scolrm, sizeof(int));
             //do_uio(1, game.Screen.scolac, sizeof(int));
             //
-            //do_uio(220, game.Objects.odesc1[0], sizeof(int));
-            //do_uio(220, game.Objects.odesc2[0], sizeof(int));
-            //do_uio(220, game.Objects.oflag1[0], sizeof(int));
-            //do_uio(220, game.Objects.oflag2[0], sizeof(int));
-            //do_uio(220, game.Objects.ofval[0], sizeof(int));
-            //do_uio(220, game.Objects.otval[0], sizeof(int));
-            //do_uio(220, game.Objects.osize[0], sizeof(int));
-            //do_uio(220, game.Objects.ocapac[0], sizeof(int));
-            //do_uio(220, game.Objects.oroom[0], sizeof(int));
-            //do_uio(220, game.Objects.oadv[0], sizeof(int));
-            //do_uio(220, game.Objects.ocan[0], sizeof(int));
+            //do_uio(220, game.Objects[0].odesc1, sizeof(int));
+            //do_uio(220, game.Objects[0].odesc2, sizeof(int));
+            //do_uio(220, game.Objects[0].oflag1, sizeof(int));
+            //do_uio(220, game.Objects[0].oflag2, sizeof(int));
+            //do_uio(220, game.Objects[0].ofval, sizeof(int));
+            //do_uio(220, game.Objects[0].otval, sizeof(int));
+            //do_uio(220, game.Objects[0].osize, sizeof(int));
+            //do_uio(220, game.Objects[0].ocapac, sizeof(int));
+            //do_uio(220, game.Objects[0].oroom, sizeof(int));
+            //do_uio(220, game.Objects[0].oadv, sizeof(int));
+            //do_uio(220, game.Objects[0].ocan, sizeof(int));
             //
             //do_uio(200, game.NewRooms.rval[0], sizeof(int));
             //do_uio(200, game.NewRooms.RoomFlags[0], sizeof(int));
@@ -200,7 +200,7 @@ namespace Zork.Core
                 goto L500;
             }
 
-            if (!dso3.FindExit(game, game.ParserVectors.prso, game.Player.Here))
+            if (!dso3.FindExit(game, (int)game.ParserVectors.prso, game.Player.Here))
             {
                 goto L450;
             }
@@ -241,7 +241,7 @@ namespace Zork.Core
                 goto L400;
             }
             // !DOOR... RETURNED ROOM?
-            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.curxt_.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L400;
             }
@@ -266,7 +266,7 @@ namespace Zork.Core
             // ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE).
 
             L500:
-            if (dso3.FindExit(game, game.ParserVectors.prso, game.Player.Here))
+            if (dso3.FindExit(game, (int)game.ParserVectors.prso, game.Player.Here))
             {
                 goto L550;
             }
@@ -274,17 +274,17 @@ namespace Zork.Core
             L525:
             game.curxt_.xstrng = 678;
             // !ASSUME WALL.
-            if (game.ParserVectors.prso == (int)XSearch.xup)
+            if (game.ParserVectors.prso == (ObjectIds)XSearch.xup)
             {
                 game.curxt_.xstrng = 679;
             }
             // !IF UP, CANT.
-            if (game.ParserVectors.prso == (int)XSearch.xdown)
+            if (game.ParserVectors.prso == (ObjectIds)XSearch.xdown)
             {
                 game.curxt_.xstrng = 680;
             }
             // !IF DOWN, CANT.
-            if ((game.Rooms[(int)game.Player.Here - 1].Flags & RoomFlags.NOWALL) != 0)
+            if ((game.Rooms[game.Player.Here].Flags & RoomFlags.NOWALL) != 0)
             {
                 game.curxt_.xstrng = 524;
             }
@@ -313,16 +313,19 @@ namespace Zork.Core
             }
             // !CEXIT... RETURNED ROOM?
             // TODO: chadj figure this out
+
             //if (game.Flags[game.curxt_.xobj - 1])
             {
               //  goto L900;
             }
+
             // !NO, FLAG ON?
             L600:
             if (game.curxt_.xstrng == 0)
             {
                 goto L525;
             }
+
             // !IF NO REASON, USE STD.
             MessageHandler.rspeak_(game, game.curxt_.xstrng);
             // !DENY EXIT.
@@ -335,18 +338,21 @@ namespace Zork.Core
             {
                 goto L900;
             }
+
             // !DOOR... RETURNED ROOM?
-            if ((game.Objects.oflag2[game.curxt_.xobj - 1] & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.curxt_.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L900;
             }
+
             // !NO, DOOR OPEN?
             if (game.curxt_.xstrng == 0)
             {
                 game.curxt_.xstrng = 525;
             }
+
             // !IF NO REASON, USE STD.
-            MessageHandler.rspsub_(game.curxt_.xstrng, game.Objects.odesc2[game.curxt_.xobj - 1], game);
+            MessageHandler.rspsub_(game.curxt_.xstrng, game.Objects[game.curxt_.xobj].Description2, game);
             game.ParserVectors.prscon = 1;
             // !STOP CMD STREAM.
             return ret_val;
@@ -358,26 +364,25 @@ namespace Zork.Core
             {
                 ret_val = RoomHandler.RoomDescription(0, game);
             }
-            // !DESCRIBE ROOM.
+
             return ret_val;
-        } // walk_
+        }
 
         // CXAPPL- CONDITIONAL EXIT PROCESSORS
         public static int cxappl_(Game game, int ri)
         {
-            // System generated locals
             int ret_val, i__1;
-
-            // Local variables
-            int i, j, k;
-            int nxt;
+            ObjectIds i, k;
+            int nxt, j;
             int ldir;
 
             ret_val = 0;
             // !NO RETURN.
-            if (ri == 0) {
+            if (ri == 0)
+            {
                 return ret_val;
             }
+
             // !IF NO ACTION, DONE.
             switch (ri)
             {
@@ -396,13 +401,14 @@ namespace Zork.Core
                 case 13: goto L13000;
                 case 14: goto L14000;
             }
+
             throw new InvalidOperationException();
             //bug_(5, ri);
 
             // C1- COFFIN-CURE
 
             L1000:
-            game.Flags.egyptf = game.Objects.oadv[(int)ObjectIds.Coffin - 1] != (int)game.Player.Winner;
+            game.Flags.egyptf = game.Objects[ObjectIds.Coffin].Adventurer != game.Player.Winner;
             // !T IF NO COFFIN.
             return ret_val;
 
@@ -410,19 +416,22 @@ namespace Zork.Core
             // C5- CAROUSEL OUT
 
             L2000:
-            if (game.Flags.caroff) {
+            if (game.Flags.caroff)
+            {
                 return ret_val;
             }
+
             // !IF FLIPPED, NOTHING.
             L2500:
-            MessageHandler.rspeak_(game, 121);
             // !SPIN THE COMPASS.
+            MessageHandler.rspeak_(game, 121);
+
             L5000:
-            i = xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8);
             // !CHOOSE RANDOM EXIT.
-            game.curxt_.xroom1 = (RoomIds)(int)(game.Exits.Travel[game.Rooms[(int)game.Player.Here - 1].Exit + i - 1] & xpars_.xrmask);
-            ret_val = (int)game.curxt_.xroom1;
+            i = (ObjectIds)(xpars_.xelnt[xpars_.xcond - 1] * game.rnd_(8));
+            game.curxt_.xroom1 = (RoomIds)(int)(game.Exits.Travel[game.Rooms[game.Player.Here].Exit + (int)i - 1] & xpars_.xrmask);
             // !RETURN EXIT.
+            ret_val = (int)game.curxt_.xroom1;
             return ret_val;
 
             // C3- CHIMNEY FUNCTION
@@ -432,10 +441,10 @@ namespace Zork.Core
             // !ASSUME HEAVY LOAD.
             j = 0;
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !COUNT OBJECTS.
-                if (game.Objects.oadv[i - 1] == (int)game.Player.Winner)
+                if (game.Objects[i].Adventurer == game.Player.Winner)
                 {
                     ++j;
                 }
@@ -450,7 +459,7 @@ namespace Zork.Core
             // !CARRYING TOO MUCH?
             game.curxt_.xstrng = 446;
             // !ASSUME NO LAMP.
-            if (game.Objects.oadv[(int)ObjectIds.Lamp - 1] != (int)game.Player.Winner)
+            if (game.Objects[ObjectIds.Lamp].Adventurer != game.Player.Winner)
             {
                 return ret_val;
             }
@@ -458,9 +467,9 @@ namespace Zork.Core
             // !NO LAMP?
             game.Flags.litldf = true;
             // !HE CAN DO IT.
-            if ((game.Objects.oflag2[(int)ObjectIds.door - 1] & ObjectFlags2.IsOpen) == 0)
+            if ((game.Objects[ObjectIds.TrapDoor].Flag2 & ObjectFlags2.IsOpen) == 0)
             {
-                game.Objects.oflag2[(int)ObjectIds.door - 1] &= ~ObjectFlags2.TCHBT;
+                game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.TCHBT;
             }
 
             return ret_val;
@@ -484,6 +493,7 @@ namespace Zork.Core
             {
                 goto L2500;
             }
+
             // !IF FLIPPED, GO SPIN.
             game.Flags.frobzf = true;
             // !OTHERWISE, AN EXIT.
@@ -492,7 +502,7 @@ namespace Zork.Core
             // C7-	FROBOZZ FLAG (BANK ALARM)
 
             L7000:
-            game.Flags.frobzf = game.Objects.oroom[(int)ObjectIds.bills - 1] != 0 & game.Objects.oroom[(int)ObjectIds.portr - 1] != 0;
+            game.Flags.frobzf = game.Objects[ObjectIds.bills].Room != 0 & game.Objects[ObjectIds.portr].Room != 0;
 
             return ret_val;
             // CXAPPL, PAGE 3
@@ -506,7 +516,7 @@ namespace Zork.Core
                 goto L8100;
             }
             // !MIRROR IN WAY?
-            if (game.ParserVectors.prso == (int)XSearch.xnorth || game.ParserVectors.prso == (int)XSearch.xsouth) {
+            if (game.ParserVectors.prso == (ObjectIds)XSearch.xnorth || game.ParserVectors.prso == (ObjectIds)XSearch.xsouth) {
                 goto L8200;
             }
             if (game.Switches.mdir % 180 != 0)
@@ -517,7 +527,7 @@ namespace Zork.Core
             // !MIRROR MUST BE N-S.
             game.curxt_.xroom1 = (game.curxt_.xroom1 - RoomIds.mra << 1) + RoomIds.mrae;
             // !CALC EAST ROOM.
-            if (game.ParserVectors.prso > (int)XSearch.xsouth)
+            if (game.ParserVectors.prso > (ObjectIds)XSearch.xsouth)
             {
                 ++game.curxt_.xroom1;
             }
@@ -536,7 +546,7 @@ namespace Zork.Core
             L8300:
             ldir = game.Switches.mdir;
             // !SEE WHICH MIRROR.
-            if (game.ParserVectors.prso == (int)XSearch.xsouth)
+            if (game.ParserVectors.prso == (ObjectIds)XSearch.xsouth)
             {
                 ldir = 180;
             }
@@ -582,9 +592,9 @@ namespace Zork.Core
             L10000:
             game.Flags.frobzf = false;
             // !ASSUME CANT.
-            ldir = (game.ParserVectors.prso - (int)XSearch.xnorth) / (int)XSearch.xnorth * 45;
+            ldir = game.ParserVectors.prso - (ObjectIds)((int)XSearch.xnorth / (int)XSearch.xnorth * 45);
             // !XLATE DIR TO DEGREES.
-            if (!game.Flags.mropnf || (game.Switches.mdir + 270) % 360 != ldir && game.ParserVectors.prso != (int)XSearch.xexit)
+            if (!game.Flags.mropnf || (game.Switches.mdir + 270) % 360 != ldir && game.ParserVectors.prso != (ObjectIds)XSearch.xexit)
             {
                 goto L10200;
             }
@@ -610,10 +620,11 @@ namespace Zork.Core
             return ret_val;
 
             L10200:
-            if (!game.Flags.wdopnf || (game.Switches.mdir + 180) % 360 != ldir &&
-                game.ParserVectors.prso != (int)XSearch.xexit) {
+            if (!game.Flags.wdopnf || (game.Switches.mdir + 180) % 360 != ldir && game.ParserVectors.prso != (ObjectIds)XSearch.xexit)
+            {
                 return ret_val;
             }
+
             game.curxt_.xroom1 = game.Switches.mloc + 1;
             // !ASSUME N.
             if (game.Switches.mdir == 0)
@@ -660,7 +671,8 @@ namespace Zork.Core
             L14000:
             game.Flags.frobzf = false;
             // !ASSSUME LOSE.
-            if (game.ParserVectors.prso != (int)XSearch.xup) {
+            if (game.ParserVectors.prso != (ObjectIds)XSearch.xup)
+            {
                 goto L14100;
             }
             // !UP?
@@ -681,8 +693,8 @@ namespace Zork.Core
             return ret_val;
 
             L14100:
-            if (game.Switches.cphere != 52 || game.ParserVectors.prso != (int)XSearch.xwest || !
-                game.Flags.cpoutf) {
+            if (game.Switches.cphere != 52 || game.ParserVectors.prso != (ObjectIds)XSearch.xwest || !game.Flags.cpoutf)
+            {
                 goto L14200;
             }
             game.Flags.frobzf = true;
@@ -690,29 +702,33 @@ namespace Zork.Core
             return ret_val;
 
             L14200:
-            for (i = 1; i <= 16; i += 2) {
+            for (i = (ObjectIds)1; i <= (ObjectIds)16; i += 2)
+            {
                 // !LOCATE EXIT.
-                if (game.ParserVectors.prso == PuzzleHandler.cpdr[i - 1]) {
+                if (game.ParserVectors.prso == (ObjectIds)PuzzleHandler.cpdr[(int)i - 1]) {
                     goto L14400;
                 }
                 // L14300:
             }
+
             return ret_val;
             // !NO SUCH EXIT.
 
             L14400:
-            j = PuzzleHandler.cpdr[i];
+            j = PuzzleHandler.cpdr[(int)i];
             // !GET DIRECTIONAL OFFSET.
             nxt = game.Switches.cphere + j;
             // !GET NEXT STATE.
-            k = 8;
+            k = (ObjectIds)8;
             // !GET ORTHOGONAL DIR.
             if (j < 0) {
-                k = -8;
+                k = (ObjectIds)(-8);
             }
-            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (PuzzleHandler.cpvec[game.Switches.cphere + k - 1] == 0 || PuzzleHandler.cpvec[nxt - k - 1] == 0)) && PuzzleHandler.cpvec[nxt - 1] == 0) {
+            if ((Math.Abs(j) == 1 || Math.Abs(j) == 8 || (PuzzleHandler.cpvec[game.Switches.cphere + (int)k - 1] == 0 || PuzzleHandler.cpvec[nxt - (int)k - 1] == 0)) && PuzzleHandler.cpvec[nxt - 1] == 0)
+            {
                 goto L14500;
             }
+
             return ret_val;
 
             L14500:

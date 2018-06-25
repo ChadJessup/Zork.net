@@ -18,16 +18,16 @@ namespace Zork.Core
 
             // Local variables
             int oa;
-            int x;
+            ObjectIds x;
 
             // !ASSUME LOSES.
             ret_val = false;
 
             // !GET OBJECT ACTION.
-            oa = game.Objects.oactio[game.ParserVectors.prso - 1];
+            oa = game.Objects[game.ParserVectors.prso].oactio;
 
             // !STAR?
-            if (game.ParserVectors.prso <= game.Star.strbit)
+            if (game.ParserVectors.prso <= (ObjectIds)game.Star.strbit)
             {
                 goto L100;
             }
@@ -38,10 +38,10 @@ namespace Zork.Core
 
             L100:
             // !INSIDE?
-            x = game.Objects.ocan[game.ParserVectors.prso - 1];
+            x = game.Objects[game.ParserVectors.prso].Container;
 
             // !HIS VEHICLE?
-            if (game.ParserVectors.prso != game.Adventurers.Vehicles[(int)game.Player.Winner - 1])
+            if (game.ParserVectors.prso != (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1])
             {
                 goto L400;
             }
@@ -51,7 +51,7 @@ namespace Zork.Core
             return ret_val;
 
             L400:
-            if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsTakeable) != 0)
+            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTakeable) != 0)
             {
                 goto L500;
             }
@@ -73,7 +73,7 @@ namespace Zork.Core
             }
 
             // !ALREADY GOT IT?
-            if (game.Objects.oadv[game.ParserVectors.prso - 1] == (int)game.Player.Winner)
+            if (game.Objects[game.ParserVectors.prso].Adventurer == game.Player.Winner)
             {
                 MessageHandler.rspeak_(game, 557);
             }
@@ -82,7 +82,7 @@ namespace Zork.Core
 
             L600:
             // !TOO MUCH WEIGHT.
-            if (x != 0 && game.Objects.oadv[x - 1] == (int)game.Player.Winner || ObjectHandler.GetWeight(0, game.ParserVectors.prso, game.Player.Winner, game) + game.Objects.Sizes[game.ParserVectors.prso - 1] <= game.State.MaxLoad)
+            if (x != 0 && game.Objects[x].Adventurer == game.Player.Winner || ObjectHandler.GetWeight(0, game.ParserVectors.prso, game.Player.Winner, game) + game.Objects[game.ParserVectors.prso].Size <= game.State.MaxLoad)
             {
                 goto L700;
             }
@@ -101,13 +101,13 @@ namespace Zork.Core
 
             // !TAKE OBJECT FOR WINNER.
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, game.Player.Winner, game);
-            game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
 
             // !UPDATE SCORE.
-            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.prso].ofval);
 
             // !CANT BE SCORED AGAIN.
-            game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
+            game.Objects[game.ParserVectors.prso].ofval = 0;
 
             // !TELL TAKEN.
             if (tellUser)
@@ -126,32 +126,32 @@ namespace Zork.Core
 
             // Local variables
             bool f;
-            int i, x;
+            ObjectIds i, x;
 
             ret_val = true;
             // !ASSUME WINS.
-            x = game.Objects.ocan[game.ParserVectors.prso - 1];
+            x = game.Objects[game.ParserVectors.prso].Container;
             // !GET CONTAINER.
             if (x == 0)
             {
                 goto L200;
             }
             // !IS IT INSIDE?
-            if (game.Objects.oadv[x - 1] != (int)game.Player.Winner)
+            if (game.Objects[x].Adventurer != game.Player.Winner)
             {
                 goto L1000;
             }
             // !IS HE CARRYING CON?
-            if ((game.Objects.oflag2[x - 1] & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[x].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L300;
             }
-            MessageHandler.rspsub_(game, 525, game.Objects.odesc2[x - 1]);
+            MessageHandler.rspsub_(game, 525, game.Objects[x].Description2);
             // !CANT REACH.
             return ret_val;
 
             L200:
-            if (game.Objects.oadv[game.ParserVectors.prso - 1] != (int)game.Player.Winner)
+            if (game.Objects[game.ParserVectors.prso].Adventurer != game.Player.Winner)
             {
                 goto L1000;
             }
@@ -162,7 +162,7 @@ namespace Zork.Core
                 goto L400;
             }
             // !IS HE IN VEHICLE?
-            game.ParserVectors.prsi = game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            game.ParserVectors.prsi = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
             // !YES,
             f = put_(game, true);
             // !DROP INTO VEHICLE.
@@ -180,11 +180,11 @@ namespace Zork.Core
                 ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, RoomIds.Forest3, 0, 0, game);
             }
 
-            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.prso].ofval);
             // !SCORE OBJECT.
-            game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
+            game.Objects[game.ParserVectors.prso].ofval = 0;
             // !CANT BE SCORED AGAIN.
-            game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
 
             if (ObjectHandler.objact_(game))
             {
@@ -195,18 +195,18 @@ namespace Zork.Core
             // !ASSUME NOTHING TO SAY.
             if (game.ParserVectors.prsa == (int)VerbIds.Drop)
             {
-                i = 528;
+                i = (ObjectIds)528;
             }
 
             if (game.ParserVectors.prsa == (int)VerbIds.Throw)
             {
-                i = 529;
+                i = (ObjectIds)529;
             }
             if (i != 0 && game.Player.Here == RoomIds.mtree)
             {
-                i = 659;
+                i = (ObjectIds)659;
             }
-            MessageHandler.rspsub_(game, i, game.Objects.odesc2[game.ParserVectors.prso - 1]);
+            MessageHandler.rspsub_(game, (int)i, game.Objects[game.ParserVectors.prso].Description2);
             return ret_val;
 
             L1000:
@@ -223,11 +223,11 @@ namespace Zork.Core
             bool ret_val;
 
             // Local variables
-            int j;
+            ObjectIds j;
             int svi, svo;
 
             ret_val = false;
-            if (game.ParserVectors.prso <= game.Star.strbit && game.ParserVectors.prsi <= game.Star.strbit)
+            if (game.ParserVectors.prso <= (ObjectIds)game.Star.strbit && game.ParserVectors.prsi <= (ObjectIds)game.Star.strbit)
             {
                 goto L200;
             }
@@ -240,8 +240,8 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if ((game.Objects.oflag2[game.ParserVectors.prsi - 1] & ObjectFlags2.IsOpen) != 0
-                || (game.Objects.oflag1[game.ParserVectors.prsi - 1] & (int)ObjectFlags.DOORBT + ObjectFlags.CONTBT) != 0 || (game.Objects.oflag2[game.ParserVectors.prsi - 1] & ObjectFlags2.VEHBT) != 0)
+            if ((game.Objects[game.ParserVectors.prsi].Flag2 & ObjectFlags2.IsOpen) != 0
+                || (game.Objects[game.ParserVectors.prsi].Flag1 & (int)ObjectFlags.DOORBT + ObjectFlags.CONTBT) != 0 || (game.Objects[game.ParserVectors.prsi].Flag2 & ObjectFlags2.VEHBT) != 0)
             {
                 goto L300;
             }
@@ -251,7 +251,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if ((game.Objects.oflag2[game.ParserVectors.prsi - 1] & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.ParserVectors.prsi].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L400;
             }
@@ -271,17 +271,17 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.Objects.ocan[game.ParserVectors.prso - 1] != game.ParserVectors.prsi)
+            if (game.Objects[game.ParserVectors.prso].Container != game.ParserVectors.prsi)
             {
                 goto L600;
             }
             // !ALREADY INSIDE.
-            MessageHandler.rspsb2_(game, 564, game.Objects.odesc2[game.ParserVectors.prso - 1], game.Objects.odesc2[game.ParserVectors.prsi - 1]);
+            MessageHandler.rspsb2_(game, 564, game.Objects[game.ParserVectors.prso].Description2, game.Objects[game.ParserVectors.prsi].Description2);
             ret_val = true;
             return ret_val;
 
             L600:
-            if (ObjectHandler.GetWeight(0, game.ParserVectors.prso, 0, game) + ObjectHandler.GetWeight(0, game.ParserVectors.prsi, 0, game) + game.Objects.Sizes[game.ParserVectors.prso - 1] <= game.Objects.ocapac[game.ParserVectors.prsi - 1])
+            if (ObjectHandler.GetWeight(0, game.ParserVectors.prso, 0, game) + ObjectHandler.GetWeight(0, game.ParserVectors.prsi, 0, game) + game.Objects[game.ParserVectors.prso].Size <= game.Objects[game.ParserVectors.prsi].ocapac)
             {
                 goto L700;
             }
@@ -301,7 +301,7 @@ namespace Zork.Core
                 goto L750;
             }
             // !IS IT HERE?
-            j = game.Objects.ocan[j - 1];
+            j = game.Objects[j].Container;
             if (j != 0)
             {
                 goto L725;
@@ -311,9 +311,9 @@ namespace Zork.Core
             // !NO, SCH FAILS.
 
             L750:
-            svo = game.ParserVectors.prso;
+            svo = (int)game.ParserVectors.prso;
             // !SAVE PARSER.
-            svi = game.ParserVectors.prsi;
+            svi = (int)game.ParserVectors.prsi;
             game.ParserVectors.prsa = (int)VerbIds.takew;
             game.ParserVectors.prsi = 0;
             if (!TakeParsedObject(game, false))
@@ -322,32 +322,34 @@ namespace Zork.Core
             }
             // !TAKE OBJECT.
             game.ParserVectors.prsa = (int)VerbIds.Put;
-            game.ParserVectors.prso = svo;
-            game.ParserVectors.prsi = svi;
+            game.ParserVectors.prso = (ObjectIds)svo;
+            game.ParserVectors.prsi = (ObjectIds)svi;
             goto L1000;
 
             // NOW SEE IF OBJECT IS ON PERSON.
 
             L800:
-            if (game.Objects.ocan[game.ParserVectors.prso - 1] == 0)
+            if (game.Objects[game.ParserVectors.prso].Container == 0)
             {
                 goto L1000;
             }
+
             // !INSIDE?
-            if ((game.Objects.oflag2[game.Objects.ocan[game.ParserVectors.prso - 1] - 1] & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.Objects[game.ParserVectors.prso].Container].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L900;
             }
+
             // !OPEN?
-            MessageHandler.rspsub_(game, 566, game.Objects.odesc2[game.ParserVectors.prso - 1]);
+            MessageHandler.rspsub_(game, 566, game.Objects[game.ParserVectors.prso].Description2);
             // !LOSE.
             return ret_val;
 
             L900:
-            AdventurerHandler.ScoreUpdate(game, game.Objects.ofval[game.ParserVectors.prso - 1]);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.prso].ofval);
             // !SCORE OBJECT.
-            game.Objects.ofval[game.ParserVectors.prso - 1] = 0;
-            game.Objects.oflag2[game.ParserVectors.prso - 1] |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].ofval = 0;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, game.Player.Winner, game);
             // !TEMPORARILY ON WINNER.
 
@@ -387,7 +389,7 @@ namespace Zork.Core
             // !IF NOT LIT, PUNT.
             i = 677;
             // !ASSUME WRONG VERB.
-            savep = game.ParserVectors.prso;
+            savep = (int)game.ParserVectors.prso;
             // !SAVE PRSO.
             saveh = (int)game.Player.Here;
             // !SAVE HERE.
@@ -399,25 +401,25 @@ namespace Zork.Core
             }
             // !TAKE EVERY/VALUA?
             i__1 = game.Objects.Count;
-            for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
+            for (game.ParserVectors.prso = (ObjectIds)1; game.ParserVectors.prso <= (ObjectIds)i__1; ++game.ParserVectors.prso)
             {
                 // !LOOP THRU OBJECTS.
                 if (!ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.prso, game.Player.Here, game)
-                    || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsVisible) == 0
-                    || (game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.ACTRBT) != 0
-                    || savep == v && game.Objects.otval[game.ParserVectors.prso - 1] <= 0)
+                    || (game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsVisible) == 0
+                    || (game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.ACTRBT) != 0
+                    || savep == v && game.Objects[game.ParserVectors.prso].otval <= 0)
                 {
                     goto L500;
                 }
 
-                if ((game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsTakeable) == 0 && (
-                    game.Objects.oflag2[game.ParserVectors.prso - 1] & ObjectFlags2.TRYBT) == 0)
+                if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTakeable) == 0 && (
+                    game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.TRYBT) == 0)
                 {
                     goto L500;
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects.odesc2[game.ParserVectors.prso - 1]);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.prso].Description2);
                 f1 = TakeParsedObject(game, true);
                 if (saveh != (int)game.Player.Here)
                 {
@@ -435,15 +437,15 @@ namespace Zork.Core
             }
             // !DROP EVERY/VALUA?
             i__1 = game.Objects.Count;
-            for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
+            for (game.ParserVectors.prso = (ObjectIds)1; game.ParserVectors.prso <= (ObjectIds)i__1; ++game.ParserVectors.prso)
             {
-                if (game.Objects.oadv[game.ParserVectors.prso - 1] != (int)game.Player.Winner || savep == v
-                    && game.Objects.otval[game.ParserVectors.prso - 1] <= 0)
+                if (game.Objects[game.ParserVectors.prso].Adventurer != game.Player.Winner || savep == v
+                    && game.Objects[game.ParserVectors.prso].otval <= 0)
                 {
                     goto L1500;
                 }
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects.odesc2[game.ParserVectors.prso - 1]);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.prso].Description2);
                 f1 = drop_(game, true);
                 if (saveh != (int)game.Player.Here)
                 {
@@ -461,20 +463,20 @@ namespace Zork.Core
             }
             // !PUT EVERY/VALUA?
             i__1 = game.Objects.Count;
-            for (game.ParserVectors.prso = 1; game.ParserVectors.prso <= i__1; ++game.ParserVectors.prso)
+            for (game.ParserVectors.prso = (ObjectIds)1; game.ParserVectors.prso <= (ObjectIds)i__1; ++game.ParserVectors.prso)
             {
                 // !LOOP THRU OBJECTS.
-                if (game.Objects.oadv[game.ParserVectors.prso - 1] != (int)game.Player.Winner
+                if (game.Objects[game.ParserVectors.prso].Adventurer != game.Player.Winner
                     || game.ParserVectors.prso == game.ParserVectors.prsi
                     || savep == v
-                    && game.Objects.otval[game.ParserVectors.prso - 1] <= 0
-                    || (game.Objects.oflag1[game.ParserVectors.prso - 1] & ObjectFlags.IsVisible) == 0)
+                    && game.Objects[game.ParserVectors.prso].otval <= 0
+                    || (game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsVisible) == 0)
                 {
                     goto L2500;
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects.odesc2[game.ParserVectors.prso - 1]);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.prso].Description2);
                 f1 = put_(game, true);
                 if (saveh != (int)game.Player.Here)
                 {

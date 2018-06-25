@@ -23,7 +23,7 @@ namespace Zork.Core
             ret_val = true;
             // !ASSUME WINS.
             // !FIND FIRST ENTRY.
-            xi = game.Rooms[(int)rm - 1].Exit;
+            xi = game.Rooms[rm].Exit;
 
             // !NO EXITS?
             if (xi == 0)
@@ -55,7 +55,7 @@ namespace Zork.Core
             //bug_(10, game.curxt_.xtype);
 
             L130:
-            game.curxt_.xobj = game.Exits.Travel[xi + 1] & xpars_.xrmask;
+            game.curxt_.xobj = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.xrmask);
             game.curxt_.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
             L120:
             game.curxt_.xstrng = game.Exits.Travel[xi];
@@ -90,34 +90,34 @@ namespace Zork.Core
         /// <param name="adv"></param>
         /// <param name="nocare"></param>
         /// <returns></returns>
-        public static int FindWhatIMean(Game game, int f1, int f2, int rm, int con, int adv, bool nocare)
+        public static int FindWhatIMean(Game game, int f1, int f2, RoomIds rm, ObjectIds con, ActorIds adv, bool nocare)
         {
             int ret_val, i__1, i__2;
-            int i, j;
+            ObjectIds i, j;
             ret_val = 0;
 
             // !ASSUME NOTHING.
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !LOOP
-                if ((rm == 0 || game.Objects.oroom[i - 1] != rm)
-                    && (adv == 0 || game.Objects.oadv[i - 1] != adv)
-                    && (con == 0 || game.Objects.ocan[i - 1] != con))
+                if ((rm == 0 || game.Objects[i].Room != rm)
+                    && (adv == 0 || game.Objects[i].Adventurer != adv)
+                    && (con == 0 || game.Objects[i].Container != con))
                 {
                     goto L1000;
                 }
 
                 // OBJECT IS ON LIST... IS IT A MATCH?
 
-                if ((game.Objects.oflag1[i - 1] & ObjectFlags.IsVisible) == 0)
+                if ((game.Objects[i].Flag1 & ObjectFlags.IsVisible) == 0)
                 {
                     goto L1000;
                 }
 
-                if (!(nocare) & (game.Objects.oflag1[i - 1] & ObjectFlags.IsTakeable) == 0
-                    || (game.Objects.oflag1[i - 1] & (ObjectFlags)f1) == 0
-                    && (game.Objects.oflag2[i - 1] & (ObjectFlags2)f2) == 0)
+                if (!(nocare) & (game.Objects[i].Flag1 & ObjectFlags.IsTakeable) == 0
+                    || (game.Objects[i].Flag1 & (ObjectFlags)f1) == 0
+                    && (game.Objects[i].Flag2 & (ObjectFlags2)f2) == 0)
                 {
                     goto L500;
                 }
@@ -133,25 +133,25 @@ namespace Zork.Core
                 return ret_val;
 
                 L400:
-                ret_val = i;
+                ret_val = (int)i;
                 // !NOTE MATCH.
 
                 // DOES OBJECT CONTAIN A MATCH?
 
                 L500:
-                if ((game.Objects.oflag2[i - 1] & ObjectFlags2.IsOpen) == 0)
+                if ((game.Objects[i].Flag2 & ObjectFlags2.IsOpen) == 0)
                 {
                     goto L1000;
                 }
 
                 i__2 = game.Objects.Count;
-                for (j = 1; j <= i__2; ++j)
+                for (j = (ObjectIds)1; j <= (ObjectIds)i__2; ++j)
                 {
                     // !NO, SEARCH CONTENTS.
-                    if (game.Objects.ocan[j - 1] != i
-                        || (game.Objects.oflag1[j - 1] & ObjectFlags.IsVisible) == 0
-                        || (game.Objects.oflag1[j - 1] & (ObjectFlags)f1) == 0
-                        && (game.Objects.oflag2[j - 1] & (ObjectFlags2)f2) == 0)
+                    if (game.Objects[j].Container != i
+                        || (game.Objects[j].Flag1 & ObjectFlags.IsVisible) == 0
+                        || (game.Objects[j].Flag1 & (ObjectFlags)f1) == 0
+                        && (game.Objects[j].Flag2 & (ObjectFlags2)f2) == 0)
                     {
                         goto L700;
                     }
@@ -165,7 +165,7 @@ namespace Zork.Core
                     return ret_val;
 
                     L600:
-                    ret_val = j;
+                    ret_val = (int)j;
                     L700:
                     ;
                 }

@@ -44,8 +44,8 @@ namespace Zork.Core
             this.IsRunning = true;
         }
 
-        public List<Room> Rooms { get; } = new List<Room>();
-        public List<Object> NewObjects { get; } = new List<Object>();
+        public Dictionary<RoomIds, Room> Rooms { get; } = new Dictionary<RoomIds, Room>();
+        public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
 
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
@@ -60,7 +60,7 @@ namespace Zork.Core
         public Player Player { get; } = new Player();
         public Syntax Syntax { get; } = new Syntax();
         public curxt_ curxt_ { get; } = new curxt_();
-        public Objects Objects { get; } = new Objects();
+//        public Objects Objects { get; } = new Objects();
         public Orphans Orphans { get; } = new Orphans();
         public Villians Villians { get; } = new Villians();
         public Messages Messages { get; } = new Messages();
@@ -148,12 +148,12 @@ namespace Zork.Core
                 }
 
                 L300:
-                if (this.ParserVectors.prso == (int)ObjectIds.valua || this.ParserVectors.prso == (int)ObjectIds.every)
+                if (this.ParserVectors.prso == ObjectIds.valua || this.ParserVectors.prso == ObjectIds.every)
                 {
                     goto L900;
                 }
 
-                if (!Parser.vappli_(input, this.ParserVectors.prsa, this))
+                if (!Parser.ProcessVerb(input, this.ParserVectors.prsa, this))
                 {
                     goto L400;
                 }
@@ -164,7 +164,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                f = RoomHandler.rappli_(this.Rooms[(int)this.Player.Here - 1].Action, this);
+                f = RoomHandler.rappli_(this.Rooms[this.Player.Here].Action, this);
 
                 L400:
                 xendmv_(this.Player.TelFlag);
@@ -198,7 +198,7 @@ namespace Zork.Core
 
                 // !KILL THE ECHO.
                 Flags.echof = true;
-                this.Objects.oflag2[(int)ObjectIds.bar - 1] &= ~ObjectFlags2.SCRDBT;
+                this.Objects[ObjectIds.bar].Flag2 &= ~ObjectFlags2.SCRDBT;
                 this.ParserVectors.prswon = true;
                 // !FAKE OUT PARSER.
                 this.ParserVectors.prscon = 1;
@@ -212,7 +212,7 @@ namespace Zork.Core
                     goto L1400;
                 }
 
-                if (dso3.FindExit(this, this.ParserVectors.prso, this.Player.Here))
+                if (dso3.FindExit(this, (int)this.ParserVectors.prso, this.Player.Here))
                 {
                     goto L300;
                 }
@@ -230,7 +230,7 @@ namespace Zork.Core
                 // NOTE THAT WE CANNOT BE IN THE ECHO ROOM.
 
                 L2000:
-                if ((this.Objects.oflag2[this.ParserVectors.prso - 1] & ObjectFlags2.ACTRBT) != 0)
+                if ((this.Objects[this.ParserVectors.prso].Flag2 & ObjectFlags2.ACTRBT) != 0)
                 {
                     goto L2100;
                 }
@@ -286,17 +286,17 @@ namespace Zork.Core
                 //}
 
                 // !VEHICLE HANDLE?
-                if (this.ParserVectors.prso == (int)ObjectIds.valua || this.ParserVectors.prso == (int)ObjectIds.every)
+                if (this.ParserVectors.prso == ObjectIds.valua || this.ParserVectors.prso == ObjectIds.every)
                 {
                     goto L2900;
                 }
-                if (!Parser.vappli_(input, this.ParserVectors.prsa, this))
+                if (!Parser.ProcessVerb(input, this.ParserVectors.prsa, this))
                 {
                     goto L2400;
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.rappli_(this.Rooms[(int)this.Player.Here - 1].Action, this);
+                f = RoomHandler.rappli_(this.Rooms[this.Player.Here].Action, this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);
@@ -325,21 +325,25 @@ namespace Zork.Core
             {
                 Actors.thiefd_(this);
             }
+
             // !THIEF DEMON.
             if (this.ParserVectors.prswon)
             {
                 DemonHandler.fightd_(this);
             }
+
             // !FIGHT DEMON.
             if (this.Hack.IsSwordActive)
             {
                 DemonHandler.swordd_(this);
             }
+
             // !SWORD DEMON.
             if (this.ParserVectors.prswon)
             {
                 f = ClockEvents.clockd_(this);
             }
+
             // !CLOCK DEMON.
             if (this.ParserVectors.prswon)
             {
@@ -352,15 +356,15 @@ namespace Zork.Core
         public bool xvehic_(int n)
         {
             bool ret_val;
-            int av;
+            ObjectIds av;
 
             ret_val = false;
             // !ASSUME LOSES.
-            av = this.Adventurers.Vehicles[(int)this.Player.Winner - 1];
+            av = (ObjectIds)this.Adventurers.Vehicles[(int)this.Player.Winner - 1];
             // !GET VEHICLE.
             if (av != 0)
             {
-                ret_val = ObjectHandler.oappli_(this.Objects.oactio[av - 1], n, this);
+                ret_val = ObjectHandler.oappli_(this.Objects[av].oactio, n, this);
             }
 
             return ret_val;
@@ -378,6 +382,6 @@ namespace Zork.Core
         public RoomIds xroom1 { get; set; }
         public int xstrng { get; set; }
         public int xactio { get; set; }
-        public int xobj { get; set; }
+        public ObjectIds xobj { get; set; }
     }
 }

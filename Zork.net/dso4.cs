@@ -16,16 +16,16 @@ namespace Zork.Core
         public static int RobAdventurer(Game game, ActorIds actorId, RoomIds nr, ObjectIds nc, ActorIds na)
         {
             int ret_val, i__1;
-            int i;
+            ObjectIds i;
 
             ret_val = 0;
             // !COUNT OBJECTS
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
-                if (game.Objects.oadv[i - 1] != (int)actorId
-                    || game.Objects.otval[i - 1] <= 0
-                    || (game.Objects.oflag2[i - 1] & ObjectFlags2.SCRDBT) != 0)
+                if (game.Objects[i].Adventurer != actorId
+                    || game.Objects[i].otval <= 0
+                    || (game.Objects[i].Flag2 & ObjectFlags2.SCRDBT) != 0)
                 {
                     goto L100;
                 }
@@ -49,16 +49,16 @@ namespace Zork.Core
         /// <param name="nc"></param>
         /// <param name="na"></param>
         /// <returns></returns>
-        public static int RobRoom(Game game, RoomIds rm, int pr, RoomIds nr, int nc, int na)
+        public static int RobRoom(Game game, RoomIds rm, int pr, RoomIds nr, ObjectIds nc, int na)
         {
             int ret_val, i__1, i__2;
-            int i;
+            ObjectIds i;
 
             // OBJECTS
             ret_val = 0;
             // !COUNT OBJECTS
             i__1 = game.Objects.Count;
-            for (i = 1; i <= i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !LOOP ON OBJECTS.
                 if (!ObjectHandler.IsObjectInRoom((ObjectIds)i, rm, game))
@@ -66,20 +66,20 @@ namespace Zork.Core
                     goto L100;
                 }
 
-                if (game.Objects.otval[i - 1] <= 0 || (game.Objects.oflag2[i - 1] & ObjectFlags2.SCRDBT) != 0 || (game.Objects.oflag1[i - 1] & ObjectFlags.IsVisible) == 0 || !RoomHandler.prob_(game, pr, pr))
+                if (game.Objects[i].otval <= 0 || (game.Objects[i].Flag2 & ObjectFlags2.SCRDBT) != 0 || (game.Objects[i].Flag1 & ObjectFlags.IsVisible) == 0 || !RoomHandler.prob_(game, pr, pr))
                 {
                     goto L50;
                 }
 
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)nr, (ObjectIds)nc, (ActorIds)na, game);
+                ObjectHandler.SetNewObjectStatus(i, 0, nr, nc, (ActorIds)na, game);
                 ++ret_val;
-                game.Objects.oflag2[i - 1] |= ObjectFlags2.TCHBT;
+                game.Objects[i].Flag2 |= ObjectFlags2.TCHBT;
                 goto L100;
                 L50:
-                if ((game.Objects.oflag2[i - 1] & ObjectFlags2.ACTRBT) != 0)
+                if ((game.Objects[i].Flag2 & ObjectFlags2.ACTRBT) != 0)
                 {
                     i__2 = (int)ObjectHandler.GetActor(i, game);
-                    ret_val += RobAdventurer(game, (ActorIds)i__2, nr, (ObjectIds)nc, (ActorIds)na);
+                    ret_val += RobAdventurer(game, (ActorIds)i__2, nr, nc, (ActorIds)na);
                 }
                 L100:
                 ;
@@ -94,7 +94,7 @@ namespace Zork.Core
         /// <param name="vl"></param>
         /// <param name="hr"></param>
         /// <returns></returns>
-        public static bool IsVillianWinning(Game game, int vl, ActorIds hr)
+        public static bool IsVillianWinning(Game game, ObjectIds vl, ActorIds hr)
         {
             // System generated locals
             bool ret_val;
@@ -103,7 +103,7 @@ namespace Zork.Core
             int ps, vs;
 
             // OBJECTS
-            vs = game.Objects.ocapac[vl - 1];
+            vs = game.Objects[vl].ocapac;
             // !VILLAIN STRENGTH
             ps = vs - ComputeFightStrength(game, hr, true);
             // !HIS MARGIN OVER HERO
@@ -177,7 +177,7 @@ namespace Zork.Core
             // Local variables
             int i;
 
-            ret_val = game.Objects.ocapac[villianId - 1];
+            ret_val = game.Objects[(ObjectIds)villianId].ocapac;
             if (ret_val <= 0)
             {
                 return ret_val;
@@ -199,7 +199,7 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !SEE IF  BEST WEAPON.
-                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.prsi == game.Villians.vbest[i - 1])
+                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.prsi == (ObjectIds)game.Villians.vbest[i - 1])
                 {
                     // Computing MAX
                     i__2 = 1;

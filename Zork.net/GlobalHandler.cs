@@ -4,38 +4,38 @@ namespace Zork.Core
 {
     public static class GlobalHandler
     {
-        public static bool ghere_(int obj, RoomIds roomId, Game game)
+        public static bool ghere_(ObjectIds obj, RoomIds roomId, Game game)
         {
             bool ret_val = true;
 
             // !ASSUME WINS.
             switch (obj - game.Star.strbit)
             {
-                case 1: goto L1000;
-                case 2: goto L1000;
-                case 3: goto L1000;
-                case 4: goto L1000;
-                case 5: goto L1000;
-                case 6: goto L1000;
-                case 7: goto L1000;
-                case 8: goto L1000;
-                case 9: goto L1000;
-                case 10: goto L1000;
-                case 11: goto L1000;
-                case 12: goto L2000;
-                case 13: goto L3000;
-                case 14: goto L4000;
-                case 15: goto L5000;
-                case 16: goto L5000;
-                case 17: goto L5000;
-                case 18: goto L6000;
-                case 19: goto L7000;
-                case 20: goto L8000;
-                case 21: goto L9000;
-                case 22: goto L9100;
-                case 23: goto L8000;
-                case 24: goto L10000;
-                case 25: goto L11000;
+                case (ObjectIds)1: goto L1000;
+                case (ObjectIds)2: goto L1000;
+                case (ObjectIds)3: goto L1000;
+                case (ObjectIds)4: goto L1000;
+                case (ObjectIds)5: goto L1000;
+                case (ObjectIds)6: goto L1000;
+                case (ObjectIds)7: goto L1000;
+                case (ObjectIds)8: goto L1000;
+                case (ObjectIds)9: goto L1000;
+                case (ObjectIds)10: goto L1000;
+                case (ObjectIds)11: goto L1000;
+                case (ObjectIds)12: goto L2000;
+                case (ObjectIds)13: goto L3000;
+                case (ObjectIds)14: goto L4000;
+                case (ObjectIds)15: goto L5000;
+                case (ObjectIds)16: goto L5000;
+                case (ObjectIds)17: goto L5000;
+                case (ObjectIds)18: goto L6000;
+                case (ObjectIds)19: goto L7000;
+                case (ObjectIds)20: goto L8000;
+                case (ObjectIds)21: goto L9000;
+                case (ObjectIds)22: goto L9100;
+                case (ObjectIds)23: goto L8000;
+                case (ObjectIds)24: goto L10000;
+                case (ObjectIds)25: goto L11000;
             }
 
             throw new InvalidOperationException("60");
@@ -75,7 +75,7 @@ namespace Zork.Core
             // 6000--	GLOBAL WATER
 
             L6000:
-            ret_val = (game.Rooms[(int)roomId - 1].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
+            ret_val = (game.Rooms[roomId].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) != 0;
             return ret_val;
 
             // 7000--	GLOBAL GUARDIANS

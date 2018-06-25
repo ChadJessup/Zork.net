@@ -6,6 +6,6 @@
     /// </summary>
     public class Last
     {
-        public int lastit { get; set; }
+        public ObjectIds lastit { get; set; }
     }
 }
