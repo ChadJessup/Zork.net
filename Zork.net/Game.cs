@@ -22,7 +22,9 @@ namespace Zork.Core
             this.ParserVectors.prsa = 0;
 
             this.Hack.WasThiefIntroduced = false;
-            this.Hack.IsThiefActive = true;
+
+            // TODO: chadj - 6/24/18 - turning off thief during refactor of obj/rooms
+            this.Hack.IsThiefActive = false;
             this.Hack.IsSwordActive = false;
             this.Hack.SwordStatus = 0;
 

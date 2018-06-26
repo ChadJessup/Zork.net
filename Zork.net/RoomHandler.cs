@@ -244,33 +244,26 @@ namespace Zork.Core
 
         public static bool IsRoomLit(RoomIds roomId, Game game)
         {
-            // System generated locals
-            int i__1, i__2;
-            bool ret_val;
+            bool ret_val = true;
 
-            // Local variables
-            int j;
             ActorIds oa;
-            ObjectIds i;
-            ret_val = true;
 
             // !ASSUME WINS
-            if ((game.Rooms[roomId].Flags & RoomFlags.LIGHT) != 0)
+            if ((game.Rooms[roomId].Flags.HasFlag(RoomFlags.LIGHT)))
             {
                 return ret_val;
             }
 
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            // !LOOK FOR LIT OBJ
+            foreach (var obj in game.Objects.Values)
             {
-                // !LOOK FOR LIT OBJ
                 // !IN ROOM?
-                if (ObjectHandler.IsInRoom(roomId, i, game))
+                if (ObjectHandler.IsInRoom(roomId, obj.Id, game))
                 {
                     goto L100;
                 }
 
-                oa = game.Objects[i].Adventurer;
+                oa = obj.Adventurer;
                 // !NO
                 if (oa <= 0)
                 {
@@ -288,24 +281,22 @@ namespace Zork.Core
                 // OBJ IN ROOM OR ON ADV IN ROOM
 
                 L100:
-                if ((game.Objects[i].Flag1 & ObjectFlags.ONBT) != 0)
+                if ((obj.Flag1.HasFlag(ObjectFlags.ONBT)))
                 {
                     return ret_val;
                 }
 
-                if ((game.Objects[i].Flag1 & ObjectFlags.IsVisible) == 0
-                    || (game.Objects[i].Flag1 & ObjectFlags.IsTransparent) == 0
-                    && (game.Objects[i].Flag2 & ObjectFlags2.IsOpen) == 0)
+                // OBJ IS VISIBLE AND OPEN OR TRANSPARENT
+                if ((!obj.Flag1.HasFlag(ObjectFlags.IsVisible))
+                    || (!obj.Flag1.HasFlag(ObjectFlags.IsTransparent))
+                    && (!obj.Flag2.HasFlag(ObjectFlags2.IsOpen)))
                 {
                     goto L1000;
                 }
 
-                // OBJ IS VISIBLE AND OPEN OR TRANSPARENT
-                i__2 = game.Objects.Count;
-                for (j = 1; j <= i__2; ++j)
+                foreach (var containerObj in game.Objects.Values)
                 {
-                    if (game.Objects[(ObjectIds)j].Container == i
-                    && (game.Objects[(ObjectIds)j].Flag1 & ObjectFlags.ONBT) != 0)
+                    if (containerObj.Container == obj.Id && (containerObj.Flag1.HasFlag(ObjectFlags.ONBT)))
                     {
                         return ret_val;
                     }
@@ -315,6 +306,7 @@ namespace Zork.Core
                 L1000:
                 ;
             }
+
             ret_val = false;
             return ret_val;
         }

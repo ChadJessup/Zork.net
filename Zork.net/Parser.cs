@@ -453,22 +453,25 @@ namespace Zork.Core
             game.objvec.o1 = game.objvec.o2;
             game.objvec.o2 = j;
 
+            // !GET DIR OBJ.
             L5000:
             game.ParserVectors.prsa = (int)(game.Syntax.vflag & SyntaxFlags.SVMASK);
             game.ParserVectors.prso = game.objvec.o1;
-            // !GET DIR OBJ.
-            game.ParserVectors.prsi = game.objvec.o2;
             // !GET IND OBJ.
+            game.ParserVectors.prsi = game.objvec.o2;
+
+            // !TRY TAKE.
             if (!TakeObject(game.ParserVectors.prso, game.Syntax.dobj, game))
             {
                 return ret_val;
             }
+
             // !TRY TAKE.
             if (!TakeObject(game.ParserVectors.prsi, game.Syntax.iobj, game))
             {
                 return ret_val;
             }
-            // !TRY TAKE.
+
             ret_val = true;
             return ret_val;
         }
@@ -653,6 +656,7 @@ namespace Zork.Core
                 L1000:
                 ;
             }
+
             return ret_val;
         }
 
@@ -778,10 +782,10 @@ namespace Zork.Core
             return ret_val;
 
             L3700:
-            //ObjectHandler.newsta_(obj, 559, 0, 0, game.Player.Winner, game);
+            ObjectHandler.SetNewObjectStatus(obj, 559, 0, 0, game.Player.Winner, game);
             // !DO TAKE.
             game.Objects[obj].Flag2 |= ObjectFlags2.TCHBT;
-            //scrupd_(game.Objects[obj].ofval, game);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[obj].ofval);
             game.Objects[obj].ofval = 0;
 
             L4000:
@@ -911,25 +915,83 @@ namespace Zork.Core
         private static Object SearchForObject(int oidx, int aidx, RoomIds room, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
         {
             int ret_val = 0;
-            ObjectIds i, j, x;
+            ObjectIds x;
 
             foreach (var obj in game.Objects.Values)
             {
+                if (obj.Id == (ObjectIds)52)
+                {
+
+                }
+
                 if (!obj.Flag1.HasFlag(ObjectFlags.IsVisible))
                 {
                     continue;
                 }
 
-                if (!ObjectHandler.IsObjectInRoom(obj.Id, room, game))
+                if ((room == 0 || !ObjectHandler.IsObjectInRoom(obj.Id, room, game)) &&
+                    (container == ObjectIds.Nothing || obj.Container != container) &&
+                    (actorId == ActorIds.NoOne || obj.Adventurer != actorId))
                 {
                     continue;
                 }
 
-                if (!ValidateObject(oidx, aidx, obj.Id, spcobj, game) &&
-                    obj.Flag1.HasFlag(ObjectFlags.IsTransparent) &&
-                    obj.Flag2.HasFlag(ObjectFlags2.IsOpen))
+                if (ValidateObject(oidx, aidx, obj.Id, spcobj, game))
+                {
+                    Console.WriteLine($"Object Id found: {obj.Id:d} in room: {game.Player.Here:d}\n");
+                    return obj;
+                }
+
+                if (!obj.Flag1.HasFlag(ObjectFlags.IsTransparent) && !obj.Flag2.HasFlag(ObjectFlags2.IsOpen))
                 {
                     continue;
+                }
+
+                foreach (var containerObj in game.Objects.Values)
+                {
+                    if ((!containerObj.Flag1.HasFlag(ObjectFlags.IsVisible)) || !ValidateObject(oidx, aidx, containerObj.Id, spcobj, game))
+                    {
+                        continue;
+                    }
+
+                    // !GET CONTAINER.
+                    x = containerObj.Container;
+
+                    L300:
+                    if (x == obj.Id)
+                    {
+                        goto L400;
+                    }
+
+                    // !INSIDE TARGET?
+                    if (x == 0)
+                    {
+                        continue;
+                    }
+
+                    // !INSIDE ANYTHING?
+                    if ((game.Objects[x].Flag1.HasFlag(ObjectFlags.IsVisible))
+                     || (game.Objects[x].Flag1.HasFlag(ObjectFlags.IsTransparent))
+                     && (game.Objects[x].Flag2.HasFlag(ObjectFlags2.IsOpen))
+                     || (game.Objects[x].Flag2.HasFlag(ObjectFlags2.IsSearchable)))
+                    {
+                        continue;
+                    }
+
+                    // !GO ANOTHER LEVEL.
+                    x = game.Objects[x].Container;
+
+                    goto L300;
+
+                    L400:
+                    // !ALREADY GOT ONE?
+                    if (ret_val != 0)
+                    {
+                        // original code returns this negative?
+                        return obj;
+                    }
+
+                    return containerObj;
                 }
 
                 return obj;
@@ -975,7 +1037,7 @@ namespace Zork.Core
                 }
 
                 // SEARCH IS CONDUCTED IN REVERSE.  ALL OBJECTS ARE CHECKED TO
-                // SEE IF THEY ARE AT SOME LEVEL OF CONTAINMENT INSIDE OBJECT 'I'.
+                // SEE IF THEY ARE AT SOME LEVEL OF CONTAINMENT INSIDE OBJECT 'i'.
                 // IF THEY ARE AT LEVEL 1, OR IF ALL LINKS IN THE CONTAINMENT
                 // CHAIN ARE OPEN, VISIBLE, AND HAVE SEARCHME SET, THEY CAN QUALIFY
 
@@ -1082,7 +1144,7 @@ namespace Zork.Core
             }
 
             // !IF FAIL, CONT.
-            if (ParserConstants.Objects[i - 1] != (int)obj + 1)
+            if (ParserConstants.Objects[i - 1] != (int)obj)
             {
                 goto L100;
             }
@@ -1647,7 +1709,7 @@ namespace Zork.Core
             }
 
             // !SEARCH ROOM.
-            obj = SearchForObject(oidx, aidx, game.Player.Here, 0, 0, spcobj, game).Id;
+            obj = SearchForObject(oidx, aidx, game.Player.Here, 0, 0, spcobj, game)?.Id ?? ObjectIds.Nothing;
 
             if (obj < 0)
             {
@@ -1719,7 +1781,7 @@ namespace Zork.Core
             obj = nobj;
 
             L400:
-            nobj = SearchForObject(oidx, aidx, 0, 0, game.Player.Winner, spcobj, game).Id;
+            nobj = SearchForObject(oidx, aidx, 0, 0, game.Player.Winner, spcobj, game)?.Id ?? ObjectIds.Nothing;
 
             // !SEARCH ADVENTURER.
             if (nobj < 0)
@@ -1737,10 +1799,10 @@ namespace Zork.Core
 
             // !TEST RESULT
             L500:
-            if (obj != 0)
-            {
-                nobj = (ObjectIds)(-(int)nobj);
-            }
+            //if (obj != 0)
+            //{
+            //    nobj = (ObjectIds)(-(int)nobj);
+            //}
 
             // !AMB RESULT?
             L1100:

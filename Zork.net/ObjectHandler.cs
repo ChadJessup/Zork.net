@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Zork.Core
 {
@@ -62,22 +63,14 @@ namespace Zork.Core
         /// <param name="game"></param>
         public static void PrintDescription(ObjectIds objectId, int descriptionId, Game game)
         {
-            int i__1;
-
-            ObjectIds i;
-
             MessageHandler.rspsub_(descriptionId, game.Objects[objectId].Description2, game);
             // !PRINT HEADER.
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            foreach (var obj in game.Objects.Values)
             {
-                // !LOOP THRU.
-                if (game.Objects[i].Container == objectId)
+                if (obj.Container == objectId)
                 {
-                    MessageHandler.rspsub_(502, game.Objects[i].Description2, game);
+                    MessageHandler.rspsub_(502, obj.Description2, game);
                 }
-
-                // L100:
             }
         }
 
@@ -117,22 +110,7 @@ namespace Zork.Core
         /// <param name="objId"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static bool IsObjectEmpty(ObjectIds objId, Game game)
-        {
-            bool ret_val = false;
-
-            // !ASSUME LOSE.
-            for (ObjectIds i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
-            {
-                if (game.Objects[i].Container == objId)
-                {
-                    return ret_val;
-                }
-            }
-
-            ret_val = true;
-            return ret_val;
-        }
+        public static bool IsObjectEmpty(ObjectIds objId, Game game) => !game.Objects.Values.Any(o => o.Container == objId);
 
         /// <summary>
         /// qhere_ - Test for object in room
@@ -146,12 +124,12 @@ namespace Zork.Core
             bool ret_val = true;
 
             int i;
-            if (!game.Objects.ContainsKey(obj - 1))
+            if (!game.Objects.ContainsKey(obj))
             {
                 return false;
             }
 
-            if (game.Objects[obj - 1].Room == rm)
+            if (game.Objects[obj].Room == rm)
             {
                 return ret_val;
             }
@@ -175,56 +153,54 @@ namespace Zork.Core
         /// <summary>
         /// weight_ - Returns sum of weight of qualifying objects.
         /// </summary>
-        /// <param name="rm"></param>
-        /// <param name="cn"></param>
-        /// <param name="actorIds"></param>
+        /// <param name="room"></param>
+        /// <param name="objId"></param>
+        /// <param name="actorId"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static int GetWeight(int rm, ObjectIds cn, ActorIds actorIds, Game game)
+        public static int GetWeight(RoomIds room, ObjectIds objId, ActorIds actorId, Game game)
         {
-            // System generated locals
-            int ret_val;
-            ObjectIds i__1;
-
-            // Local variables
-            ObjectIds i;
             ObjectIds j;
+            int ret_val = 0;
+            return game.Objects[objId].Size;
 
-            ret_val = 0;
-            i__1 = (ObjectIds)game.Objects.Count;
-
-            for (i = (ObjectIds)1; i <= i__1; ++i)
+            foreach (var obj in game.Objects.Values.Where(o => o.Size < 10000))
             {
-                // !OMIT BIG FIXED ITEMS.
-                if (game.Objects[i].Size >= 10000)
+                if (obj.Id == ObjectIds.Leaflet)
                 {
-                    goto L100;
+
                 }
                 // !IF FIXED, FORGET IT.
-                if (ObjectHandler.IsObjectInRoom(i, (RoomIds)rm, game) && rm != 0 || game.Objects[i].Adventurer == actorIds && actorIds != 0)
+                if (ObjectHandler.IsObjectInRoom(obj.Id, room, game) &&
+                    room != RoomIds.NoWhere ||
+                    obj.Adventurer == actorId &&
+                    actorId != ActorIds.NoOne)
                 {
                     goto L50;
                 }
 
-                j = i;
                 // !SEE IF CONTAINED.
                 L25:
-                j = game.Objects[j].Container;
+                j = obj.Container;
                 // !GET NEXT LEVEL UP.
                 if (j == 0)
                 {
-                    goto L100;
+                    continue;
                 }
+
                 // !END OF LIST?
-                if (j != cn)
+                if (j != obj.Id)
                 {
-                    goto L25;
+                    //TODO: chadj - 6/24/18 - need containers to auto-add all of the weight of the items inside.
+                    // this way we can remove some of this recursion.
+                    //goto L25;
+                    continue;
                 }
+
                 L50:
-                ret_val += game.Objects[i].Size;
-                L100:
-                ;
+                ret_val += obj.Size;
             }
+
             return ret_val;
         }
 
@@ -258,7 +234,7 @@ namespace Zork.Core
         }
 
         /// <summary>
-        /// qehre_ - Test for object in room.
+        /// qhere_ - Test for object in room.
         /// </summary>
         /// <param name="game"></param>
         /// <param name="obj"></param>

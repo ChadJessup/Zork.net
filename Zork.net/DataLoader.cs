@@ -45,17 +45,17 @@ namespace Zork.Core
             var tempFlags = new List<int>();
             DataLoader.ReadInts(roomCount, tempFlags, bytes, game);
 
-            for (int ridx = 0; ridx < roomCount; ridx++)
+            for (int ridx = 1; ridx <= roomCount; ridx++)
             {
                 var room = new Room
                 {
                     Id = (RoomIds)ridx,
-                    Action = actions[ridx],
-                    Description1 = desc1[ridx],
-                    Description2 = desc2[ridx],
-                    Exit = exits[ridx],
-                    Flags = (RoomFlags)tempFlags[ridx],
-                    Score = values[ridx]
+                    Action = actions[ridx - 1],
+                    Description1 = desc1[ridx - 1],
+                    Description2 = desc2[ridx - 1],
+                    Exit = exits[ridx - 1],
+                    Flags = (RoomFlags)tempFlags[ridx - 1],
+                    Score = values[ridx - 1]
                 };
 
                 game.Rooms.Add(room.Id, room);
@@ -109,29 +109,31 @@ namespace Zork.Core
             DataLoader.ReadPartialInts(objectCount, ocan, bytes, game);
             DataLoader.ReadPartialInts(objectCount, oread, bytes, game);
 
-            for (int objIdx = 0; objIdx < objectCount; objIdx++)
+            for (int objIdx = 1; objIdx <= objectCount; objIdx++)
             {
                 var newObject = new Object
                 {
                     Id = (ObjectIds)objIdx,
-                    Description1 = odesc1[objIdx],
-                    Description2 = odesc2[objIdx],
-                    odesco = odesco[objIdx],
-                    oactio = oactio[objIdx],
-                    ofval = ofval[objIdx],
-                    otval = otval[objIdx],
-                    Size = Sizes[objIdx],
-                    ocapac = ocapac[objIdx],
-                    Room = (RoomIds)oroom[objIdx],
-                    Adventurer = (ActorIds)oadv[objIdx],
-                    Container = (ObjectIds)ocan[objIdx],
-                    oread = oread[objIdx],
-                    Flag1 = oflag1[objIdx],
-                    Flag2 = oflag2[objIdx],
+                    Description1 = odesc1[objIdx - 1],
+                    Description2 = odesc2[objIdx - 1],
+                    odesco = odesco[objIdx - 1],
+                    oactio = oactio[objIdx - 1],
+                    ofval = ofval[objIdx - 1],
+                    otval = otval[objIdx - 1],
+                    Size = Sizes[objIdx - 1],
+                    ocapac = ocapac[objIdx - 1],
+                    Room = (RoomIds)oroom[objIdx - 1],
+                    Adventurer = (ActorIds)oadv[objIdx - 1],
+                    Container = (ObjectIds)ocan[objIdx - 1],
+                    oread = oread[objIdx - 1],
+                    Flag1 = oflag1[objIdx - 1],
+                    Flag2 = oflag2[objIdx - 1],
                 };
 
                 game.Objects.Add(newObject.Id, newObject);
             }
+
+            game.Objects.Add(ObjectIds.Nothing, new Object());
 
             game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
