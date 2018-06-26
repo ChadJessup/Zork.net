@@ -176,10 +176,10 @@ namespace Zork.Core
                 ObjectHandler.SetNewObjectStatus(ObjectIds.Coffin, 0, RoomIds.Egypt, 0, 0, game);
             }
 
-            game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.TCHBT;
-            game.Objects[ObjectIds.robot].Flag1 = (game.Objects[ObjectIds.robot].Flag1 | ObjectFlags.IsVisible) & ~ObjectFlags.NDSCBT;
+            game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.WasTouched;
+            game.Objects[ObjectIds.robot].Flag1 = (game.Objects[ObjectIds.robot].Flag1 | ObjectFlags.IsVisible) & ~ObjectFlags.HasNoDescription;
 
-            if (game.Objects[ObjectIds.Lamp].Room != 0 || game.Objects[ObjectIds.Lamp].Adventurer == game.Player.Winner)
+            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Lamp, game).Id != 0 || game.Objects[ObjectIds.Lamp].Adventurer == game.Player.Winner)
             {
                 ObjectHandler.SetNewObjectStatus(ObjectIds.Lamp, 0, RoomIds.LivingRoom, 0, 0, game);
             }

@@ -17,7 +17,6 @@ namespace Zork.Core
             this.State.Deaths = 0;
             this.State.Moves = 0;
             this.Time.pltime = 0;
-            this.State.mungrm = 0;
             this.State.HelloSailor = 0;
             this.ParserVectors.prsa = 0;
 
@@ -144,7 +143,7 @@ namespace Zork.Core
                     goto L400;
                 }
 
-                if (this.ParserVectors.prsa == (int)VerbIds.Tell)
+                if (this.ParserVectors.prsa == VerbIds.Tell)
                 {
                     //goto L2000;
                 }
@@ -169,9 +168,9 @@ namespace Zork.Core
                 f = RoomHandler.rappli_(this.Rooms[this.Player.Here].Action, this);
 
                 L400:
+                // !DO END OF MOVE.
                 xendmv_(this.Player.TelFlag);
 
-                // !DO END OF MOVE.
                 if (!RoomHandler.IsRoomLit(this.Player.Here, this))
                 {
                     this.ParserVectors.prscon = 1;
@@ -209,7 +208,7 @@ namespace Zork.Core
 
                 L1300:
                 this.ParserVectors.prswon = Parser.Parse(input, false, this);
-                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != (int)VerbIds.Walk)
+                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != VerbIds.Walk)
                 {
                     goto L1400;
                 }

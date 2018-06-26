@@ -31,7 +31,7 @@ namespace Zork.Core
                 }
 
                 // !STEAL OBJECT
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, nr, nc, na, game);
+                ObjectHandler.SetNewObjectStatus(i, 0, game.Rooms[nr], nc, na, game);
                 ++ret_val;
                 L100:
                 ;
@@ -73,7 +73,7 @@ namespace Zork.Core
 
                 ObjectHandler.SetNewObjectStatus(i, 0, nr, nc, (ActorIds)na, game);
                 ++ret_val;
-                game.Objects[i].Flag2 |= ObjectFlags2.TCHBT;
+                game.Objects[i].Flag2 |= ObjectFlags2.WasTouched;
                 goto L100;
                 L50:
                 if ((game.Objects[i].Flag2 & ObjectFlags2.ACTRBT) != 0)
@@ -103,7 +103,7 @@ namespace Zork.Core
             int ps, vs;
 
             // OBJECTS
-            vs = game.Objects[vl].ocapac;
+            vs = game.Objects[vl].Capacity;
             // !VILLAIN STRENGTH
             ps = vs - ComputeFightStrength(game, hr, true);
             // !HIS MARGIN OVER HERO
@@ -177,7 +177,7 @@ namespace Zork.Core
             // Local variables
             int i;
 
-            ret_val = game.Objects[(ObjectIds)villianId].ocapac;
+            ret_val = game.Objects[(ObjectIds)villianId].Capacity;
             if (ret_val <= 0)
             {
                 return ret_val;

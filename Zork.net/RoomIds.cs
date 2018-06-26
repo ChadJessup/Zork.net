@@ -5,6 +5,7 @@
         UNKNOWN = -1,
         NoWhere = 0,
         WhiteHouse = 2,
+        Kitchen = 6,
         LivingRoom = 8,
         Cellar = 9,
         Troll = 10,

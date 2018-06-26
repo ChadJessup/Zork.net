@@ -15,7 +15,7 @@ namespace Zork.Core
                 goto L200;
             }
             // !READOUT?
-            if (game.ParserVectors.prsa != (int)VerbIds.lookw)
+            if (game.ParserVectors.prsa != VerbIds.lookw)
             {
                 goto L10;
             }
@@ -47,7 +47,7 @@ namespace Zork.Core
                 goto L500;
             }
             // !READIN?
-            if (game.ParserVectors.prsa != (int)VerbIds.Walk)
+            if (game.ParserVectors.prsa != VerbIds.Walk)
             {
                 goto L300;
             }
@@ -79,14 +79,14 @@ namespace Zork.Core
             // !NORMAL EXIT?
             if ((game.Rooms[game.curxt_.xroom1].Flags & RoomFlags.RMUNG) == 0)
             {
-                game.State.BalloonLocation = game.curxt_.xroom1;
+                game.State.BalloonLocation.Id = game.curxt_.xroom1;
             }
             L10:
             ret_val = false;
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VerbIds.takew || game.ParserVectors.prso != (ObjectIds)game.Switches.IsBalloonInflated)
+            if (game.ParserVectors.prsa != VerbIds.takew || game.ParserVectors.prso != (ObjectIds)game.Switches.IsBalloonInflated)
             {
                 goto L350;
             }
@@ -95,7 +95,7 @@ namespace Zork.Core
             return ret_val;
 
             L350:
-            if (game.ParserVectors.prsa != (int)VerbIds.Put
+            if (game.ParserVectors.prsa != VerbIds.Put
                 || game.ParserVectors.prsi != ObjectIds.recep
                 || ObjectHandler.IsObjectEmpty(game, ObjectIds.recep))
             {
@@ -106,7 +106,7 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if (game.ParserVectors.prsa != (int)VerbIds.unboaw || (game.Rooms[game.Player.Here].Flags & RoomFlags.LAND) == 0)
+            if (game.ParserVectors.prsa != VerbIds.unboaw || (game.Rooms[game.Player.Here].Flags & RoomFlags.LAND) == 0)
             {
                 goto L600;
             }
@@ -119,7 +119,7 @@ namespace Zork.Core
             goto L10;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VerbIds.burnw || game.Objects[game.ParserVectors.prso].Container != ObjectIds.recep)
+            if (game.ParserVectors.prsa != VerbIds.burnw || game.Objects[game.ParserVectors.prso].Container != ObjectIds.recep)
             {
                 goto L700;
             }
@@ -146,7 +146,7 @@ namespace Zork.Core
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa == (int)VerbIds.unboaw
+            if (game.ParserVectors.prsa == VerbIds.unboaw
                 && game.Switches.IsBalloonInflated != 0
                 && (game.Rooms[game.Player.Here].Flags & RoomFlags.LAND) != 0)
             {

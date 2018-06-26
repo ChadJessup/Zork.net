@@ -469,7 +469,7 @@ namespace Zork.Core
             // !HE CAN DO IT.
             if ((game.Objects[ObjectIds.TrapDoor].Flag2 & ObjectFlags2.IsOpen) == 0)
             {
-                game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.TCHBT;
+                game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.WasTouched;
             }
 
             return ret_val;
@@ -502,7 +502,7 @@ namespace Zork.Core
             // C7-	FROBOZZ FLAG (BANK ALARM)
 
             L7000:
-            game.Flags.frobzf = game.Objects[ObjectIds.bills].Room != 0 & game.Objects[ObjectIds.portr].Room != 0;
+            game.Flags.frobzf = RoomHandler.GetRoomThatContainsObject(ObjectIds.bills, game).Id != 0 & RoomHandler.GetRoomThatContainsObject(ObjectIds.portr, game).Id != 0;
 
             return ret_val;
             // CXAPPL, PAGE 3

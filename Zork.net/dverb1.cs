@@ -101,7 +101,7 @@ namespace Zork.Core
 
             // !TAKE OBJECT FOR WINNER.
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, game.Player.Winner, game);
-            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.WasTouched;
 
             // !UPDATE SCORE.
             AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.prso].ofval);
@@ -184,7 +184,7 @@ namespace Zork.Core
             // !SCORE OBJECT.
             game.Objects[game.ParserVectors.prso].ofval = 0;
             // !CANT BE SCORED AGAIN.
-            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.WasTouched;
 
             if (ObjectHandler.objact_(game))
             {
@@ -193,12 +193,12 @@ namespace Zork.Core
             // !DID IT HANDLE?
             i = 0;
             // !ASSUME NOTHING TO SAY.
-            if (game.ParserVectors.prsa == (int)VerbIds.Drop)
+            if (game.ParserVectors.prsa == VerbIds.Drop)
             {
                 i = (ObjectIds)528;
             }
 
-            if (game.ParserVectors.prsa == (int)VerbIds.Throw)
+            if (game.ParserVectors.prsa == VerbIds.Throw)
             {
                 i = (ObjectIds)529;
             }
@@ -281,7 +281,7 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (ObjectHandler.GetWeight(0, game.ParserVectors.prso, 0, game) + ObjectHandler.GetWeight(0, game.ParserVectors.prsi, 0, game) + game.Objects[game.ParserVectors.prso].Size <= game.Objects[game.ParserVectors.prsi].ocapac)
+            if (ObjectHandler.GetWeight(0, game.ParserVectors.prso, 0, game) + ObjectHandler.GetWeight(0, game.ParserVectors.prsi, 0, game) + game.Objects[game.ParserVectors.prso].Size <= game.Objects[game.ParserVectors.prsi].Capacity)
             {
                 goto L700;
             }
@@ -314,14 +314,14 @@ namespace Zork.Core
             svo = (int)game.ParserVectors.prso;
             // !SAVE PARSER.
             svi = (int)game.ParserVectors.prsi;
-            game.ParserVectors.prsa = (int)VerbIds.takew;
+            game.ParserVectors.prsa = VerbIds.takew;
             game.ParserVectors.prsi = 0;
             if (!TakeParsedObject(game, false))
             {
                 return ret_val;
             }
             // !TAKE OBJECT.
-            game.ParserVectors.prsa = (int)VerbIds.Put;
+            game.ParserVectors.prsa = VerbIds.Put;
             game.ParserVectors.prso = (ObjectIds)svo;
             game.ParserVectors.prsi = (ObjectIds)svi;
             goto L1000;
@@ -349,7 +349,7 @@ namespace Zork.Core
             AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.prso].ofval);
             // !SCORE OBJECT.
             game.Objects[game.ParserVectors.prso].ofval = 0;
-            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.WasTouched;
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, game.Player.Winner, game);
             // !TEMPORARILY ON WINNER.
 
@@ -395,7 +395,7 @@ namespace Zork.Core
             // !SAVE HERE.
 
             // L100:
-            if (game.ParserVectors.prsa != (int)VerbIds.takew)
+            if (game.ParserVectors.prsa != VerbIds.takew)
             {
                 goto L1000;
             }
@@ -431,7 +431,7 @@ namespace Zork.Core
             goto L3000;
 
             L1000:
-            if (game.ParserVectors.prsa != (int)VerbIds.Drop)
+            if (game.ParserVectors.prsa != VerbIds.Drop)
             {
                 goto L2000;
             }
@@ -457,7 +457,7 @@ namespace Zork.Core
             goto L3000;
 
             L2000:
-            if (game.ParserVectors.prsa != (int)VerbIds.Put)
+            if (game.ParserVectors.prsa != VerbIds.Put)
             {
                 goto L3000;
             }

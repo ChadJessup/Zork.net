@@ -186,13 +186,13 @@ namespace Zork.Core
             // !RESCHEDULE INTERRUPT.
             f = game.Adventurers.Vehicles[(int)game.Player.Winner - 1] == (int)ObjectIds.Balloon;
             // !SEE IF IN BALLOON.
-            if (game.State.BalloonLocation == RoomIds.vlbot)
+            if (game.State.BalloonLocation.Id == RoomIds.vlbot)
             {
                 goto L6800;
             }
             // !AT BOTTOM?
-            if (game.State.BalloonLocation == RoomIds.Ledge2 || game.State.BalloonLocation == RoomIds.Ledge3 ||
-                game.State.BalloonLocation == RoomIds.Ledge4 || game.State.BalloonLocation == RoomIds.vlbot)
+            if (game.State.BalloonLocation.Id == RoomIds.Ledge2 || game.State.BalloonLocation.Id == RoomIds.Ledge3 ||
+                game.State.BalloonLocation.Id == RoomIds.Ledge4 || game.State.BalloonLocation.Id == RoomIds.vlbot)
             {
                 goto L6700;
             }
@@ -206,13 +206,13 @@ namespace Zork.Core
             // FALL TO NEXT ROOM.
 
             // !IN VAIR1?
-            if (game.State.BalloonLocation != RoomIds.InAir1)
+            if (game.State.BalloonLocation.Id != RoomIds.InAir1)
             {
                 goto L6300;
             }
 
             // !YES, NOW AT VLBOT.
-            game.State.BalloonLocation = RoomIds.vlbot;
+            game.State.BalloonLocation.Id = RoomIds.vlbot;
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, game.State.BalloonLocation, 0, 0, game);
             if (f)
             {
@@ -230,7 +230,7 @@ namespace Zork.Core
             return;
 
             L6200:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE HIM.
             if (game.Switches.IsBalloonInflated == 0) {
                 goto L6250;
@@ -257,7 +257,8 @@ namespace Zork.Core
             return;
 
             L6300:
-            --game.State.BalloonLocation;
+            // TODO: chadj - this is broken now.
+            --game.State.BalloonLocation.Id;
             // !NOT IN VAIR1, DESCEND.
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, game.State.BalloonLocation, 0, 0, game);
             if (f) {
@@ -273,7 +274,7 @@ namespace Zork.Core
             return;
 
             L6400:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !IN BALLOON, MOVE HIM.
             MessageHandler.rspeak_(game, 534);
             // !DESCRIBE.
@@ -284,7 +285,7 @@ namespace Zork.Core
             // !
 
             L6500:
-            if (game.State.BalloonLocation != RoomIds.InAir4)
+            if (game.State.BalloonLocation.Id != RoomIds.InAir4)
             {
                 goto L6600;
             }
@@ -294,7 +295,7 @@ namespace Zork.Core
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 0;
             game.Switches.IsBalloonInflated = 0;
             game.Switches.IsBalloonTiedUp = 0;
-            game.State.BalloonLocation = RoomIds.vlbot;
+            game.State.BalloonLocation.Id = RoomIds.vlbot;
             // !FALL TO BOTTOM.
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, 0, 0, 0, game);
             // !BALLOON & CONTENTS DIE.
@@ -319,7 +320,8 @@ namespace Zork.Core
             return;
 
             L6600:
-            ++game.State.BalloonLocation;
+            // TODO: chadj - this will break now.
+            ++game.State.BalloonLocation.Id;
             // !NOT AT VAIR4, GO UP.
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, game.State.BalloonLocation, 0, 0, game);
             if (f)
@@ -337,7 +339,7 @@ namespace Zork.Core
             return;
 
             L6650:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE PLAYER.
             MessageHandler.rspeak_(game, 538);
             // !DESCRIBE.
@@ -347,7 +349,7 @@ namespace Zork.Core
             // ON LEDGE, GOES TO MIDAIR ROOM WHETHER INFLATED OR NOT.
 
             L6700:
-            game.State.BalloonLocation += (int)RoomIds.InAir2 - (int)RoomIds.Ledge2;
+            game.State.BalloonLocation.Id += (int)RoomIds.InAir2 - (int)RoomIds.Ledge2;
             // !MOVE TO MIDAIR.
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, game.State.BalloonLocation, 0, 0, game);
             if (f)
@@ -368,7 +370,7 @@ namespace Zork.Core
             return;
 
             L6750:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE TO NEW ROOM.
             MessageHandler.rspeak_(game, 540);
             // !DESCRIBE.
@@ -383,7 +385,7 @@ namespace Zork.Core
                 return;
             }
 
-            game.State.BalloonLocation = RoomIds.InAir1;
+            game.State.BalloonLocation.Id = RoomIds.InAir1;
             // !INFLATED AND OPEN,
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, game.State.BalloonLocation, 0, 0, game);
             // !GO UP TO VAIR1.
@@ -400,7 +402,7 @@ namespace Zork.Core
             return;
 
             L6850:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation, game.Player.Winner);
+            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE PLAYER.
             MessageHandler.rspeak_(game, 542);
             f = RoomHandler.RoomDescription(0, game);
@@ -425,11 +427,11 @@ namespace Zork.Core
             //bug_(4, 0);
 
             L7200:
-            ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(i, 0, 0, 0, 0, game);
             // !VANISH OBJECT.
             game.Switches.IsBalloonInflated = 0;
             // !UNINFLATED.
-            if (game.Player.Here == game.State.BalloonLocation)
+            if (game.Player.Here == game.State.BalloonLocation.Id)
             {
                 MessageHandler.rspsub_(game, 292, game.Objects[i].Description2);
             }
@@ -445,12 +447,12 @@ namespace Zork.Core
             }
 
             // !IGNITED BRICK?
-            br = game.Objects[ObjectIds.brick].Room;
+            br = RoomHandler.GetRoomThatContainsObject(ObjectIds.brick, game).Id;
             // !GET BRICK ROOM.
             bc = game.Objects[ObjectIds.brick].Container;
             // !GET CONTAINER.
             if (br == 0 && bc != 0) {
-                br = game.Objects[bc].Room;
+                br = RoomHandler.GetRoomThatContainsObject(bc, game).Id;
             }
             ObjectHandler.SetNewObjectStatus(ObjectIds.fuse, 0, 0, 0, 0, game);
             // !KILL FUSE.
@@ -475,7 +477,7 @@ namespace Zork.Core
             MessageHandler.rspeak_(game, 151);
 
             // !SAVE ROOM THAT BLEW.
-            game.State.mungrm = (RoomIds)br;
+            game.State.mungrm.Id = br;
             game.Clock.Ticks[(int)ClockIndices.cevsaf - 1] = 5;
             // !SET SAFE INTERRUPT.
             if (br != RoomIds.Safe)
@@ -575,7 +577,7 @@ namespace Zork.Core
             return;
 
             L9300:
-            game.State.BalloonLocation = RoomIds.vlbot;
+            game.State.BalloonLocation.Id = RoomIds.vlbot;
             // !YES, CRASH BALLOON.
             ObjectHandler.SetNewObjectStatus(ObjectIds.Balloon, 0, 0, 0, 0, game);
             // !BALLOON & CONTENTS DIE.
@@ -592,9 +594,9 @@ namespace Zork.Core
             // CEV10--	SAFE MUNG.
 
             L10000:
-            game.Rooms[game.State.mungrm].Flags |= RoomFlags.RMUNG;
-            game.Rooms[game.State.mungrm].Action = 114;
-            if (game.Player.Here == game.State.mungrm)
+            game.State.mungrm.Flags |= RoomFlags.RMUNG;
+            game.State.mungrm.Action = 114;
+            if (game.Player.Here == game.State.mungrm.Id)
             {
                 goto L10100;
             }
@@ -602,7 +604,7 @@ namespace Zork.Core
             // !IS HE PRESENT?
             MessageHandler.rspeak_(game, 115);
             // !LET HIM KNOW.
-            if (game.State.mungrm == RoomIds.Safe)
+            if (game.State.mungrm.Id == RoomIds.Safe)
             {
                 game.Clock.Ticks[(int)ClockIndices.cevled - 1] = 8;
             }
@@ -766,7 +768,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !STRIP HIM OF OBJS.
-                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)game.Objects[i].Room, (ObjectIds)game.Objects[i].Container, 0, game);
+                ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, (RoomIds)RoomHandler.GetRoomThatContainsObject(i, game).Id, (ObjectIds)game.Objects[i].Container, 0, game);
                 // L20300:
             }
 
@@ -776,12 +778,12 @@ namespace Zork.Core
             // !GIVE HIM SWORD.
 
             game.Objects[ObjectIds.Lamp].Flag1 = (game.Objects[ObjectIds.Lamp].Flag1 | ObjectFlags.LITEBT) & ~ObjectFlags.ONBT;
-            game.Objects[ObjectIds.Lamp].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[ObjectIds.Lamp].Flag2 |= ObjectFlags2.WasTouched;
             game.Clock.Flags[(int)ClockIndices.cevlnt - 1] = false;
             // !LAMP IS GOOD AS NEW.
             game.Clock.Ticks[(int)ClockIndices.cevlnt - 1] = 350;
             game.Switches.orlamp = 0;
-            game.Objects[ObjectIds.Sword].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[ObjectIds.Sword].Flag2 |= ObjectFlags2.WasTouched;
             game.Hack.IsSwordActive = true;
             game.Hack.SwordStatus = 0;
 
@@ -913,14 +915,14 @@ namespace Zork.Core
             }
             // !EXPIRED?
             game.Objects[obj].Flag1 &= ~((int)ObjectFlags.LITEBT + (int)ObjectFlags.FLAMBT + ObjectFlags.ONBT);
-            if (game.Objects[obj].Room == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
+            if (RoomHandler.GetRoomThatContainsObject(obj, game).Id == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
             {
                 MessageHandler.rspsub_(game, 293, game.Objects[obj].Description2);
             }
             return;
 
             L100:
-            if (game.Objects[obj].Room == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
+            if (RoomHandler.GetRoomThatContainsObject(obj, game).Id == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
             {
                 MessageHandler.rspeak_(game, ticks[ctr + tickln / 2]);
             }

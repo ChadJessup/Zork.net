@@ -277,12 +277,12 @@ namespace Zork.Core
             int dforce;
 
             ret_val = false;
-            j = (ObjectIds)game.pv_1.act;
             // !SET UP PTR TO SYNTAX.
-            drive = 0;
+            j = (ObjectIds)game.pv_1.act;
             // !NO DEFAULT.
-            dforce = 0;
+            drive = 0;
             // !NO FORCED DEFAULT.
+            dforce = 0;
             qprep = (ObjectIds)(game.Orphans.oflag & game.Orphans.oprep);
             L100:
             j += 2;
@@ -354,6 +354,7 @@ namespace Zork.Core
             {
                 goto L200;
             }
+
             // !MORE TO DO?
             // SYNMCH, PAGE 2
 
@@ -407,6 +408,7 @@ namespace Zork.Core
             i__1 = game.Syntax.dobj & (int)SyntaxObjectFlags.VPMASK;
             Orphans.Orphan(-1, game.pv_1.act, 0, i__1, 0, game);
             MessageHandler.Speak(623, game);
+
             return ret_val;
 
             // TRY TO FILL INDIRECT OBJECT SLOT IF THAT WAS THE PROBLEM.
@@ -417,19 +419,23 @@ namespace Zork.Core
                 goto L6000;
             }
 
-            game.objvec.o2 = (ObjectIds)GetWhatIMean(game.Syntax.iobj, game.Syntax.ifw1, game.Syntax.ifw2, game);
             // !GWIM.
+            game.objvec.o2 = (ObjectIds)GetWhatIMean(game.Syntax.iobj, game.Syntax.ifw1, game.Syntax.ifw2, game);
+
             if (game.objvec.o2 > 0)
             {
                 goto L6000;
             }
+
             if (game.objvec.o1 == 0)
             {
                 game.objvec.o1 = (ObjectIds)(game.Orphans.oflag & (int)game.Orphans.oslot);
             }
+
             i__1 = game.Syntax.dobj & (int)SyntaxObjectFlags.VPMASK;
             Orphans.Orphan(-1, game.pv_1.act, game.objvec.o1, i__1, 0, game);
             MessageHandler.Speak(624, game);
+
             return ret_val;
 
             // TOTAL CHOMP
@@ -448,6 +454,7 @@ namespace Zork.Core
             {
                 goto L5000;
             }
+
             j = game.objvec.o1;
             // !YES.
             game.objvec.o1 = game.objvec.o2;
@@ -455,7 +462,7 @@ namespace Zork.Core
 
             // !GET DIR OBJ.
             L5000:
-            game.ParserVectors.prsa = (int)(game.Syntax.vflag & SyntaxFlags.SVMASK);
+            game.ParserVectors.prsa = (VerbIds)(game.Syntax.vflag & SyntaxFlags.SVMASK);
             game.ParserVectors.prso = game.objvec.o1;
             // !GET IND OBJ.
             game.ParserVectors.prsi = game.objvec.o2;
@@ -496,8 +503,8 @@ namespace Zork.Core
 
             // GWIM, PAGE 2
 
-            ret_val = -1;
             // !ASSUME LOSE.
+            ret_val = -1;
             av = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
             nobj = 0;
             nocare = (sflag & (int)SyntaxObjectFlags.VCBIT) == 0;
@@ -544,21 +551,25 @@ namespace Zork.Core
             {
                 goto L300;
             }
+
             if (game.Objects[robj].Container != av)
             {
                 goto L50;
             }
+
             // !UNREACHABLE? TRY NOBJ
             L300:
             if (nobj != 0)
             {
                 return ret_val;
             }
+
             // !IF AMBIGUOUS, RETURN.
             if (!TakeObject(robj, sflag, game))
             {
                 return ret_val;
             }
+
             // !IF UNTAKEABLE, RETURN
             ret_val = (int)robj;
             L500:
@@ -590,7 +601,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !LOOP
-                if ((rm == 0 || game.Objects[i].Room != rm)
+                if ((rm == 0 || RoomHandler.GetRoomThatContainsObject(i, game).Id != rm)
                     && (actorId == 0 || game.Objects[i].Adventurer != actorId) && (con == 0 || game.Objects[i].Container != con))
                 {
                     goto L1000;
@@ -784,7 +795,7 @@ namespace Zork.Core
             L3700:
             ObjectHandler.SetNewObjectStatus(obj, 559, 0, 0, game.Player.Winner, game);
             // !DO TAKE.
-            game.Objects[obj].Flag2 |= ObjectFlags2.TCHBT;
+            game.Objects[obj].Flag2 |= ObjectFlags2.WasTouched;
             AdventurerHandler.ScoreUpdate(game, game.Objects[obj].ofval);
             game.Objects[obj].ofval = 0;
 
@@ -906,16 +917,40 @@ namespace Zork.Core
         /// </summary>
         /// <param name="oidx"></param>
         /// <param name="aidx"></param>
-        /// <param name="room"></param>
+        /// <param name="roomId"></param>
         /// <param name="container"></param>
         /// <param name="actorId"></param>
         /// <param name="spcobj"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static Object SearchForObject(int oidx, int aidx, RoomIds room, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
+        private static Object SearchForObject(int oidx, int aidx, RoomIds roomId, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
         {
-            int ret_val = 0;
+            ObjectIds ret_val = ObjectIds.Nothing;
             ObjectIds x;
+
+            if (roomId != RoomIds.NoWhere)
+            {
+                var room = game.Rooms[roomId];
+
+                foreach (var obj in room.Objects)
+                {
+                    if (ValidateObject(oidx, aidx, obj.Id, spcobj, game))
+                    {
+                        return obj;
+                    }
+
+                    if (obj.CanSeeInside)
+                    {
+                        foreach (var containedItems in obj.ContainedObjects)
+                        {
+                            if (ValidateObject(oidx, aidx, containedItems.Id, spcobj, game))
+                            {
+                                return containedItems;
+                            }
+                        }
+                    }
+                }
+            }
 
             foreach (var obj in game.Objects.Values)
             {
@@ -929,18 +964,29 @@ namespace Zork.Core
                     continue;
                 }
 
-                if ((room == 0 || !ObjectHandler.IsObjectInRoom(obj.Id, room, game)) &&
+                if ((roomId == 0 || !ObjectHandler.IsObjectInRoom(obj.Id, roomId, game)) &&
                     (container == ObjectIds.Nothing || obj.Container != container) &&
                     (actorId == ActorIds.NoOne || obj.Adventurer != actorId))
                 {
                     continue;
                 }
 
-                if (ValidateObject(oidx, aidx, obj.Id, spcobj, game))
+                if (!ValidateObject(oidx, aidx, obj.Id, spcobj, game))
                 {
-                    Console.WriteLine($"Object Id found: {obj.Id:d} in room: {game.Player.Here:d}\n");
-                    return obj;
+                    if (!obj.Flag1.HasFlag(ObjectFlags.IsTransparent) && !obj.Flag2.HasFlag(ObjectFlags2.IsOpen))
+                    {
+                        continue;
+                    }
                 }
+
+                if (ret_val != ObjectIds.Nothing)
+                {
+                    ret_val = (ObjectIds)(-(int)ret_val);
+                    return game.Objects[ret_val];
+                }
+
+                Console.WriteLine($"Object Id found: {obj.Id:d} in room: {game.Player.Here:d}\n");
+                ret_val = obj.Id;
 
                 if (!obj.Flag1.HasFlag(ObjectFlags.IsTransparent) && !obj.Flag2.HasFlag(ObjectFlags2.IsOpen))
                 {
@@ -997,7 +1043,7 @@ namespace Zork.Core
                 return obj;
             }
 
-            return null;
+            return game.Objects[ret_val];
             /*
             for (i = 0; i < (ObjectIds)game.Objects.Count; ++i)
             {
@@ -1434,7 +1480,7 @@ namespace Zork.Core
 
                 L2000:
 
-                game.ParserVectors.prsa = (int)VerbIds.Walk;
+                game.ParserVectors.prsa = VerbIds.Walk;
                 game.ParserVectors.prso = (ObjectIds)ParserConstants.Directions[j + 1];
 
                 ret_val = 1;
@@ -1777,6 +1823,7 @@ namespace Zork.Core
             {
                 nobj = (ObjectIds)(-(int)nobj);
             }
+
             // !AMB RESULT?
             obj = nobj;
 
@@ -1864,10 +1911,10 @@ namespace Zork.Core
         /// <param name="ri"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static bool ProcessVerb(string input, int ri, Game game)
+        public static bool ProcessVerb(string input, VerbIds ri, Game game)
         {
-            const int mxnop = 39;
-            const int mxsmp = 99;
+            const VerbIds mxnop = (VerbIds)39;
+            const VerbIds mxsmp = (VerbIds)99;
 
             int i__1;
             bool ret_val;
@@ -1965,7 +2012,7 @@ namespace Zork.Core
                 case 40: goto L64000;
                 case 41: goto L65000;
                 case 42: goto L66000;
-                case 43: goto L68000;
+                case 43: goto LWALK;
                 case 44: goto L69000;
                 case 45: goto L70000;
                 case 46: goto L71000;
@@ -2263,7 +2310,7 @@ namespace Zork.Core
             // V117--	BREATHE.  BECOMES INFLATE WITH LUNGS.
 
             L38000:
-            game.ParserVectors.prsa = (int)VerbIds.Inflate;
+            game.ParserVectors.prsa = VerbIds.Inflate;
             game.ParserVectors.prsi = ObjectIds.lungs;
             goto L22000;
             // !HANDLE LIKE INFLATE.
@@ -2335,7 +2382,7 @@ namespace Zork.Core
             }
 
             // !OTHERWISE DEFAULT.
-            game.ParserVectors.prsa = (int)VerbIds.foow;
+            game.ParserVectors.prsa = VerbIds.foow;
             // !DEFUSE ROOM PROCESSORS.
             return ret_val;
 
@@ -2386,7 +2433,7 @@ namespace Zork.Core
                 }
 
                 // !INSIDE?
-                game.Objects[i].Flag2 |= ObjectFlags2.TCHBT;
+                game.Objects[i].Flag2 |= ObjectFlags2.WasTouched;
                 if (av == 0)
                 {
                     goto L42400;
@@ -2529,7 +2576,7 @@ namespace Zork.Core
             return ret_val;
 
             L46100:
-            if (game.Objects[game.ParserVectors.prso].ocapac != 0)
+            if (game.Objects[game.ParserVectors.prso].Capacity != 0)
             {
                 goto L46200;
             }
@@ -2576,7 +2623,7 @@ namespace Zork.Core
                 goto L46050;
             }
 
-            if (game.Objects[game.ParserVectors.prso].ocapac != 0)
+            if (game.Objects[game.ParserVectors.prso].Capacity != 0)
             {
                 goto L47100;
             }
@@ -2857,7 +2904,7 @@ namespace Zork.Core
 
             L59200:
             // !DRINK FOOD?
-            if (game.ParserVectors.prsa == (int)VerbIds.drinkw)
+            if (game.ParserVectors.prsa == VerbIds.drinkw)
             {
                 goto L59300;
             }
@@ -3039,7 +3086,7 @@ namespace Zork.Core
             j = (ObjectIds)odo2;
             odo2 = odi2;
             odi2 = (int)j;
-            game.ParserVectors.prsa = (int)VerbIds.attacw;
+            game.ParserVectors.prsa = VerbIds.attacw;
             // !FOR OBJACT.
 
             // V141--	ATTACK.  FALL THRU TO ATTACK CODE.
@@ -3115,7 +3162,7 @@ namespace Zork.Core
 
             // V142--	WALK.  PROCESSED EXTERNALLY.
 
-            L68000:
+            LWALK:
             ret_val = dverb2.walk_(game);
             return ret_val;
 
@@ -3325,7 +3372,7 @@ namespace Zork.Core
             // V154--	PUMP
 
             L83000:
-            if (game.Objects[ObjectIds.Pump].Room == game.Player.Here
+            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Pump, game).Id == game.Player.Here
               || game.Objects[ObjectIds.Pump].Adventurer == game.Player.Winner)
             {
                 goto L83100;
@@ -3339,7 +3386,7 @@ namespace Zork.Core
             // !BECOMES INFLATE
             game.ParserVectors.prsi = ObjectIds.Pump;
             // !X WITH PUMP.
-            game.ParserVectors.prsa = (int)VerbIds.Inflate;
+            game.ParserVectors.prsa = VerbIds.Inflate;
 
             goto L22000;
             // !DONE.
@@ -3366,7 +3413,7 @@ namespace Zork.Core
             i = (ObjectIds)XSearch.xup;
 
             // !UNLESS CLIMB DN.
-            if (game.ParserVectors.prsa == (int)VerbIds.ClimbDown)
+            if (game.ParserVectors.prsa == VerbIds.ClimbDown)
             {
                 i = (ObjectIds)XSearch.xdown;
             }
@@ -3404,7 +3451,7 @@ namespace Zork.Core
 
             L87500:
             // !WALK
-            game.ParserVectors.prsa = (int)VerbIds.Walk;
+            game.ParserVectors.prsa = VerbIds.Walk;
             // !IN SPECIFIED DIR.
             game.ParserVectors.prso = i;
 
@@ -3412,10 +3459,10 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool sverbs_(Game game, string input, int ri)
+        public static bool sverbs_(Game game, string input, VerbIds ri)
         {
-            int mxnop = 39;
-            int mxjoke = 64;
+            VerbIds mxnop = (VerbIds)39;
+            VerbIds mxjoke = (VerbIds)64;
             int [] jokes = new int [] { 4, 5, 3, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 5314, 5319, 324, 325, 883, 884, 120, 120, 0, 0, 0, 0 };
             int [] answer = new int [] { 0, 1, 2, 3, 4, 4, 4, 4, 5, 5, 5, 6, 7, 7 };
             string[] ansstr = new string[]
@@ -3873,7 +3920,7 @@ namespace Zork.Core
             L17400:
             i = 671;
             // !JOKE.
-            if (game.Objects[game.ParserVectors.prso].Room != 0)
+            if (RoomHandler.GetRoomThatContainsObject(game.ParserVectors.prso, game).Id != 0)
             {
                 i = game.rnd_(5) + 552;
             }

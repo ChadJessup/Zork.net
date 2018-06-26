@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Humanizer;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Zork.Core
 {
@@ -13,7 +15,21 @@ namespace Zork.Core
         public RoomFlags Flags { get; set;}
         public List<int> Travel { get; set; }
 
-        public override string ToString() => $"{Id} - {Flags}";
+        /// <summary>
+        /// Container for objects that are in this room.
+        /// </summary>
+        public List<Object> Objects { get; set; } = new List<Object>();
+
+        /// <summary>
+        /// Container for Adventurers that are in this room.
+        /// </summary>
+        public List<Adventurer> Adventurers { get; set; } = new List<Adventurer>();
+
+        public bool HasObject(ObjectIds objId) => this.Objects.Any(o => o.IsOrHasObject(objId));
+
+        public Object GetObject(ObjectIds objId) => this.Objects.FirstOrDefault(o => o.Id == objId);
+
+        public override string ToString() => $"{this.Id} - {this.Flags} - {"items".ToQuantity(this.Objects.Count)}";
         public override int GetHashCode() => this.Id.GetHashCode();
     }
 }

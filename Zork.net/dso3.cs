@@ -101,7 +101,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !LOOP
-                if ((rm == 0 || game.Objects[i].Room != rm)
+                if ((rm == 0 || RoomHandler.GetRoomThatContainsObject(i, game).Id != rm)
                     && (adv == 0 || game.Objects[i].Adventurer != adv)
                     && (con == 0 || game.Objects[i].Container != con))
                 {

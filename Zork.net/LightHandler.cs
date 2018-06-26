@@ -37,7 +37,7 @@ namespace Zork.Core
                 goto L10;
             }
             // !IGNORE IND REFS.
-            if (game.ParserVectors.prsa != (int)VerbIds.trnofw)
+            if (game.ParserVectors.prsa != VerbIds.trnofw)
             {
                 goto L19200;
             }
@@ -58,7 +58,7 @@ namespace Zork.Core
             return ret_val;
 
             L19200:
-            if (game.ParserVectors.prsa != (int)VerbIds.burnw && game.ParserVectors.prsa != (int)VerbIds.trnonw)
+            if (game.ParserVectors.prsa != VerbIds.burnw && game.ParserVectors.prsa != VerbIds.trnonw)
             {
                 goto L10;
             }
@@ -138,7 +138,7 @@ namespace Zork.Core
                 //bug_(6, obj);
             }
 
-            if (game.ParserVectors.prsa != (int)VerbIds.trnonw
+            if (game.ParserVectors.prsa != VerbIds.trnonw
                 || game.ParserVectors.prso != ObjectIds.match)
             {
                 goto L20500;
@@ -165,7 +165,7 @@ namespace Zork.Core
             return ret_val;
 
             L20500:
-            if (game.ParserVectors.prsa != (int)VerbIds.trnofw || (game.Objects[ObjectIds.match].Flag1 & ObjectFlags.ONBT) == 0)
+            if (game.ParserVectors.prsa != VerbIds.trnofw || (game.Objects[ObjectIds.match].Flag1 & ObjectFlags.ONBT) == 0)
             {
                 goto L10;
             }

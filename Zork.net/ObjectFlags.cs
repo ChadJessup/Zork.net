@@ -11,7 +11,7 @@ namespace Zork.Core
         DOORBT = 4096,
         IsTransparent = 2048,
         FOODBT = 1024,
-        NDSCBT = 512,
+        HasNoDescription = 512,
         DRNKBT = 256,
         CONTBT = 128,
         LITEBT = 64,
@@ -39,7 +39,8 @@ namespace Zork.Core
         TRYBT = 32,
         NOCHBT = 16,
         IsOpen = 8,
-        TCHBT = 4,
+        // Was TCHBt - I believe that means 'touched', whatever that means.
+        WasTouched = 4,
         VEHBT = 2,
         // Was SCHBT - I believe that means 'searchable'.
         IsSearchable = 1,

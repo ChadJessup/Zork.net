@@ -33,7 +33,7 @@ namespace Zork.Core
                 ra = game.Objects[obj].oactio;
 
                 // !ADVENTURER STILL HERE?
-                if (game.Player.Here != game.Objects[obj].Room)
+                if (game.Player.Here != RoomHandler.GetRoomThatContainsObject(obj, game).Id)
                 {
                     goto L2200;
                 }
@@ -44,7 +44,7 @@ namespace Zork.Core
                 }
 
                 // !THIEF ENGROSSED?
-                if (game.Objects[obj].ocapac >= 0)
+                if (game.Objects[obj].Capacity >= 0)
                 {
                     goto L2050;
                 }
@@ -55,15 +55,15 @@ namespace Zork.Core
                     goto L2025;
                 }
 
-                i__2 = game.Objects[obj].ocapac;
-                game.Objects[obj].ocapac = Math.Abs(i__2);
+                i__2 = game.Objects[obj].Capacity;
+                game.Objects[obj].Capacity = Math.Abs(i__2);
                 game.Villians.vprob[i - 1] = 0;
                 if (ra == 0)
                 {
                     goto L2400;
                 }
                 // !ANYTHING TO DO?
-                game.ParserVectors.prsa = (int)VerbIds.inxw;
+                game.ParserVectors.prsa = VerbIds.inxw;
                 // !YES, WAKE HIM UP.
                 f = ObjectHandler.oappli_(ra, 0, game);
                 goto L2400;
@@ -92,7 +92,7 @@ namespace Zork.Core
                 }
 
                 // !NOT FIGHTING,
-                game.ParserVectors.prsa = (int)VerbIds.frstqw;
+                game.ParserVectors.prsa = VerbIds.frstqw;
                 // !SET UP PROBABILITY
                 if (!ObjectHandler.oappli_(ra, 0, game))
                 {
@@ -110,7 +110,7 @@ namespace Zork.Core
                 {
                     goto L2300;
                 }
-                game.ParserVectors.prsa = (int)VerbIds.Fight;
+                game.ParserVectors.prsa = VerbIds.Fight;
                 // !HAVE A FIGHT.
                 f = ObjectHandler.oappli_(ra, 0, game);
                 L2300:
@@ -121,15 +121,15 @@ namespace Zork.Core
                 // !TURN OFF ENGROSSED.
                 game.Adventurers.Flags[(int)ActorIds.Player - 1] &= ~game.astag;
                 game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.STAGBT + ObjectFlags2.FITEBT);
-                if (game.Objects[obj].ocapac >= 0 || ra == 0)
+                if (game.Objects[obj].Capacity >= 0 || ra == 0)
                 {
                     goto L2400;
                 }
-                game.ParserVectors.prsa = (int)VerbIds.inxw;
+                game.ParserVectors.prsa = VerbIds.inxw;
                 // !WAKE HIM UP.
                 f = ObjectHandler.oappli_(ra, 0, game);
-                i__2 = game.Objects[obj].ocapac;
-                game.Objects[obj].ocapac = Math.Abs(i__2);
+                i__2 = game.Objects[obj].Capacity;
+                game.Objects[obj].Capacity = Math.Abs(i__2);
                 L2400:
                 ;
             }
@@ -158,7 +158,7 @@ namespace Zork.Core
                     goto L2650;
                 }
                 // !VILLAIN ACTION?
-                game.ParserVectors.prsa = (int)VerbIds.Fight;
+                game.ParserVectors.prsa = VerbIds.Fight;
                 // !SEE IF
                 if (ObjectHandler.oappli_(ra, 0, game))
                 {
@@ -517,7 +517,7 @@ namespace Zork.Core
                 goto L4500;
             }
             // !HERO?
-            game.Objects[v].ocapac = def;
+            game.Objects[v].Capacity = def;
             // !STORE NEW CAPACITY.
             if (def != 0)
             {
@@ -535,7 +535,7 @@ namespace Zork.Core
             }
 
             // !IF NX TO DO, EXIT.
-            game.ParserVectors.prsa = (int)VerbIds.deadxw;
+            game.ParserVectors.prsa = VerbIds.deadxw;
             // !LET HIM KNOW.
             f = ObjectHandler.oappli_(ra, 0, game);
             return ret_val;
@@ -546,7 +546,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.ParserVectors.prsa = (int)VerbIds.outxw;
+            game.ParserVectors.prsa = VerbIds.outxw;
             // !LET HIM BE OUT.
             f = ObjectHandler.oappli_(ra, 0, game);
             return ret_val;
@@ -673,7 +673,7 @@ namespace Zork.Core
 
             if (!game.Flags.EndGame)
             {
-                ret_val = game.Objects[ObjectIds.cyclo].Room == roomId || game.Objects[ObjectIds.Troll].Room == roomId || game.Objects[ObjectIds.thief].Room == roomId && game.Hack.IsThiefActive;
+                ret_val = RoomHandler.GetRoomThatContainsObject(ObjectIds.cyclo, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.Troll, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id == roomId && game.Hack.IsThiefActive;
             }
             else
             {

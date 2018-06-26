@@ -70,13 +70,13 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !RELOCATE OBJECTS.
-                if (game.Objects[i].Room == RoomIds.cpuzz && (game.Objects[i].Flag2 & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
+                if (RoomHandler.GetRoomThatContainsObject(i, game).Id == RoomIds.cpuzz && (game.Objects[i].Flag2 & (int)ObjectFlags2.ACTRBT + ObjectFlags2.VILLBT) == 0)
                 {
                     i__2 = game.Switches.cphere * game.hyper_.hfactr;
                     ObjectHandler.SetNewObjectStatus(i, 0, (RoomIds)i__2, 0, 0, game);
                 }
 
-                if (game.Objects[i].Room == (RoomIds)(st * game.hyper_.hfactr))
+                if (RoomHandler.GetRoomThatContainsObject(i, game).Id == (RoomIds)(st * game.hyper_.hfactr))
                 {
                     ObjectHandler.SetNewObjectStatus(i, 0, RoomIds.cpuzz, 0, 0, game);
                 }

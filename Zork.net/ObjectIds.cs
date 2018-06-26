@@ -50,6 +50,7 @@
         Window = 63,
         grate = 65,
         TrapDoor = 66,
+        Door = 68,
         hpole = 71,
         leak = 78,
         rbutt = 79,

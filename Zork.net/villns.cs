@@ -15,7 +15,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.ParserVectors.prsa != (int)VerbIds.Fight)
+            if (game.ParserVectors.prsa != VerbIds.Fight)
             {
                 goto L1100;
             }
@@ -48,7 +48,7 @@ namespace Zork.Core
             return ret_val;
 
             L1100:
-            if (game.ParserVectors.prsa != (int)VerbIds.deadxw)
+            if (game.ParserVectors.prsa != VerbIds.deadxw)
             {
                 goto L1200;
             }
@@ -59,7 +59,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            if (game.ParserVectors.prsa != (int)VerbIds.outxw)
+            if (game.ParserVectors.prsa != VerbIds.outxw)
             {
                 goto L1300;
             }
@@ -73,7 +73,7 @@ namespace Zork.Core
             return ret_val;
 
             L1300:
-            if (game.ParserVectors.prsa != (int)VerbIds.inxw)
+            if (game.ParserVectors.prsa != VerbIds.inxw)
             {
                 goto L1400;
             }
@@ -90,7 +90,7 @@ namespace Zork.Core
             return ret_val;
 
             L1400:
-            if (game.ParserVectors.prsa != (int)VerbIds.frstqw)
+            if (game.ParserVectors.prsa != VerbIds.frstqw)
             {
                 goto L1500;
             }
@@ -100,22 +100,22 @@ namespace Zork.Core
             return ret_val;
 
             L1500:
-            if (game.ParserVectors.prsa != (int)VerbIds.movew
-                && game.ParserVectors.prsa != (int)VerbIds.takew
-                && game.ParserVectors.prsa != (int)VerbIds.mungw
-                && game.ParserVectors.prsa != (int)VerbIds.Throw
-                && game.ParserVectors.prsa != (int)VerbIds.Give)
+            if (game.ParserVectors.prsa != VerbIds.movew
+                && game.ParserVectors.prsa != VerbIds.takew
+                && game.ParserVectors.prsa != VerbIds.mungw
+                && game.ParserVectors.prsa != VerbIds.Throw
+                && game.ParserVectors.prsa != VerbIds.Give)
             {
                 goto L2000;
             }
 
-            if (game.Objects[ObjectIds.Troll].ocapac >= 0)
+            if (game.Objects[ObjectIds.Troll].Capacity >= 0)
             {
                 goto L1550;
             }
 
             // !TROLL OUT?
-            game.Objects[ObjectIds.Troll].ocapac = -game.Objects[ObjectIds.Troll].ocapac;
+            game.Objects[ObjectIds.Troll].Capacity = -game.Objects[ObjectIds.Troll].Capacity;
             // !YES, WAKE HIM.
             game.Objects[ObjectIds.axe].Flag1 |= ObjectFlags.IsVisible;
             game.Flags.trollf = false;
@@ -123,7 +123,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(game, 437);
 
             L1550:
-            if (game.ParserVectors.prsa != (int)VerbIds.takew && game.ParserVectors.prsa != (int)VerbIds.movew)
+            if (game.ParserVectors.prsa != VerbIds.takew && game.ParserVectors.prsa != VerbIds.movew)
             {
                 goto L1600;
             }
@@ -133,7 +133,7 @@ namespace Zork.Core
             return ret_val;
 
             L1600:
-            if (game.ParserVectors.prsa != (int)VerbIds.mungw)
+            if (game.ParserVectors.prsa != VerbIds.mungw)
             {
                 goto L1700;
             }
@@ -151,7 +151,7 @@ namespace Zork.Core
             // !NO OBJECT?
             i = 440;
             // !ASSUME THROW.
-            if (game.ParserVectors.prsa == (int)VerbIds.Give)
+            if (game.ParserVectors.prsa == VerbIds.Give)
             {
                 i = 441;
             }
@@ -177,7 +177,7 @@ namespace Zork.Core
             return ret_val;
 
             L2000:
-            if (!game.Flags.trollf || game.ParserVectors.prsa != (int)VerbIds.hellow)
+            if (!game.Flags.trollf || game.ParserVectors.prsa != VerbIds.hellow)
             {
                 goto L10;
             }
@@ -207,12 +207,12 @@ namespace Zork.Core
             }
 
             // !ASLEEP?
-            if (game.ParserVectors.prsa != (int)VerbIds.alarmw
-                && game.ParserVectors.prsa != (int)VerbIds.mungw
-                && game.ParserVectors.prsa != (int)VerbIds.hellow
-                && game.ParserVectors.prsa != (int)VerbIds.burnw
-                && game.ParserVectors.prsa != (int)VerbIds.killw
-                && game.ParserVectors.prsa != (int)VerbIds.attacw)
+            if (game.ParserVectors.prsa != VerbIds.alarmw
+                && game.ParserVectors.prsa != VerbIds.mungw
+                && game.ParserVectors.prsa != VerbIds.hellow
+                && game.ParserVectors.prsa != VerbIds.burnw
+                && game.ParserVectors.prsa != VerbIds.killw
+                && game.ParserVectors.prsa != VerbIds.attacw)
             {
                 goto L10;
             }
@@ -226,8 +226,8 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            if (game.ParserVectors.prsa == (int)VerbIds.Fight
-                || game.ParserVectors.prsa == (int)VerbIds.frstqw)
+            if (game.ParserVectors.prsa == VerbIds.Fight
+                || game.ParserVectors.prsa == VerbIds.frstqw)
             {
                 goto L10;
             }
@@ -245,7 +245,7 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if (game.ParserVectors.prsa != (int)VerbIds.Give)
+            if (game.ParserVectors.prsa != VerbIds.Give)
             {
                 goto L500;
             }
@@ -327,23 +327,23 @@ namespace Zork.Core
             L500:
             i = 0;
             // !ASSUME NOT HANDLED.
-            if (game.ParserVectors.prsa == (int)VerbIds.hellow)
+            if (game.ParserVectors.prsa == VerbIds.hellow)
             {
                 goto L450;
             }
 
             // !HELLO IS NO GO.
-            if (game.ParserVectors.prsa == (int)VerbIds.Throw || game.ParserVectors.prsa == (int)VerbIds.mungw)
+            if (game.ParserVectors.prsa == VerbIds.Throw || game.ParserVectors.prsa == VerbIds.mungw)
             {
                 i = game.rnd_(2) + 200;
             }
 
-            if (game.ParserVectors.prsa == (int)VerbIds.takew)
+            if (game.ParserVectors.prsa == VerbIds.takew)
             {
                 i = 202;
             }
 
-            if (game.ParserVectors.prsa == (int)VerbIds.tiew)
+            if (game.ParserVectors.prsa == VerbIds.tiew)
             {
                 i = 203;
             }
@@ -370,7 +370,7 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.ParserVectors.prsa != (int)VerbIds.Fight)
+            if (game.ParserVectors.prsa != VerbIds.Fight)
             {
                 goto L100;
             }
@@ -410,7 +410,7 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            if (game.ParserVectors.prsa != (int)VerbIds.deadxw)
+            if (game.ParserVectors.prsa != VerbIds.deadxw)
             {
                 goto L200;
             }
@@ -466,7 +466,7 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if (game.ParserVectors.prsa != (int)VerbIds.frstqw)
+            if (game.ParserVectors.prsa != VerbIds.frstqw)
             {
                 goto L250;
             }
@@ -475,7 +475,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.ParserVectors.prsa != (int)VerbIds.hellow || game.Objects[ObjectIds.thief].Description1 != 504)
+            if (game.ParserVectors.prsa != VerbIds.hellow || game.Objects[ObjectIds.thief].Description1 != 504)
             {
                 goto L300;
             }
@@ -484,7 +484,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != (int)VerbIds.outxw)
+            if (game.ParserVectors.prsa != VerbIds.outxw)
             {
                 goto L400;
             }
@@ -499,7 +499,7 @@ namespace Zork.Core
             return ret_val;
 
             L400:
-            if (game.ParserVectors.prsa != (int)VerbIds.inxw)
+            if (game.ParserVectors.prsa != VerbIds.inxw)
             {
                 goto L500;
             }
@@ -527,7 +527,7 @@ namespace Zork.Core
 
             L500:
             // !TAKE?
-            if (game.ParserVectors.prsa != (int)VerbIds.takew)
+            if (game.ParserVectors.prsa != VerbIds.takew)
             {
                 goto L600;
             }
@@ -537,7 +537,7 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (game.ParserVectors.prsa != (int)VerbIds.Throw || game.ParserVectors.prso != ObjectIds.Knife ||
+            if (game.ParserVectors.prsa != VerbIds.Throw || game.ParserVectors.prso != ObjectIds.Knife ||
                 (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.FITEBT) != 0)
             {
                 goto L700;
@@ -576,21 +576,21 @@ namespace Zork.Core
             return ret_val;
 
             L700:
-            if (game.ParserVectors.prsa != (int)VerbIds.Throw
-                && game.ParserVectors.prsa != (int)VerbIds.Give
+            if (game.ParserVectors.prsa != VerbIds.Throw
+                && game.ParserVectors.prsa != VerbIds.Give
                 || game.ParserVectors.prso == 0
                 || game.ParserVectors.prso == ObjectIds.thief)
             {
                 goto L10;
             }
 
-            if (game.Objects[ObjectIds.thief].ocapac >= 0)
+            if (game.Objects[ObjectIds.thief].Capacity >= 0)
             {
                 goto L750;
             }
 
             // !WAKE HIM UP.
-            game.Objects[ObjectIds.thief].ocapac = -game.Objects[ObjectIds.thief].ocapac;
+            game.Objects[ObjectIds.thief].Capacity = -game.Objects[ObjectIds.thief].Capacity;
             game.Hack.IsThiefActive = true;
             game.Objects[ObjectIds.Stilletto].Flag1 |= ObjectFlags.IsVisible;
             game.Objects[ObjectIds.thief].Description1 = 503;

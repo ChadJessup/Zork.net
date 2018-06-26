@@ -61,6 +61,11 @@ namespace Zork.Core
                 game.Rooms.Add(room.Id, room);
             }
 
+            game.Rooms.Add(RoomIds.NoWhere, new Room
+            {
+                Id = RoomIds.NoWhere
+            });
+
             game.Exits.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
 
@@ -109,6 +114,8 @@ namespace Zork.Core
             DataLoader.ReadPartialInts(objectCount, ocan, bytes, game);
             DataLoader.ReadPartialInts(objectCount, oread, bytes, game);
 
+            var containerHolding = new List<Object>();
+
             for (int objIdx = 1; objIdx <= objectCount; objIdx++)
             {
                 var newObject = new Object
@@ -121,8 +128,8 @@ namespace Zork.Core
                     ofval = ofval[objIdx - 1],
                     otval = otval[objIdx - 1],
                     Size = Sizes[objIdx - 1],
-                    ocapac = ocapac[objIdx - 1],
-                    Room = (RoomIds)oroom[objIdx - 1],
+                    Capacity = ocapac[objIdx - 1],
+                    //Room = (RoomIds)oroom[objIdx - 1],
                     Adventurer = (ActorIds)oadv[objIdx - 1],
                     Container = (ObjectIds)ocan[objIdx - 1],
                     oread = oread[objIdx - 1],
@@ -130,7 +137,24 @@ namespace Zork.Core
                     Flag2 = oflag2[objIdx - 1],
                 };
 
+                // Some items exist, but not in a room specifically, they can be on an adventurer...
+                if ((RoomIds)oroom[objIdx - 1] != RoomIds.NoWhere && game.Rooms.ContainsKey((RoomIds)oroom[objIdx - 1]))
+                {
+                    game.Rooms[(RoomIds)oroom[objIdx - 1]].Objects.Add(newObject);
+                }
+
+                if (newObject.Container != ObjectIds.Nothing)
+                {
+                    containerHolding.Add(newObject);
+                }
+
                 game.Objects.Add(newObject.Id, newObject);
+            }
+
+            foreach (var containedItem in containerHolding)
+            {
+                var container = game.Objects.First(o => o.Value.Id == containedItem.Container);
+                container.Value.ContainedObjects.Add(containedItem);
             }
 
             game.Objects.Add(ObjectIds.Nothing, new Object());
@@ -176,8 +200,8 @@ namespace Zork.Core
             game.Last.lastit = (ObjectIds)game.Adventurers.Objects[(int)(ActorIds.Player - 1)];
             game.Player.Here = (RoomIds)game.Adventurers.Rooms[(int)game.Player.Winner - 1];
 
-            game.State.BalloonLocation = game.Objects[ObjectIds.Balloon].Room;
-            game.Hack.ThiefPosition = game.Objects[ObjectIds.thief].Room;
+            game.State.BalloonLocation = RoomHandler.GetRoomThatContainsObject(ObjectIds.Balloon, game);
+            game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id;
 
             return game;
         }
