@@ -48,12 +48,15 @@ namespace Zork.Core
         {
             MessageHandler.Speak(messageId, game);
             var currentRoom = RoomHandler.GetRoomThatContainsObject(objectId, game);
+
             var obj = game.Objects[objectId];
             currentRoom.Objects.Remove(obj);
             room.Objects.Add(obj);
 
-            game.Objects[objectId].Container = containerObjectId;
-            game.Objects[objectId].Adventurer = actorIds;
+            obj.Container = containerObjectId;
+            obj.Adventurer = actorIds;
+
+            game.Adventurers[actorIds].Objects.Add(obj);
         }
 
         /// <summary>
@@ -90,7 +93,7 @@ namespace Zork.Core
                 // !LOOP THRU ACTORS.
                 ret_val = i;
                 // !ASSUME FOUND.
-                if (game.Adventurers.Objects[i - 1] == (int)objId)
+                if (game.Adventurers[(ActorIds)i].ObjectId == objId)
                 {
                     return (ActorIds)ret_val;
                 }
@@ -207,11 +210,13 @@ namespace Zork.Core
             {
                 odo2 = game.Objects[game.ParserVectors.prso].Description2;
             }
+
             if (game.ParserVectors.prsi != 0)
             {
                 odi2 = game.Objects[game.ParserVectors.prsi].Description2;
             }
-            av = game.Adventurers.Vehicles[(int)game.Player.Winner];
+
+            av = game.Adventurers[game.Player.Winner].VehicleId;
             ret_val = true;
 
             switch (ri - 31)
@@ -991,10 +996,11 @@ namespace Zork.Core
                 game.Objects[ObjectIds.odoor].Flag1 |= ObjectFlags.IsVisible;
             }
 
-            if (game.Adventurers.Rooms[(int)ActorIds.Player - 1] != (int)RoomIds.cell)
+            if (game.Adventurers[ActorIds.Player].RoomId != RoomIds.cell)
             {
                 goto L17400;
             }
+
             // !PLAYER IN CELL?
             if (game.Switches.lcell != 4)
             {
@@ -1216,10 +1222,10 @@ namespace Zork.Core
             L5:
             if (game.ParserVectors.prsi != 0)
             {
-                odi2 = game.Objects[(ObjectIds)game.ParserVectors.prsi].Description2;
+                odi2 = game.Objects[game.ParserVectors.prsi].Description2;
             }
 
-            av = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
             flobts = (int)(ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.ONBT);
             ret_val = true;
 
@@ -1795,17 +1801,17 @@ namespace Zork.Core
             // !ROBOT TAKE?
             MessageHandler.Speak(263, game);
             // !NO, DROP CAGE.
-            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.robot, game).Id != game.Player.Here)
+            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Robot, game).Id != game.Player.Here)
             {
                 goto L47200;
             }
             // !ROBOT HERE?
             f = AdventurerHandler.moveto_(game, RoomIds.caged, game.Player.Winner);
             // !YES, MOVE INTO CAGE.
-            SetNewObjectStatus(ObjectIds.robot, 0, RoomIds.caged, 0, 0, game);
+            SetNewObjectStatus(ObjectIds.Robot, 0, RoomIds.caged, 0, 0, game);
             // !MOVE ROBOT.
-            game.Adventurers.Rooms[(int)ActorIds.Robot - 1] = (int)RoomIds.caged;
-            game.Objects[ObjectIds.robot].Flag1 |= ObjectFlags.HasNoDescription;
+            game.Adventurers[ActorIds.Robot].RoomId = RoomIds.caged;
+            game.Objects[ObjectIds.Robot].Flag1 |= ObjectFlags.HasNoDescription;
             game.Clock.Ticks[(int)ClockIndices.cevsph - 1] = 10;
             // !GET OUT IN 10 OR ELSE.
             return ret_val;
@@ -1822,7 +1828,7 @@ namespace Zork.Core
             L47500:
             SetNewObjectStatus(ObjectIds.spher, 0, 0, 0, 0, game);
             // !ROBOT TRIED,
-            SetNewObjectStatus(ObjectIds.robot, 264, 0, 0, 0, game);
+            SetNewObjectStatus(ObjectIds.Robot, 264, 0, 0, 0, game);
             // !KILL HIM.
             SetNewObjectStatus(ObjectIds.cage, 0, game.Player.Here, 0, 0, game);
             // !INSERT MANGLED CAGE.
@@ -1973,7 +1979,7 @@ namespace Zork.Core
 
             SetNewObjectStatus(ObjectIds.ecake, 273, 0, 0, 0, game);
             // !VANISH CAKE.
-            game.Objects[ObjectIds.robot].Flag1 &= ~ObjectFlags.IsVisible;
+            game.Objects[ObjectIds.Robot].Flag1 &= ~ObjectFlags.IsVisible;
             ret_val = AdventurerHandler.moveto_(game, RoomIds.alism, game.Player.Winner);
             // !MOVE TO ALICE SMALL.
             iz = 64;
@@ -2061,7 +2067,7 @@ namespace Zork.Core
                 goto L52500;
             }
             // !IN REDUCED ROOM?
-            game.Objects[ObjectIds.robot].Flag1 |= ObjectFlags.IsVisible;
+            game.Objects[ObjectIds.Robot].Flag1 |= ObjectFlags.IsVisible;
             io = game.Player.Here;
             ret_val = AdventurerHandler.moveto_(game, RoomIds.alice, game.Player.Winner);
             iz = 0;
@@ -2487,7 +2493,7 @@ namespace Zork.Core
                 odi2 = game.Objects[game.ParserVectors.prsi].Description2;
             }
 
-            av = game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            av = game.Adventurers[game.Player.Winner].VehicleId;
             ret_val = true;
 
             switch (ri)
@@ -3598,7 +3604,7 @@ namespace Zork.Core
             }
 
             // !KILL ROBOT.
-            SetNewObjectStatus(ObjectIds.robot, 285, 0, 0, 0, game);
+            SetNewObjectStatus(ObjectIds.Robot, 285, 0, 0, 0, game);
 
             return ret_val;
 

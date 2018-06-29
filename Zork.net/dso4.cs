@@ -154,10 +154,10 @@ namespace Zork.Core
             // System generated locals
             int ret_val;
 
-            ret_val = smin + ((smax - smin) * game.Adventurers.Scores[(int)actorId - 1] + game.State.MaxScore / 2) / game.State.MaxScore;
+            ret_val = smin + ((smax - smin) * game.Adventurers[actorId].Score + game.State.MaxScore / 2) / game.State.MaxScore;
             if (flg)
             {
-                ret_val += game.Adventurers.astren[(int)actorId - 1];
+                ret_val += game.Adventurers[actorId].Strength;
             }
 
             return ret_val;

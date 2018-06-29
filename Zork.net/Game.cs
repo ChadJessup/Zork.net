@@ -7,6 +7,7 @@ namespace Zork.Core
     {
         public Game(byte[] bytes)
         {
+            this.Random = new Random(this.RandomSeed);
             this.Data = bytes;
             this.State.ltshft = 10;
             this.State.MaxScore = this.State.ltshft;
@@ -45,15 +46,18 @@ namespace Zork.Core
             this.IsRunning = true;
         }
 
+        public int RandomSeed { get; set; } = DateTime.Now.Millisecond;
+
         public Dictionary<RoomIds, Room> Rooms { get; } = new Dictionary<RoomIds, Room>();
         public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
+        public Dictionary<ActorIds, Adventurer> Adventurers { get; } = new Dictionary<ActorIds, Adventurer>();
 
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
         public Hack Hack { get; } = new Hack();
         public Flags Flags { get; } = new Flags();
-        public Random Random { get; } = new Random(DateTime.Now.Millisecond);
+        public Random Random { get; }
         public Exits Exits { get; } = new Exits();
         public Switches Switches { get; } = new Switches();
         public Screen Screen { get; } = new Screen();
@@ -67,7 +71,6 @@ namespace Zork.Core
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
         public ClockEvents Clock { get; } = new ClockEvents();
-        public Adventurer Adventurers { get; } = new Adventurer();
 
         public hyper_ hyper_ { get; } = new hyper_();
 
@@ -244,7 +247,7 @@ namespace Zork.Core
                 L2100:
                 this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.prso, this);
                 // !NEW PLAYER.
-                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
+                this.Player.Here = this.Adventurers[this.Player.Winner - 1].RoomId;
 
                 // !NEW LOCATION.
                 if (this.ParserVectors.prscon <= 1)
@@ -271,7 +274,7 @@ namespace Zork.Core
                 L2600:
                 this.Player.Winner = ActorIds.Player;
                 // !RESTORE STATE.
-                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
+                this.Player.Here = this.Adventurers[this.Player.Winner - 1].RoomId;
                 goto L350;
 
                 L2150:
@@ -361,7 +364,7 @@ namespace Zork.Core
 
             ret_val = false;
             // !ASSUME LOSES.
-            av = (ObjectIds)this.Adventurers.Vehicles[(int)this.Player.Winner - 1];
+            av = (ObjectIds)this.Adventurers[this.Player.Winner - 1].VehicleId;
             // !GET VEHICLE.
             if (av != 0)
             {

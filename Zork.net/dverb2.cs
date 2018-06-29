@@ -7,10 +7,6 @@ namespace Zork.Core
         // SAVE- SAVE GAME STATE
         public static void savegm_(Game game)
         {
-            // Local variables
-            int i;
-            //FILE* e;
-
             game.ParserVectors.prswon = false;
             // !DISABLE GAME.
             // Note: save file format is different for PDP vs. non-PDP versions
@@ -95,10 +91,6 @@ namespace Zork.Core
         // RESTORE- RESTORE GAME STATE
         public static void rstrgm_(Game game)
         {
-            // Local variables
-            int i, j, k;
-//            FILE* e;
-
             game.ParserVectors.prswon = false;
             // !DISABLE GAME.
             // Note: save file format is different for PDP vs. non-PDP versions

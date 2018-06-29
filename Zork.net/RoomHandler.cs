@@ -30,7 +30,7 @@ namespace Zork.Core
 
             // !CLEAR.
             L50:
-            if (game.Player.Here == (RoomIds)game.Adventurers.Rooms[(int)(ActorIds.Player - 1)])
+            if (game.Player.Here == game.Adventurers[ActorIds.Player].RoomId)
             {
                 goto L100;
             }
@@ -109,9 +109,9 @@ namespace Zork.Core
 
             // !OUTPUT DESCRIPTION.
             L500:
-            if (game.Adventurers.Vehicles.Any() && game.Adventurers.Vehicles[(int)game.Player.Winner - 1] != 0)
+            if (game.Adventurers[game.Player.Winner].VehicleId != 0)
             {
-                MessageHandler.rspsub_(431, game.Objects[(ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1]].Description2, game);
+                MessageHandler.rspsub_(431, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].VehicleId].Description2, game);
             }
 
             L600:
@@ -177,7 +177,7 @@ namespace Zork.Core
                 // !LOOP ON OBJECTS
                 if (!ObjectHandler.IsInRoom(roomId, i, game)
                     || (game.Objects[i].Flag1 & (int)ObjectFlags.IsVisible + ObjectFlags.HasNoDescription) != ObjectFlags.IsVisible
-                    || (game.Adventurers.Vehicles.Any() && i == (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1]))
+                    || (i == (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId))
                 {
                     goto L500;
                 }
@@ -294,7 +294,7 @@ namespace Zork.Core
                 }
 
                 //!ON ADV?
-                if (game.Adventurers.Rooms[(int)oa - 1] != (int)roomId)
+                if (game.Adventurers[oa].RoomId != roomId)
                 {
                     goto L1000;
                 }
@@ -517,7 +517,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.Adventurers.Scores[(int)game.Player.Winner - 1] = game.State.RawScore;
+            game.Adventurers[game.Player.Winner].Score = game.State.RawScore;
             // !SCORE TROPHY CASE.
             i__1 = game.Objects.Count;
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
@@ -539,7 +539,7 @@ namespace Zork.Core
                 }
 
                 // !DO ALL LEVELS.
-                game.Adventurers.Scores[(int)game.Player.Winner - 1] += game.Objects[i].otval;
+                game.Adventurers[game.Player.Winner].Score += game.Objects[i].otval;
                 L3600:
                 ;
             }

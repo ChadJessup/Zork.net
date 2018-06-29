@@ -61,14 +61,14 @@ namespace Zork.Core
             ObjectHandler.SetNewObjectStatus(ObjectIds.cage, 567, game.Rooms[RoomIds.cager], 0, 0, game);
 
             // !INSTALL ROBOT IN ROOM.
-            ObjectHandler.SetNewObjectStatus(ObjectIds.robot, 0, RoomIds.cager, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Robot, 0, RoomIds.cager, 0, 0, game);
 
             // !ALSO MOVE ROBOT/ADV.
-            game.Adventurers.Rooms[(int)ActorIds.Robot - 1] = (int)RoomIds.cager;
+            game.Adventurers[ActorIds.Robot].RoomId = RoomIds.cager;
 
             // !CAGE SOLVED.
             game.Flags.cagesf = true;
-            game.Objects[ObjectIds.robot].Flag1 &= ~ObjectFlags.HasNoDescription;
+            game.Objects[ObjectIds.Robot].Flag1 &= ~ObjectFlags.HasNoDescription;
             game.Objects[ObjectIds.spher].Flag1 |=  ObjectFlags.IsTakeable;
 
             return ret_val;

@@ -119,7 +119,7 @@ namespace Zork.Core
                     game.Flags.thfenf = false;
                 }
                 // !TURN OFF ENGROSSED.
-                game.Adventurers.Flags[(int)ActorIds.Player - 1] &= ~game.astag;
+                game.Adventurers[ActorIds.Player].Flags &= ~game.astag;
                 game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.STAGBT + ObjectFlags2.FITEBT);
                 if (game.Objects[obj].Capacity >= 0 || ra == 0)
                 {
@@ -244,14 +244,14 @@ namespace Zork.Core
             // !BAD LK PROB.
             game.Objects[v].Flag2 |= ObjectFlags2.FITEBT;
 
-            if ((game.Adventurers.Flags[(int)h - 1] & game.astag) == 0)
+            if ((game.Adventurers[h].Flags & game.astag) == 0)
             {
                 goto L100;
             }
 
             MessageHandler.Speak(game, 591);
             // !YES, CANT FIGHT.
-            game.Adventurers.Flags[(int)h - 1] &= ~game.astag;
+            game.Adventurers[h].Flags &= ~game.astag;
             return ret_val;
 
             L100:
@@ -274,7 +274,7 @@ namespace Zork.Core
                 // L200:
             }
 
-            if (v == (ObjectIds)game.Adventurers.Objects[(int)ActorIds.Player - 1])
+            if (v == game.Adventurers[ActorIds.Player].ObjectId)
             {
                 goto L300;
             }
@@ -300,7 +300,7 @@ namespace Zork.Core
             L1000:
             pblose = 50;
             // !BAD LK PROB.
-            game.Adventurers.Flags[(int)h - 1] &= ~game.astag;
+            game.Adventurers[h].Flags &= ~game.astag;
             if ((game.Objects[v].Flag2 & ObjectFlags2.STAGBT) == 0)
             {
                 goto L1200;
@@ -483,7 +483,7 @@ namespace Zork.Core
                 goto L3550;
             }
             // !STAGGERED.
-            game.Adventurers.Flags[(int)h - 1] |= game.astag;
+            game.Adventurers[h].Flags |= game.astag;
             goto L4000;
 
             L3550:
@@ -553,10 +553,10 @@ namespace Zork.Core
 
             L4500:
             // !ASSUME DEAD.
-            game.Adventurers.astren[(int)h - 1] = -10000;
+            game.Adventurers[h].Strength = -10000;
             if (def != 0)
             {
-                game.Adventurers.astren[(int)h - 1] = def - od;
+                game.Adventurers[h].Strength = def - od;
             }
 
             if (def >= od)
@@ -573,7 +573,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.Adventurers.astren[(int)h - 1] = 1 - dso4.ComputeFightStrength(game, (ActorIds)h, false);
+            game.Adventurers[h].Strength = 1 - dso4.ComputeFightStrength(game, h, false);
 
             // !HE'S DEAD.
             AdventurerHandler.jigsup_(game, 596);
