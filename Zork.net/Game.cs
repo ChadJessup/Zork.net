@@ -71,10 +71,7 @@ namespace Zork.Core
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
         public ClockEvents Clock { get; } = new ClockEvents();
-<<<<<<< HEAD
-=======
 
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
         public hyper_ hyper_ { get; } = new hyper_();
 
         public ParserVectors ParserVectors { get; } = new ParserVectors();
@@ -250,11 +247,7 @@ namespace Zork.Core
                 L2100:
                 this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.prso, this);
                 // !NEW PLAYER.
-<<<<<<< HEAD
                 this.Player.Here = this.Adventurers[this.Player.Winner].CurrentRoom.Id;
-=======
-                this.Player.Here = this.Adventurers[this.Player.Winner - 1].RoomId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
 
                 // !NEW LOCATION.
                 if (this.ParserVectors.prscon <= 1)
@@ -281,11 +274,7 @@ namespace Zork.Core
                 L2600:
                 this.Player.Winner = ActorIds.Player;
                 // !RESTORE STATE.
-<<<<<<< HEAD
                 this.Player.Here = this.Adventurers[this.Player.Winner].CurrentRoom.Id;
-=======
-                this.Player.Here = this.Adventurers[this.Player.Winner - 1].RoomId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 goto L350;
 
                 L2150:
@@ -374,12 +363,7 @@ namespace Zork.Core
             ObjectIds av;
 
             // !ASSUME LOSES.
-<<<<<<< HEAD
             ret_val = false;
-
-=======
-            av = (ObjectIds)this.Adventurers[this.Player.Winner - 1].VehicleId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             // !GET VEHICLE.
             av = (ObjectIds)this.Adventurers[this.Player.Winner].VehicleId;
             if (av != 0)

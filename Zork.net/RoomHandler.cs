@@ -30,11 +30,7 @@ namespace Zork.Core
 
             // !CLEAR.
             L50:
-<<<<<<< HEAD
             if (game.Player.Here == game.Adventurers[ActorIds.Player].CurrentRoom.Id)
-=======
-            if (game.Player.Here == game.Adventurers[ActorIds.Player].RoomId)
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 goto L100;
             }
@@ -113,15 +109,9 @@ namespace Zork.Core
 
             // !OUTPUT DESCRIPTION.
             L500:
-<<<<<<< HEAD
             if (game.Adventurers[game.Player.Winner].VehicleId != 0)
             {
                 MessageHandler.rspsub_(431, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].VehicleId].Description2, game);
-=======
-            if (game.Adventurers[game.Player.Winner].VehicleId != 0)
-            {
-                MessageHandler.rspsub_(431, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].VehicleId].Description2, game);
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             }
 
             L600:
@@ -187,11 +177,7 @@ namespace Zork.Core
                 // !LOOP ON OBJECTS
                 if (!ObjectHandler.IsInRoom(roomId, i, game)
                     || (game.Objects[i].Flag1 & (int)ObjectFlags.IsVisible + ObjectFlags.HasNoDescription) != ObjectFlags.IsVisible
-<<<<<<< HEAD
                     || (i == (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId))
-=======
-                    || (i == (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId))
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 {
                     goto L500;
                 }
@@ -308,11 +294,7 @@ namespace Zork.Core
                 }
 
                 //!ON ADV?
-<<<<<<< HEAD
                 if (game.Adventurers[oa].CurrentRoom.Id != roomId)
-=======
-                if (game.Adventurers[oa].RoomId != roomId)
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 {
                     goto L1000;
                 }

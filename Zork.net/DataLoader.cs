@@ -174,17 +174,12 @@ namespace Zork.Core
             DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes, game);
             DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes, game);
 
-<<<<<<< HEAD
             var advCount = DataLoader.ReadInt(bytes, game);
-=======
-            var adventurersCount = DataLoader.ReadInt(bytes, game);
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             var advRooms = new List<int>();
             var advScores = new List<int>();
             var advVehicles = new List<int>();
             var advObjects = new List<int>();
             var advActions = new List<int>();
-<<<<<<< HEAD
             var advStrengths = new List<int>();
             var advFlags = new List<int>();
 
@@ -209,35 +204,8 @@ namespace Zork.Core
 
                 game.Adventurers.Add(newAdventurer.Id, newAdventurer);
             }
-=======
-            var advAstren = new List<int>();
-            var advFlags = new List<int>();
-
-            DataLoader.ReadInts(adventurersCount, advRooms, bytes, game);
-            DataLoader.ReadPartialInts(adventurersCount, advScores, bytes, game);
-            DataLoader.ReadPartialInts(adventurersCount, advVehicles, bytes, game);
-            DataLoader.ReadInts(adventurersCount, advObjects, bytes, game);
-            DataLoader.ReadInts(adventurersCount, advActions, bytes, game);
-            DataLoader.ReadInts(adventurersCount, advAstren, bytes, game);
-            DataLoader.ReadPartialInts(adventurersCount, advFlags, bytes, game);
-
-            for (int advIdx = 1; advIdx <= adventurersCount; advIdx++)
-            {
-                var newAdventurer = new Adventurer
-                {
-                    Id = (ActorIds)advIdx,
-                    Strength = advAstren[advIdx - 1],
-                    Flags = advFlags[advIdx - 1],
-                    ObjectId = (ObjectIds)advObjects[advIdx - 1],
-                    Score = advScores[advIdx - 1],
-                    RoomId = (RoomIds)advRooms[advIdx - 1],
-                };
-
-                game.Adventurers.Add((ActorIds)advIdx, newAdventurer);
-            }
 
             game.Adventurers.Add(ActorIds.NoOne, new Adventurer());
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
 
             game.Star.mbase = DataLoader.ReadInt(bytes, game);
             game.Messages.Count = DataLoader.ReadInt(bytes, game);
@@ -252,13 +220,8 @@ namespace Zork.Core
             game.Time.ssec = now.Second;
 
             game.Player.Winner = ActorIds.Player;
-<<<<<<< HEAD
             game.Last.lastit = game.Adventurers[ActorIds.Player].ObjectId;
-            game.Player.Here = game.Adventurers[ActorIds.Player].CurrentRoom.Id;
-=======
-            game.Last.lastit = game.Adventurers[ActorIds.Player].ObjectId;
-            game.Player.Here = game.Adventurers[game.Player.Winner].RoomId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
+            game.Player.Here = game.Adventurers[game.Player.Winner].CurrentRoom.Id;
 
             game.State.BalloonLocation = RoomHandler.GetRoomThatContainsObject(ObjectIds.Balloon, game);
             game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id;

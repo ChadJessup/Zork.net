@@ -119,11 +119,7 @@ namespace Zork.Core
                     game.Flags.thfenf = false;
                 }
                 // !TURN OFF ENGROSSED.
-<<<<<<< HEAD
                 game.Adventurers[ActorIds.Player].Flag &= ~game.astag;
-=======
-                game.Adventurers[ActorIds.Player].Flags &= ~game.astag;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.STAGBT + ObjectFlags2.FITEBT);
                 if (game.Objects[obj].Capacity >= 0 || ra == 0)
                 {
@@ -248,22 +244,14 @@ namespace Zork.Core
             // !BAD LK PROB.
             game.Objects[v].Flag2 |= ObjectFlags2.FITEBT;
 
-<<<<<<< HEAD
             if ((game.Adventurers[h].Flag & game.astag) == 0)
-=======
-            if ((game.Adventurers[h].Flags & game.astag) == 0)
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 goto L100;
             }
 
             MessageHandler.Speak(game, 591);
             // !YES, CANT FIGHT.
-<<<<<<< HEAD
             game.Adventurers[h].Flag &= ~game.astag;
-=======
-            game.Adventurers[h].Flags &= ~game.astag;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             return ret_val;
 
             L100:
@@ -286,11 +274,7 @@ namespace Zork.Core
                 // L200:
             }
 
-<<<<<<< HEAD
-            if (v == (ObjectIds)game.Adventurers[ActorIds.Player].ObjectId)
-=======
             if (v == game.Adventurers[ActorIds.Player].ObjectId)
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 goto L300;
             }
@@ -316,11 +300,7 @@ namespace Zork.Core
             L1000:
             pblose = 50;
             // !BAD LK PROB.
-<<<<<<< HEAD
             game.Adventurers[h].Flag &= ~game.astag;
-=======
-            game.Adventurers[h].Flags &= ~game.astag;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             if ((game.Objects[v].Flag2 & ObjectFlags2.STAGBT) == 0)
             {
                 goto L1200;
@@ -503,11 +483,7 @@ namespace Zork.Core
                 goto L3550;
             }
             // !STAGGERED.
-<<<<<<< HEAD
             game.Adventurers[h].Flag |= game.astag;
-=======
-            game.Adventurers[h].Flags |= game.astag;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             goto L4000;
 
             L3550:

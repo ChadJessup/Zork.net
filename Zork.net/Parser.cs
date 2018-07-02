@@ -505,11 +505,7 @@ namespace Zork.Core
 
             // !ASSUME LOSE.
             ret_val = -1;
-<<<<<<< HEAD
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
-=======
-            av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             nobj = 0;
             nocare = (sflag & (int)SyntaxObjectFlags.VCBIT) == 0;
 
@@ -776,11 +772,7 @@ namespace Zork.Core
             // THE FOLLOWING CODE IS LIFTED FROM SUBROUTINE TAKE.
 
             L3000:
-<<<<<<< HEAD
             if (obj != (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId)
-=======
-            if (obj != (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId)
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 goto L3500;
             }
@@ -1590,11 +1582,7 @@ namespace Zork.Core
 
                 if (vbflag)
                 {
-<<<<<<< HEAD
                     MessageHandler.rspsub_(620, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].VehicleId].Description2, game);
-=======
-                    MessageHandler.rspsub_(620, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].VehicleId].Description2, game);
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 }
 
                 return ret_val;
@@ -1787,11 +1775,8 @@ namespace Zork.Core
             bool chomp;
 
             chomp = false;
-<<<<<<< HEAD
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
-=======
-            av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
+
             obj = 0;
 
             // !ASSUME DARK.
@@ -1993,11 +1978,7 @@ namespace Zork.Core
                 odi2 = game.Objects[game.ParserVectors.prsi].Description2;
             }
 
-<<<<<<< HEAD
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
-=======
-            av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             rmk = game.rnd_(6) + 372;
             // !REMARK FOR HACK-HACKS.
 
@@ -2827,19 +2808,11 @@ namespace Zork.Core
             MessageHandler.rspsub_(423, odo2, game);
             // !DESCRIBE.
 
-<<<<<<< HEAD
             game.Adventurers[game.Player.Winner].VehicleId = (int)game.ParserVectors.prso;
 
             if (game.Player.Winner != ActorIds.Player)
             {
                 game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Container = game.ParserVectors.prso;
-=======
-            game.Adventurers[game.Player.Winner].VehicleId = (int)game.ParserVectors.prso;
-
-            if (game.Player.Winner != ActorIds.Player)
-            {
-                game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Container = game.ParserVectors.prso;
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             }
             return ret_val;
 
@@ -2870,19 +2843,11 @@ namespace Zork.Core
             return ret_val;
 
             L52200:
-<<<<<<< HEAD
             game.Adventurers[game.Player.Winner].VehicleId = 0;
             MessageHandler.Speak(426, game);
             if (game.Player.Winner != ActorIds.Player)
             {
                 ObjectHandler.SetNewObjectStatus(game.Adventurers[game.Player.Winner].ObjectId, 0, game.Player.Here, 0, 0, game);
-=======
-            game.Adventurers[game.Player.Winner].VehicleId = 0;
-            MessageHandler.Speak(426, game);
-            if (game.Player.Winner != ActorIds.Player)
-            {
-                ObjectHandler.SetNewObjectStatus(game.Adventurers[game.Player.Winner].ObjectId, 0, game.Player.Here, 0, 0, game);
->>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             }
 
             return ret_val;
