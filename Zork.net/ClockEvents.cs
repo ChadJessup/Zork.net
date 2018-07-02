@@ -184,7 +184,11 @@ namespace Zork.Core
             L6000:
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             // !RESCHEDULE INTERRUPT.
-            f = game.Adventurers[game.Player.Winner].Vehicle == (int)ObjectIds.Balloon;
+<<<<<<< HEAD
+            f = game.Adventurers[game.Player.Winner].VehicleId == (int)ObjectIds.Balloon;
+=======
+            f = game.Adventurers[game.Player.Winner].VehicleId == (int)ObjectIds.Balloon;
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             // !SEE IF IN BALLOON.
             if (game.State.BalloonLocation.Id == RoomIds.vlbot)
             {
@@ -247,7 +251,11 @@ namespace Zork.Core
             // !NO, BALLOON & CONTENTS DIE.
             ObjectHandler.SetNewObjectStatus(ObjectIds.dball, 0, game.State.BalloonLocation, 0, 0, game);
             // !INSERT DEAD BALLOON.
-            game.Adventurers[game.Player.Winner].Vehicle = 0;
+<<<<<<< HEAD
+            game.Adventurers[game.Player.Winner].VehicleId = 0;
+=======
+            game.Adventurers[game.Player.Winner].VehicleId = 0;
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             // !NOT IN VEHICLE.
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             // !DISABLE INTERRUPTS.
@@ -556,7 +564,11 @@ namespace Zork.Core
             return;
 
             L9100:
-            if (game.Adventurers[game.Player.Winner].Vehicle != 0)
+<<<<<<< HEAD
+            if (game.Adventurers[game.Player.Winner].VehicleId != 0)
+=======
+            if (game.Adventurers[game.Player.Winner].VehicleId != 0)
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 goto L9200;
             }
@@ -842,7 +854,11 @@ namespace Zork.Core
             // CEV23--	INQUISITOR'S QUESTION
 
             L23000:
+<<<<<<< HEAD
             if (game.Adventurers[ActorIds.Player].CurrentRoom.Id != RoomIds.fdoor)
+=======
+            if (game.Adventurers[ActorIds.Player].RoomId != RoomIds.fdoor)
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 return;
             }
@@ -857,10 +873,15 @@ namespace Zork.Core
             // CEV24--	MASTER FOLLOWS
 
             L24000:
+<<<<<<< HEAD
             if (game.Adventurers[ActorIds.Master].CurrentRoom.Id == game.Player.Here)
+=======
+            if (game.Adventurers[ActorIds.Master].RoomId == game.Player.Here)
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             {
                 return;
             }
+
             // !NO MOVEMENT, DONE.
             if (game.Player.Here != RoomIds.Cell && game.Player.Here != RoomIds.pcell)
             {
@@ -885,7 +906,11 @@ namespace Zork.Core
             i__2 = (int)XSearch.xmin;
             for (j = (int)XSearch.xmin; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2)
             {
+<<<<<<< HEAD
                 if (dso3.FindExit(game, j, game.Adventurers[ActorIds.Master].CurrentRoom.Id) && game.curxt_.xroom1 == game.Player.Here)
+=======
+                if (dso3.FindExit(game, j, game.Adventurers[ActorIds.Master].RoomId) && game.curxt_.xroom1 == game.Player.Here)
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
                 {
                     i = (ObjectIds)813;
                 }
@@ -893,9 +918,15 @@ namespace Zork.Core
             }
 
             MessageHandler.rspeak_(game, i);
+<<<<<<< HEAD
             ObjectHandler.SetNewObjectStatus(ObjectIds.MasterObject, 0, game.Player.Here, 0, 0, game);
             // !MOVE MASTER OBJECT.
             game.Adventurers[ActorIds.Master].CurrentRoom.Id = game.Player.Here;
+=======
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Master, 0, game.Player.Here, 0, 0, game);
+            // !MOVE MASTER OBJECT.
+            game.Adventurers[ActorIds.Master].RoomId = game.Player.Here;
+>>>>>>> b9bdb1c1c351be3a17bb00c642377bf040ae43bd
             // !MOVE MASTER PLAYER.
             return;
 

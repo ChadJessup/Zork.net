@@ -7,9 +7,9 @@ namespace Zork.Core
         public ActorIds Id { get; set; }
         public Room CurrentRoom { get; set; }
         public int Score { get; set; }
-        public int Vehicle { get; set; }
+        public int VehicleId { get; set; }
         public List<Object> HeldObjects { get; } = new List<Object>();
-        public ObjectIds Object { get; set; }
+        public ObjectIds ObjectId { get; set; }
         public int Action { get; set; }
         public int Strength { get; set; }
         public int Flag { get; set; }
