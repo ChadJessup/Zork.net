@@ -107,7 +107,7 @@ namespace Zork.Core
             // 10000--	MASTER
 
             L10000:
-            ret_val = roomId == RoomIds.fdoor || roomId == RoomIds.ncorr || roomId == RoomIds.parap || roomId == RoomIds.cell;
+            ret_val = roomId == RoomIds.fdoor || roomId == RoomIds.ncorr || roomId == RoomIds.parap || roomId == RoomIds.Cell;
             return ret_val;
 
             // 11000--	LADDER

@@ -41,7 +41,7 @@ namespace Zork.Core
             x = game.Objects[game.ParserVectors.prso].Container;
 
             // !HIS VEHICLE?
-            if (game.ParserVectors.prso != (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1])
+            if (game.ParserVectors.prso != (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle)
             {
                 goto L400;
             }
@@ -157,12 +157,12 @@ namespace Zork.Core
             }
             // !IS HE CARRYING OBJ?
             L300:
-            if (game.Adventurers.Vehicles[(int)game.Player.Winner - 1] == 0)
+            if (game.Adventurers[game.Player.Winner].Vehicle == 0)
             {
                 goto L400;
             }
             // !IS HE IN VEHICLE?
-            game.ParserVectors.prsi = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            game.ParserVectors.prsi = (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle;
             // !YES,
             f = put_(game, true);
             // !DROP INTO VEHICLE.

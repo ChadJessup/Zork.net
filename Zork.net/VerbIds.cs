@@ -39,7 +39,7 @@
         closew = 126,
         Find = 127,
         waitw = 128,
-        spinw = 129,
+        Spin = 129,
         boardw = 130,
         unboaw = 131,
         takew = 132,

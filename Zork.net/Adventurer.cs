@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Zork.Core
 {
     public class Adventurer
     {
-        public int Count { get; set; }
-        public List<int> Rooms { get; } = new List<int>();
-        public List<int> Scores { get; } = new List<int>();
-        public List<int> Vehicles { get; } = new List<int>();
-        public List<int> Objects { get; } = new List<int>();
-        public List<int> Actions { get; } = new List<int>();
-        public List<int> astren { get; } = new List<int>();
-        public List<int> Flags { get; } = new List<int>();
+        public ActorIds Id { get; set; }
+        public Room CurrentRoom { get; set; }
+        public int Score { get; set; }
+        public int Vehicle { get; set; }
+        public List<Object> HeldObjects { get; } = new List<Object>();
+        public ObjectIds Object { get; set; }
+        public int Action { get; set; }
+        public int Strength { get; set; }
+        public int Flag { get; set; }
     }
 }

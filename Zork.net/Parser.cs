@@ -505,7 +505,7 @@ namespace Zork.Core
 
             // !ASSUME LOSE.
             ret_val = -1;
-            av = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            av = (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle;
             nobj = 0;
             nocare = (sflag & (int)SyntaxObjectFlags.VCBIT) == 0;
 
@@ -774,7 +774,7 @@ namespace Zork.Core
             // THE FOLLOWING CODE IS LIFTED FROM SUBROUTINE TAKE.
 
             L3000:
-            if (obj != (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1])
+            if (obj != (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle)
             {
                 goto L3500;
             }
@@ -925,14 +925,32 @@ namespace Zork.Core
         /// <returns></returns>
         private static Object SearchForObject(int oidx, int aidx, RoomIds roomId, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
         {
-            ObjectIds ret_val = ObjectIds.Nothing;
-            ObjectIds x;
+            var obj = game.Objects.First(o => ValidateObject(oidx, aidx, o.Value.Id, spcobj, game)).Value;
 
             if (roomId != RoomIds.NoWhere)
             {
                 var room = game.Rooms[roomId];
 
-                foreach (var obj in room.Objects)
+                if (room.HasObject(obj.Id))
+                {
+                    return obj;
+                }
+
+                return null;
+            }
+
+            if (actorId != ActorIds.NoOne)
+            {
+                if (obj.Adventurer == actorId)
+                {
+                    return obj;
+                }
+
+                return null;
+            }
+
+            return null;
+/*                foreach (var obj in room.Objects)
                 {
                     if (ValidateObject(oidx, aidx, obj.Id, spcobj, game))
                     {
@@ -1555,7 +1573,7 @@ namespace Zork.Core
 
                 if (vbflag)
                 {
-                    MessageHandler.rspsub_(620, game.Objects[(ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1]].Description2, game);
+                    MessageHandler.rspsub_(620, game.Objects[(ObjectIds)game.Adventurers[game.Player.Winner].Vehicle].Description2, game);
                 }
 
                 return ret_val;
@@ -1744,7 +1762,7 @@ namespace Zork.Core
             bool chomp;
 
             chomp = false;
-            av = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            av = (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle;
             obj = 0;
 
             // !ASSUME DARK.
@@ -1828,9 +1846,9 @@ namespace Zork.Core
             obj = nobj;
 
             L400:
+            // !SEARCH ADVENTURER.
             nobj = SearchForObject(oidx, aidx, 0, 0, game.Player.Winner, spcobj, game)?.Id ?? ObjectIds.Nothing;
 
-            // !SEARCH ADVENTURER.
             if (nobj < 0)
             {
                 goto L1100;
@@ -1946,7 +1964,7 @@ namespace Zork.Core
                 odi2 = game.Objects[game.ParserVectors.prsi].Description2;
             }
 
-            av = (ObjectIds)game.Adventurers.Vehicles[(int)game.Player.Winner - 1];
+            av = (ObjectIds)game.Adventurers[game.Player.Winner].Vehicle;
             rmk = game.rnd_(6) + 372;
             // !REMARK FOR HACK-HACKS.
 
@@ -2776,11 +2794,11 @@ namespace Zork.Core
             MessageHandler.rspsub_(423, odo2, game);
             // !DESCRIBE.
 
-            game.Adventurers.Vehicles[(int)game.Player.Winner - 1] = (int)game.ParserVectors.prso;
+            game.Adventurers[game.Player.Winner].Vehicle = (int)game.ParserVectors.prso;
 
             if (game.Player.Winner != ActorIds.Player)
             {
-                game.Objects[(ObjectIds)game.Adventurers.Objects[(int)game.Player.Winner - 1]].Container = game.ParserVectors.prso;
+                game.Objects[game.Adventurers[game.Player.Winner].Object].Container = game.ParserVectors.prso;
             }
             return ret_val;
 
@@ -2811,11 +2829,11 @@ namespace Zork.Core
             return ret_val;
 
             L52200:
-            game.Adventurers.Vehicles[(int)game.Player.Winner - 1] = 0;
+            game.Adventurers[game.Player.Winner].Vehicle = 0;
             MessageHandler.Speak(426, game);
             if (game.Player.Winner != ActorIds.Player)
             {
-                ObjectHandler.SetNewObjectStatus((ObjectIds)game.Adventurers.Objects[(int)game.Player.Winner - 1], 0, game.Player.Here, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(game.Adventurers[game.Player.Winner].Object, 0, game.Player.Here, 0, 0, game);
             }
             return ret_val;
 
@@ -4166,7 +4184,7 @@ namespace Zork.Core
             L25000:
             i = dso4.ComputeFightStrength(game, game.Player.Winner, false);
             // !GET FIGHTS STRENGTH.
-            j = game.Adventurers.astren[(int)game.Player.Winner - 1];
+            j = game.Adventurers[game.Player.Winner].Strength;
             // !GET HEALTH.
             // Computing MIN
             i__1 = i + j;

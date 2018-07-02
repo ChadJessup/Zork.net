@@ -91,7 +91,7 @@
         orice = 139,
         rdice = 140,
         blice = 141,
-        robot = 142,
+        RobotObject = 142,
         ftree = 145,
         bills = 148,
         portr = 149,
@@ -124,9 +124,9 @@
         itobj = 192,
         every = 194,
         valua = 195,
-        oplay = 193,
+        PlayerObject = 193,
         wnort = 205,
         gwate = 209,
-        master = 215,
+        MasterObject = 215,
     }
 }

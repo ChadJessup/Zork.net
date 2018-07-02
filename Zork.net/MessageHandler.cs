@@ -65,7 +65,7 @@ namespace Zork.Core
 
             if (newLine)
             {
-                game.WriteOutput(Environment.NewLine);
+              //  game.WriteOutput(Environment.NewLine);
             }
 
             while (true)

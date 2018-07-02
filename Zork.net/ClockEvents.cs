@@ -110,11 +110,11 @@ namespace Zork.Core
             L1000:
             // Computing MIN
             i__1 = 0;
-            i__2 = game.Adventurers.astren[(int)ActorIds.Player - 1] + 1;
-            game.Adventurers.astren[(int)ActorIds.Player - 1] = Math.Min(i__1, i__2);
+            i__2 = game.Adventurers[ActorIds.Player].Strength + 1;
+            game.Adventurers[ActorIds.Player].Strength = Math.Min(i__1, i__2);
 
             // !RECOVER.
-            if (game.Adventurers.astren[(int)ActorIds.Player - 1] >= 0)
+            if (game.Adventurers[ActorIds.Player].Strength >= 0)
             {
                 return;
             }
@@ -184,7 +184,7 @@ namespace Zork.Core
             L6000:
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             // !RESCHEDULE INTERRUPT.
-            f = game.Adventurers.Vehicles[(int)game.Player.Winner - 1] == (int)ObjectIds.Balloon;
+            f = game.Adventurers[game.Player.Winner].Vehicle == (int)ObjectIds.Balloon;
             // !SEE IF IN BALLOON.
             if (game.State.BalloonLocation.Id == RoomIds.vlbot)
             {
@@ -247,7 +247,7 @@ namespace Zork.Core
             // !NO, BALLOON & CONTENTS DIE.
             ObjectHandler.SetNewObjectStatus(ObjectIds.dball, 0, game.State.BalloonLocation, 0, 0, game);
             // !INSERT DEAD BALLOON.
-            game.Adventurers.Vehicles[(int)game.Player.Winner - 1] = 0;
+            game.Adventurers[game.Player.Winner].Vehicle = 0;
             // !NOT IN VEHICLE.
             game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
             // !DISABLE INTERRUPTS.
@@ -556,7 +556,7 @@ namespace Zork.Core
             return;
 
             L9100:
-            if (game.Adventurers.Vehicles[(int)game.Player.Winner - 1] != 0)
+            if (game.Adventurers[game.Player.Winner].Vehicle != 0)
             {
                 goto L9200;
             }
@@ -842,9 +842,11 @@ namespace Zork.Core
             // CEV23--	INQUISITOR'S QUESTION
 
             L23000:
-            if (game.Adventurers.Rooms[(int)ActorIds.Player - 1] != (int)RoomIds.fdoor) {
+            if (game.Adventurers[ActorIds.Player].CurrentRoom.Id != RoomIds.fdoor)
+            {
                 return;
             }
+
             // !IF PLAYER LEFT, DIE.
             MessageHandler.rspeak_(game, 769);
             i__1 = game.Switches.quesno + 770;
@@ -855,12 +857,12 @@ namespace Zork.Core
             // CEV24--	MASTER FOLLOWS
 
             L24000:
-            if (game.Adventurers.Rooms[(int)ActorIds.Master - 1] == (int)game.Player.Here)
+            if (game.Adventurers[ActorIds.Master].CurrentRoom.Id == game.Player.Here)
             {
                 return;
             }
             // !NO MOVEMENT, DONE.
-            if (game.Player.Here != RoomIds.cell && game.Player.Here != RoomIds.pcell)
+            if (game.Player.Here != RoomIds.Cell && game.Player.Here != RoomIds.pcell)
             {
                 goto L24100;
             }
@@ -883,7 +885,7 @@ namespace Zork.Core
             i__2 = (int)XSearch.xmin;
             for (j = (int)XSearch.xmin; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2)
             {
-                if (dso3.FindExit(game, j, (RoomIds)game.Adventurers.Rooms[(int)ActorIds.Master - 1]) && game.curxt_.xroom1 == game.Player.Here)
+                if (dso3.FindExit(game, j, game.Adventurers[ActorIds.Master].CurrentRoom.Id) && game.curxt_.xroom1 == game.Player.Here)
                 {
                     i = (ObjectIds)813;
                 }
@@ -891,9 +893,9 @@ namespace Zork.Core
             }
 
             MessageHandler.rspeak_(game, i);
-            ObjectHandler.SetNewObjectStatus(ObjectIds.master, 0, game.Player.Here, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.MasterObject, 0, game.Player.Here, 0, 0, game);
             // !MOVE MASTER OBJECT.
-            game.Adventurers.Rooms[(int)ActorIds.Master - 1] = (int)game.Player.Here;
+            game.Adventurers[ActorIds.Master].CurrentRoom.Id = game.Player.Here;
             // !MOVE MASTER PLAYER.
             return;
 

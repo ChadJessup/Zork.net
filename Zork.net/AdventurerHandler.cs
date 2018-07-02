@@ -33,7 +33,7 @@ namespace Zork.Core
                     goto L10;
                 }
 
-                MessageHandler.rspsub_(i, game.Objects[(ObjectIds)game.Adventurers.Objects[(int)adventurerId]].Description2, game);
+                MessageHandler.rspsub_(i, game.Objects[game.Adventurers[adventurerId].Object].Description2, game);
                 i = 0;
 
                 MessageHandler.rspsub_(502, game.Objects[j].Description2, game);
@@ -116,7 +116,7 @@ namespace Zork.Core
             //    return;
             //}
 
-            game.Adventurers.Vehicles[(int)game.Player.Winner - 1] = 0;
+            game.Adventurers[game.Player.Winner].Vehicle = 0;
 
             // !GET RID OF VEHICLE.
             if (game.Player.Winner == ActorIds.Player)
@@ -126,10 +126,10 @@ namespace Zork.Core
 
             // !HIMSELF?
             // !NO, SAY WHO DIED.
-            MessageHandler.rspsub_(432, game.Objects[(ObjectIds)game.Adventurers.Objects[(int)game.Player.Winner - 1]].Description2, game);
+            MessageHandler.rspsub_(432, game.Objects[game.Adventurers[game.Player.Winner].Object].Description2, game);
 
             // !SEND TO HYPER SPACE.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.Adventurers.Objects[(int)game.Player.Winner - 1], 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(game.Adventurers[game.Player.Winner].Object, 0, 0, 0, 0, game);
 
             return;
 
@@ -177,7 +177,7 @@ namespace Zork.Core
             }
 
             game.Objects[ObjectIds.TrapDoor].Flag2 &= ~ObjectFlags2.WasTouched;
-            game.Objects[ObjectIds.robot].Flag1 = (game.Objects[ObjectIds.robot].Flag1 | ObjectFlags.IsVisible) & ~ObjectFlags.HasNoDescription;
+            game.Objects[ObjectIds.RobotObject].Flag1 = (game.Objects[ObjectIds.RobotObject].Flag1 | ObjectFlags.IsVisible) & ~ObjectFlags.HasNoDescription;
 
             if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Lamp, game).Id != 0 || game.Objects[ObjectIds.Lamp].Adventurer == game.Player.Winner)
             {
@@ -298,7 +298,7 @@ namespace Zork.Core
             lnr = (game.Rooms[nr].Flags & RoomFlags.LAND) != 0;
 
             // !HIS VEHICLE
-            j = (ObjectIds)game.Adventurers.Vehicles[(int)who - 1];
+            j = (ObjectIds)game.Adventurers[who].Vehicle;
 
             if (j != 0)
             {
@@ -358,16 +358,17 @@ namespace Zork.Core
             L600:
             if (who != ActorIds.Player)
             {
-                ObjectHandler.SetNewObjectStatus((ObjectIds)game.Adventurers.Objects[(int)who - 1], 0, nr, 0, 0, game);
+                // TODO: chadj - fix this when needed.
+                //ObjectHandler.SetNewObjectStatus((ObjectIds)game.OldAdventurers.Objects[(int)who - 1], 0, nr, 0, 0, game);
             }
 
             if (j != 0)
             {
-                ObjectHandler.SetNewObjectStatus((ObjectIds)j, 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(j, 0, nr, 0, 0, game);
             }
 
             game.Player.Here = nr;
-            game.Adventurers.Rooms[(int)who - 1] = (int)game.Player.Here;
+            game.Adventurers[who].CurrentRoom = game.Rooms[game.Player.Here];
             AdventurerHandler.ScoreUpdate(game, game.Rooms[nr].Score);
             // !SCORE ROOM
             game.Rooms[nr].Score = 0;
@@ -393,7 +394,7 @@ namespace Zork.Core
 
             int i, intAs;
 
-            intAs = game.Adventurers.Scores[(int)game.Player.Winner - 1];
+            intAs = game.Adventurers[game.Player.Winner].Score;
 
             if (game.Flags.EndGame)
             {
@@ -479,12 +480,12 @@ namespace Zork.Core
             }
 
             // !UPDATE SCORE
-            game.Adventurers.Scores[(int)game.Player.Winner - 1] += incrementAmount;
+            game.Adventurers[game.Player.Winner].Score += incrementAmount;
 
             // !UPDATE RAW SCORE
             game.State.RawScore += incrementAmount;
 
-            if (game.Adventurers.Scores[(int)game.Player.Winner - 1] < game.State.MaxScore - game.State.Deaths * 10)
+            if (game.Adventurers[game.Player.Winner].Score < game.State.MaxScore - game.State.Deaths * 10)
             {
                 return;
             }

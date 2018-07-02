@@ -47,6 +47,7 @@ namespace Zork.Core
 
         public Dictionary<RoomIds, Room> Rooms { get; } = new Dictionary<RoomIds, Room>();
         public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
+        public Dictionary<ActorIds, Adventurer> Adventurers { get; } = new Dictionary<ActorIds, Adventurer>();
 
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
@@ -67,8 +68,6 @@ namespace Zork.Core
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
         public ClockEvents Clock { get; } = new ClockEvents();
-        public Adventurer Adventurers { get; } = new Adventurer();
-
         public hyper_ hyper_ { get; } = new hyper_();
 
         public ParserVectors ParserVectors { get; } = new ParserVectors();
@@ -244,7 +243,7 @@ namespace Zork.Core
                 L2100:
                 this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.prso, this);
                 // !NEW PLAYER.
-                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
+                this.Player.Here = this.Adventurers[this.Player.Winner].CurrentRoom.Id;
 
                 // !NEW LOCATION.
                 if (this.ParserVectors.prscon <= 1)
@@ -271,7 +270,7 @@ namespace Zork.Core
                 L2600:
                 this.Player.Winner = ActorIds.Player;
                 // !RESTORE STATE.
-                this.Player.Here = (RoomIds)this.Adventurers.Rooms[(int)this.Player.Winner - 1];
+                this.Player.Here = this.Adventurers[this.Player.Winner].CurrentRoom.Id;
                 goto L350;
 
                 L2150:
@@ -359,10 +358,11 @@ namespace Zork.Core
             bool ret_val;
             ObjectIds av;
 
-            ret_val = false;
             // !ASSUME LOSES.
-            av = (ObjectIds)this.Adventurers.Vehicles[(int)this.Player.Winner - 1];
+            ret_val = false;
+
             // !GET VEHICLE.
+            av = (ObjectIds)this.Adventurers[this.Player.Winner].Vehicle;
             if (av != 0)
             {
                 ret_val = ObjectHandler.oappli_(this.Objects[av].oactio, n, this);

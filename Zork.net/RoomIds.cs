@@ -85,7 +85,7 @@
         scorr = 179,
         ncorr = 182,
         parap = 183,
-        cell  = 184,
+        Cell  = 184,
         pcell = 185,
         ncell = 186,
         cpant = 188,
