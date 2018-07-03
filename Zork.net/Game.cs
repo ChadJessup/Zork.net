@@ -52,6 +52,9 @@ namespace Zork.Core
         public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
         public Dictionary<ActorIds, Adventurer> Adventurers { get; } = new Dictionary<ActorIds, Adventurer>();
 
+        public Villians Villians { get; } = new Villians();
+        public ClockEvents Clock { get; } = new ClockEvents();
+
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
@@ -67,10 +70,8 @@ namespace Zork.Core
         public curxt_ curxt_ { get; } = new curxt_();
 //        public Objects Objects { get; } = new Objects();
         public Orphans Orphans { get; } = new Orphans();
-        public Villians Villians { get; } = new Villians();
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
-        public ClockEvents Clock { get; } = new ClockEvents();
 
         public hyper_ hyper_ { get; } = new hyper_();
 
@@ -109,7 +110,9 @@ namespace Zork.Core
         public void Play()
         {
             MessageHandler.Speak(1, this);
+
             bool result = RoomHandler.RoomDescription(3, this);
+
             bool f = false;
             int i = 0;
 
@@ -196,7 +199,9 @@ namespace Zork.Core
                 ++this.State.Moves;
 
                 if (input.Equals("ECHO"))
+                {
                     goto L1300;
+                }
 
                 MessageHandler.Speak(571, this);
 
@@ -278,10 +283,10 @@ namespace Zork.Core
                 goto L350;
 
                 L2150:
-                //if (ObjectHandler.aappli_(this.Adventurers.Actions[this.Player.Winner - 1], game))
-                //{
-                //    goto L2400;
-                //}
+                if (Actors.aappli_(this, this.Adventurers[this.Player.Winner].Action))
+                {
+                    goto L2400;
+                }
 
                 // !ACTOR HANDLE?
                 //if (xvehic_(1))

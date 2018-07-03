@@ -74,7 +74,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            if (game.ParserVectors.prsa != VerbIds.drinkw
+            if (game.ParserVectors.prsa != VerbIds.Drink
                 && game.ParserVectors.prsa != VerbIds.Eat)
             {
                 goto L1300;
@@ -272,7 +272,7 @@ namespace Zork.Core
             return;
 
             L1150:
-            if (rhere == 0 || (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.FITEBT) == 0)
+            if (rhere == 0 || (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.IsFighting) == 0)
             {
                 goto L1200;
             }
@@ -285,7 +285,7 @@ namespace Zork.Core
             // !WINNING?
             ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 584, null, 0, 0, game);
             // !NO, VANISH THIEF.
-            game.Objects[ObjectIds.thief].Flag2 &= ~ObjectFlags2.FITEBT;
+            game.Objects[ObjectIds.thief].Flag2 &= ~ObjectFlags2.IsFighting;
             if (ObjectHandler.IsObjectInRoom(ObjectIds.Stilletto, game.Hack.ThiefPosition, game)
                 || game.Objects[ObjectIds.Stilletto].Adventurer == (ActorIds)(-(int)ObjectIds.thief))
             {

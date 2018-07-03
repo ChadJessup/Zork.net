@@ -674,7 +674,7 @@ namespace Zork.Core
             // CEV15--	END GAME HERALD.
 
             L15000:
-            game.Flags.EndGame = true;
+            game.Flags.IsEndGame = true;
             // !WE'RE IN ENDGAME.
             MessageHandler.rspeak_(game, 119);
             // !INFORM OF ENDGAME.
@@ -791,7 +791,7 @@ namespace Zork.Core
 
             game.Hack.IsThiefActive = false;
             // !THIEF GONE.
-            game.Flags.EndGame = true;
+            game.Flags.IsEndGame = true;
             // !ENDGAME RUNNING.
             game.Clock.Flags[(int)ClockIndices.MatchCountdown - 1] = false;
             // !MATCHES GONE,

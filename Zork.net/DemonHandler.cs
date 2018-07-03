@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Zork.Core
 {
@@ -76,7 +77,7 @@ namespace Zork.Core
                 // !NOTHING ELSE.
 
                 L2050:
-                if ((game.Objects[obj].Flag2 & ObjectFlags2.FITEBT) == 0)
+                if ((game.Objects[obj].Flag2 & ObjectFlags2.IsFighting) == 0)
                 {
                     goto L2100;
                 }
@@ -100,13 +101,13 @@ namespace Zork.Core
                 }
 
                 // !OF FIGHTING.
-                game.Objects[obj].Flag2 |= ObjectFlags2.FITEBT;
+                game.Objects[obj].Flag2 |= ObjectFlags2.IsFighting;
                 game.Villians.vopps[i - 1] = (int)obj;
                 // !SET UP OPP.
                 goto L2400;
 
                 L2200:
-                if ((game.Objects[obj].Flag2 & ObjectFlags2.FITEBT) == 0 || ra == 0)
+                if ((game.Objects[obj].Flag2 & ObjectFlags2.IsFighting) == 0 || ra == 0)
                 {
                     goto L2300;
                 }
@@ -120,7 +121,7 @@ namespace Zork.Core
                 }
                 // !TURN OFF ENGROSSED.
                 game.Adventurers[ActorIds.Player].Flag &= ~game.astag;
-                game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.STAGBT + ObjectFlags2.FITEBT);
+                game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.IsStaggered + ObjectFlags2.IsFighting);
                 if (game.Objects[obj].Capacity >= 0 || ra == 0)
                 {
                     goto L2400;
@@ -145,56 +146,59 @@ namespace Zork.Core
             {
                 // !LOOP THRU OPPS.
                 j = (ObjectIds)game.Villians.vopps[i - 1];
+                // !SLOT EMPTY?
                 if (j == 0)
                 {
                     goto L2700;
                 }
-                // !SLOT EMPTY?
-                game.ParserVectors.prscon = 1;
                 // !STOP CMD STREAM.
+                game.ParserVectors.prscon = 1;
+                // !VILLAIN ACTION?
                 ra = game.Objects[j].Action;
                 if (ra == 0)
                 {
                     goto L2650;
                 }
-                // !VILLAIN ACTION?
-                game.ParserVectors.prsa = VerbIds.Fight;
                 // !SEE IF
+                game.ParserVectors.prsa = VerbIds.Fight;
+                // !SPECIAL ACTION.
                 if (ObjectHandler.DoObjectSpecialAction(ra, 0, game))
                 {
                     goto L2700;
                 }
-                // !SPECIAL ACTION.
                 L2650:
+                // !STRIKE BLOW.
                 res = StrikeBlow(game, ActorIds.Player, j, game.Villians.vmelee[i - 1], false, output);
 
-                // !STRIKE BLOW.
+                // !IF HERO DEAD, EXIT.
                 if (res < 0)
                 {
                     return;
                 }
-                // !IF HERO DEAD, EXIT.
+
+                // !IF HERO OUT, SET FLG.
                 if (res == rout)
                 {
                     output = game.rnd_(3) + 2;
                 }
-                // !IF HERO OUT, SET FLG.
                 L2700:
                 ;
             }
+
             --output;
             // !DECREMENT OUT COUNT.
             if (output > 0)
             {
                 goto L2600;
             }
+
             // !IF STILL OUT, GO AGAIN.
             return;
 
         } // fightd_
 
         // BLOW- STRIKE BLOW
-        public static int StrikeBlow(Game game, ActorIds h, ObjectIds v, int rmk, bool hflg, int output)
+        public static int StrikeBlow(Game game, ActorIds adventurer, ObjectIds villian, int remark, bool isHeroAttacking, int output)
         {
             int rmiss = 0;
             int rout = 1;
@@ -225,74 +229,72 @@ namespace Zork.Core
             int dweap;
             int pblose;
 
-            ra = game.Objects[v].Action;
             // !GET VILLAIN ACTION,
-            dv = game.Objects[v].Description2;
+            ra = game.Objects[villian].Action;
+
             // !DESCRIPTION.
-            ret_val = rmiss;
+            dv = game.Objects[villian].Description2;
             // !ASSUME NO RESULT.
-            if (!(hflg))
+            ret_val = rmiss;
+
+            // !HERO STRIKING BLOW?
+            // HERO IS ATTACKER, VILLAIN IS DEFENDER.
+            if (!(isHeroAttacking))
             {
                 goto L1000;
             }
 
-            // !HERO STRIKING BLOW?
-
-            // HERO IS ATTACKER, VILLAIN IS DEFENDER.
-
             pblose = 10;
             // !BAD LK PROB.
-            game.Objects[v].Flag2 |= ObjectFlags2.FITEBT;
+            game.Objects[villian].Flag2 |= ObjectFlags2.IsFighting;
 
-            if ((game.Adventurers[h].Flag & game.astag) == 0)
+            if ((game.Adventurers[adventurer].Flag & game.astag) == 0)
             {
                 goto L100;
             }
 
             MessageHandler.Speak(game, 591);
             // !YES, CANT FIGHT.
-            game.Adventurers[h].Flag &= ~game.astag;
+            game.Adventurers[adventurer].Flag &= ~game.astag;
             return ret_val;
 
             L100:
-            att = dso4.ComputeFightStrength(game, (ActorIds)h, true);
+            att = dso4.ComputeFightStrength(game, adventurer, true);
             // !GET HIS STRENGTH.
             oa = att;
-            def = dso4.ComputeVillianStrength(game, (int)v);
+            def = dso4.ComputeVillianStrength(game, (int)villian);
             // !GET VILL STRENGTH.
             od = def;
             dweap = 0;
             // !ASSUME NO WEAPON.
             i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+
+
+            foreach (var weapon in game.Objects[villian].ContainedObjects.Where(o => o.Flag2.HasFlag(ObjectFlags2.IsWeapon)))
             {
-                // !SEARCH VILLAIN.
-                if (game.Objects[i].Container == v && (game.Objects[i].Flag2 & ObjectFlags2.IsWeapon) != 0)
-                {
-                    dweap = (int)i;
-                }
-                // L200:
+                dweap = (int)weapon.Id;
             }
 
-            if (v == game.Adventurers[ActorIds.Player].ObjectId)
+            // !KILLING SELF?
+            if (villian == game.Adventurers[ActorIds.Player].ObjectId)
             {
                 goto L300;
             }
 
-            // !KILLING SELF?
+            // !DEFENDER ALIVE?
             if (def != 0)
             {
                 goto L2000;
             }
 
-            // !DEFENDER ALIVE?
-            MessageHandler.rspsub_(game, 592, dv);
             // !VILLAIN DEAD.
+            MessageHandler.rspsub_(game, 592, dv);
+
             return ret_val;
 
             L300:
-            AdventurerHandler.jigsup_(game, 593);
             // !KILLING SELF.
+            AdventurerHandler.jigsup_(game, 593);
             return ret_val;
 
             // VILLAIN IS ATTACKER, HERO IS DEFENDER.
@@ -300,32 +302,33 @@ namespace Zork.Core
             L1000:
             pblose = 50;
             // !BAD LK PROB.
-            game.Adventurers[h].Flag &= ~game.astag;
-            if ((game.Objects[v].Flag2 & ObjectFlags2.STAGBT) == 0)
+            game.Adventurers[adventurer].Flag &= ~game.astag;
+            if ((game.Objects[villian].Flag2 & ObjectFlags2.IsStaggered) == 0)
             {
                 goto L1200;
             }
 
-            game.Objects[v].Flag2 &= ~ObjectFlags2.STAGBT;
+            game.Objects[villian].Flag2 &= ~ObjectFlags2.IsStaggered;
             MessageHandler.rspsub_(game, 594, dv);
             // !DESCRIBE.
             return ret_val;
 
             L1200:
-            att = dso4.ComputeVillianStrength(game, (int)v);
+            att = dso4.ComputeVillianStrength(game, (int)villian);
             // !SET UP ATT, DEF.
             oa = att;
-            def = dso4.ComputeFightStrength(game, (ActorIds)h, true);
+            def = dso4.ComputeFightStrength(game, adventurer, true);
             if (def <= 0)
             {
                 return ret_val;
             }
 
             // !DONT ALLOW DEAD DEF.
-            od = dso4.ComputeFightStrength(game, h, false);
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, h, true, game);
-            dweap = Math.Abs(i__1);
+            od = dso4.ComputeFightStrength(game, adventurer, false);
             // !FIND A WEAPON.
+            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
+
+            dweap = Math.Abs(i__1);
             // BLOW, PAGE 4
 
             // PARTIES ARE NOW EQUIPPED.  DEF CANNOT BE ZERO.
@@ -339,7 +342,7 @@ namespace Zork.Core
 
             // !DEF ALIVE?
             res = rkill;
-            if (hflg)
+            if (isHeroAttacking)
             {
                 MessageHandler.rspsub_(595, dv, game);
             }
@@ -412,7 +415,7 @@ namespace Zork.Core
                 res = rlose;
             }
 
-            mi = rstate[(rmk - 1) * 9 + res];
+            mi = rstate[(remark - 1) * 9 + res];
             // !CHOOSE TABLE ENTRY.
             if (mi == 0)
             {
@@ -423,7 +426,7 @@ namespace Zork.Core
             i = (ObjectIds)(mi % 1000 + game.rnd_(i__1) + game.Star.mbase + 1);
             j = dv;
 
-            if (!(hflg) && dweap != 0)
+            if (!(isHeroAttacking) && dweap != 0)
             {
                 j = game.Objects[(ObjectIds)dweap].Description2;
             }
@@ -449,7 +452,7 @@ namespace Zork.Core
             }
 
             L3100:
-            if (hflg)
+            if (isHeroAttacking)
             {
                 def = -def;
             }
@@ -478,31 +481,32 @@ namespace Zork.Core
             goto L4000;
 
             L3500:
-            if (hflg)
+            if (isHeroAttacking)
             {
                 goto L3550;
             }
             // !STAGGERED.
-            game.Adventurers[h].Flag |= game.astag;
+            game.Adventurers[adventurer].Flag |= game.astag;
             goto L4000;
 
             L3550:
-            game.Objects[v].Flag2 |= ObjectFlags2.STAGBT;
+            game.Objects[villian].Flag2 |= ObjectFlags2.IsStaggered;
             goto L4000;
 
             L3600:
-            ObjectHandler.SetNewObjectStatus((ObjectIds)dweap, 0, game.Player.Here, 0, 0, game);
             // !LOSE WEAPON.
+            ObjectHandler.SetNewObjectStatus((ObjectIds)dweap, 0, game.Player.Here, 0, 0, game);
             dweap = 0;
-            if (hflg)
+
+            // !IF HERO, DONE.
+            if (isHeroAttacking)
             {
                 goto L4000;
             }
 
-            // !IF HERO, DONE.
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, h, true, game);
-            dweap = Math.Abs(i__1);
             // !GET NEW.
+            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
+            dweap = Math.Abs(i__1);
             if (dweap != 0)
             {
                 MessageHandler.rspsub_(605, game.Objects[(ObjectIds)dweap].Description2, game);
@@ -512,30 +516,31 @@ namespace Zork.Core
             L4000:
             ret_val = res;
             // !RETURN RESULT.
-            if (!(hflg))
+            // !HERO?
+            if (!(isHeroAttacking))
             {
                 goto L4500;
             }
-            // !HERO?
-            game.Objects[v].Capacity = def;
             // !STORE NEW CAPACITY.
+            game.Objects[villian].Capacity = def;
+            // !DEAD?
             if (def != 0)
             {
                 goto L4100;
             }
-            // !DEAD?
-            game.Objects[v].Flag2 &= ~ObjectFlags2.FITEBT;
-            MessageHandler.rspsub_(game, 572, dv);
+            game.Objects[villian].Flag2 &= ~ObjectFlags2.IsFighting;
             // !HE DIES.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)v, 0, 0, 0, 0, game);
+            MessageHandler.rspsub_(game, 572, dv);
+
             // !MAKE HIM DISAPPEAR.
+            ObjectHandler.SetNewObjectStatus(villian, 0, 0, 0, 0, game);
             if (ra == 0)
             {
                 return ret_val;
             }
 
             // !IF NX TO DO, EXIT.
-            game.ParserVectors.prsa = VerbIds.deadxw;
+            game.ParserVectors.prsa = VerbIds.Dead;
             // !LET HIM KNOW.
             f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
@@ -546,17 +551,17 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.ParserVectors.prsa = VerbIds.outxw;
+            game.ParserVectors.prsa = VerbIds.OutCold;
             // !LET HIM BE OUT.
             f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
 
             L4500:
             // !ASSUME DEAD.
-            game.Adventurers[h].Strength = -10000;
+            game.Adventurers[adventurer].Strength = -10000;
             if (def != 0)
             {
-                game.Adventurers[h].Strength = def - od;
+                game.Adventurers[adventurer].Strength = def - od;
             }
 
             if (def >= od)
@@ -568,12 +573,12 @@ namespace Zork.Core
             game.Clock.Flags[(int)ClockIndices.cevcur - 1] = true;
 
             L4600:
-            if (dso4.ComputeFightStrength(game, h, true) > 0)
+            if (dso4.ComputeFightStrength(game, adventurer, true) > 0)
             {
                 return ret_val;
             }
 
-            game.Adventurers[h].Strength = 1 - dso4.ComputeFightStrength(game, h, false);
+            game.Adventurers[adventurer].Strength = 1 - dso4.ComputeFightStrength(game, adventurer, false);
 
             // !HE'S DEAD.
             AdventurerHandler.jigsup_(game, 596);
@@ -671,7 +676,7 @@ namespace Zork.Core
             // System generated locals
             bool ret_val;
 
-            if (!game.Flags.EndGame)
+            if (!game.Flags.IsEndGame)
             {
                 ret_val = RoomHandler.GetRoomThatContainsObject(ObjectIds.Cyclops, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.Troll, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id == roomId && game.Hack.IsThiefActive;
             }

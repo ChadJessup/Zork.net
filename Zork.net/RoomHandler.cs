@@ -117,8 +117,7 @@ namespace Zork.Core
             L600:
             if (full != 2)
             {
-                L__1 = full != 0;
-                RoomHandler.PrintRoomContents(L__1, game.Player.Here, game);
+                RoomHandler.PrintRoomContents(full != 0, game.Player.Here, game);
             }
 
             game.Rooms[game.Player.Here].Flags |= RoomFlags.SEEN;
@@ -417,16 +416,16 @@ namespace Zork.Core
                 case 23: goto L23000;
                 case 24: goto L24000;
                 case 25: goto L25000;
-                case 26: goto L26000;
-                case 27: goto L27000;
-                case 28: goto L28000;
+                case 26: goto BANKBOX;
+                case 27: goto TREASURE;
+                case 28: goto CLIFF;
                 case 29: goto L29000;
                 case 30: goto L30000;
                 case 31: goto L31000;
-                case 32: goto L32000;
+                case 32: goto TCAVE;
                 case 33: goto L33000;
                 case 34: goto L34000;
-                case 35: goto L35000;
+                case 35: goto SAFEROOM;
                 case 36: goto MAGNETROOM;
                 case 37: goto CAGEROOM;
             }
@@ -480,49 +479,54 @@ namespace Zork.Core
             // 	DOOR TO CYCLOPS ROOM), RUG (MOVED OR NOT), DOOR (OPEN OR CLOSED)
 
             LIVINGROOM:
+            // !LOOK?
             if (game.ParserVectors.prsa != VerbIds.Look)
             {
                 goto L3500;
             }
 
-            // !LOOK?
-            i = (ObjectIds)15;
             // !ASSUME NO HOLE.
+            i = (ObjectIds)15;
+
+            // !IF MAGICF, CYCLOPS HOLE.
             if (game.Flags.IsDoorToCyclopsRoomOpen)
             {
                 i = (ObjectIds)16;
             }
 
-            // !IF MAGICF, CYCLOPS HOLE.
-            MessageHandler.Speak(i, game);
             // !DESCRIBE.
-            i = (ObjectIds)(game.Switches.IsRugMoved + 17);
+            MessageHandler.Speak(i, game);
+
             // !ASSUME INITIAL STATE.
-            if ((game.Objects[ObjectIds.TrapDoor].Flag2 & ObjectFlags2.IsOpen) != 0)
+            i = (ObjectIds)(game.Switches.IsRugMoved + 17);
+
+            // !DOOR OPEN?
+            if ((game.Objects[ObjectIds.TrapDoor].Flag2.HasFlag(ObjectFlags2.IsOpen)))
             {
                 i += 2;
             }
 
-            // !DOOR OPEN?
-            MessageHandler.Speak(i, game);
             // !DESCRIBE.
+            MessageHandler.Speak(i, game);
+
             return ret_val;
 
             // 	NOT A LOOK WORD.  REEVALUATE TROPHY CASE.
 
             L3500:
-            if (game.ParserVectors.prsa != VerbIds.Take && (game.ParserVectors.prsa != VerbIds.Put ||
-                game.ParserVectors.IndirectObject != ObjectIds.TrophyCase))
+            if (game.ParserVectors.prsa != VerbIds.Take &&
+                (game.ParserVectors.prsa != VerbIds.Put || game.ParserVectors.IndirectObject != ObjectIds.TrophyCase))
             {
                 return ret_val;
             }
 
-            game.Adventurers[game.Player.Winner].Score = game.State.RawScore;
             // !SCORE TROPHY CASE.
-            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
+            // !RETAIN RAW SCORE AS WELL.
+            game.Adventurers[game.Player.Winner].Score = game.State.RawScore;
+
+            foreach (var obj in game.Objects.Values)
             {
-                // !RETAIN RAW SCORE AS WELL.
-                j = i;
+                j = obj.Id;
                 // !FIND OUT IF IN CASE.
                 L3550:
                 j = game.Objects[j].Container;
@@ -538,7 +542,7 @@ namespace Zork.Core
                 }
 
                 // !DO ALL LEVELS.
-                game.Adventurers[game.Player.Winner].Score += game.Objects[i].otval;
+                game.Adventurers[game.Player.Winner].Score += obj.otval;
                 L3600:
                 ;
             }
@@ -1161,7 +1165,7 @@ namespace Zork.Core
 
             // R26--	BANK BOX ROOM.
 
-            L26000:
+            BANKBOX:
             if (game.ParserVectors.prsa != VerbIds.WalkIn)
             {
                 return ret_val;
@@ -1181,7 +1185,7 @@ namespace Zork.Core
 
             // R27--	TREASURE ROOM.
 
-            L27000:
+            TREASURE:
             if (game.ParserVectors.prsa != VerbIds.WalkIn || !game.Hack.IsThiefActive)
             {
                 return ret_val;
@@ -1194,7 +1198,7 @@ namespace Zork.Core
 
             game.Hack.ThiefPosition = game.Player.Here;
             // !RESET SEARCH PATTERN.
-            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.FITEBT;
+            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.IsFighting;
             if (RoomHandler.GetRoomThatContainsObject(ObjectIds.chali, game).Id == game.Player.Here)
             {
                 game.Objects[ObjectIds.chali].Flag1 &= ~ObjectFlags.IsTakeable;
@@ -1223,7 +1227,7 @@ namespace Zork.Core
 
             // R28--	CLIFF FUNCTION.  SEE IF CARRYING INFLATED BOAT.
 
-            L28000:
+            CLIFF:
             game.Flags.deflaf = game.Objects[ObjectIds.rboat].Adventurer != game.Player.Winner;
             // !TRUE IF NOT CARRYING.
             return ret_val;
@@ -1300,7 +1304,7 @@ namespace Zork.Core
 
             // R32--	TCAVE ROOM.  DIG A HOLE IN GUANO.
 
-            L32000:
+            TCAVE:
             if (game.ParserVectors.prsa != VerbIds.Dig || game.ParserVectors.DirectObject != ObjectIds.Shovel)
             {
                 return ret_val;
@@ -1370,7 +1374,7 @@ namespace Zork.Core
 
             // R35--	SAFE ROOM.  STATE DEPENDS ON WHETHER SAFE BLOWN.
 
-            L35000:
+            SAFEROOM:
             if (game.ParserVectors.prsa != VerbIds.Look)
             {
                 return ret_val;
@@ -1439,7 +1443,7 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool RunRoomAction2(int ri, Game game)
+        public static bool RunRoomAction2(int roomActionId, Game game)
         {
             const int newrms = 38;
 
@@ -1451,7 +1455,7 @@ namespace Zork.Core
             ObjectIds j;
 
             ret_val = true;
-            switch (ri - newrms + 1)
+            switch (roomActionId - newrms + 1)
             {
                 case 1: goto L38000;
                 case 2: goto L39000;
@@ -1603,8 +1607,7 @@ namespace Zork.Core
             // !LOOK?
             i = 704;
             // !ASSUME BEAM STOP.
-            i__1 = game.Objects.Count;
-            for (j = (ObjectIds)1; j <= (ObjectIds)i__1; ++j)
+            for (j = (ObjectIds)1; j <= (ObjectIds)game.Objects.Count; ++j)
             {
                 if (ObjectHandler.IsObjectInRoom(j, game.Player.Here, game) && j != ObjectIds.rbeam)
                 {

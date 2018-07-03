@@ -48,7 +48,7 @@ namespace Zork.Core
             return ret_val;
 
             L1100:
-            if (game.ParserVectors.prsa != VerbIds.deadxw)
+            if (game.ParserVectors.prsa != VerbIds.Dead)
             {
                 goto L1200;
             }
@@ -59,7 +59,7 @@ namespace Zork.Core
             return ret_val;
 
             L1200:
-            if (game.ParserVectors.prsa != VerbIds.outxw)
+            if (game.ParserVectors.prsa != VerbIds.OutCold)
             {
                 goto L1300;
             }
@@ -173,7 +173,7 @@ namespace Zork.Core
             L1900:
             MessageHandler.rspeak_(game, 443);
             // !KNIFE, THROWS IT BACK
-            game.Objects[ObjectIds.Troll].Flag2 |= ObjectFlags2.FITEBT;
+            game.Objects[ObjectIds.Troll].Flag2 |= ObjectFlags2.IsFighting;
             return ret_val;
 
             L2000:
@@ -222,7 +222,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(game, 187);
             // !DESCRIBE.
             game.Switches.rvcyc = Math.Abs(game.Switches.rvcyc);
-            game.Objects[ObjectIds.Cyclops].Flag2 = (game.Objects[ObjectIds.Cyclops].Flag2 | ObjectFlags2.FITEBT) & ~ObjectFlags2.IsSleeping;
+            game.Objects[ObjectIds.Cyclops].Flag2 = (game.Objects[ObjectIds.Cyclops].Flag2 | ObjectFlags2.IsFighting) & ~ObjectFlags2.IsSleeping;
             return ret_val;
 
             L100:
@@ -282,7 +282,7 @@ namespace Zork.Core
             // !DRINKS AND
             game.Flags.cyclof = true;
             // !FALLS ASLEEP.
-            game.Objects[ObjectIds.Cyclops].Flag2 = (game.Objects[ObjectIds.Cyclops].Flag2 | ObjectFlags2.IsSleeping) & ~ObjectFlags2.FITEBT;
+            game.Objects[ObjectIds.Cyclops].Flag2 = (game.Objects[ObjectIds.Cyclops].Flag2 | ObjectFlags2.IsSleeping) & ~ObjectFlags2.IsFighting;
             return ret_val;
 
             L350:
@@ -410,7 +410,7 @@ namespace Zork.Core
             return ret_val;
 
             L100:
-            if (game.ParserVectors.prsa != VerbIds.deadxw)
+            if (game.ParserVectors.prsa != VerbIds.Dead)
             {
                 goto L200;
             }
@@ -484,7 +484,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != VerbIds.outxw)
+            if (game.ParserVectors.prsa != VerbIds.OutCold)
             {
                 goto L400;
             }
@@ -538,7 +538,7 @@ namespace Zork.Core
 
             L600:
             if (game.ParserVectors.prsa != VerbIds.Throw || game.ParserVectors.DirectObject != ObjectIds.Knife ||
-                (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.FITEBT) != 0)
+                (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.IsFighting) != 0)
             {
                 goto L700;
             }
@@ -551,7 +551,7 @@ namespace Zork.Core
             // !THREW KNIFE, 10%?
             MessageHandler.rspeak_(game, 507);
             // !NO, JUST MAKES
-            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.FITEBT;
+            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.IsFighting;
             return ret_val;
 
             L650:

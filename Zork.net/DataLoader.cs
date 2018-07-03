@@ -30,45 +30,94 @@ namespace Zork.Core
             game.Star.strbit = DataLoader.ReadInt(bytes, game);
             game.State.egmxsc = DataLoader.ReadInt(bytes, game);
 
-            var roomCount = DataLoader.ReadInt(bytes, game);
-            var desc1 = new List<int>();
-            var desc2 = new List<int>();
-            var exits = new List<int>();
-            var actions = new List<int>();
-            var values = new List<int>();
-            DataLoader.ReadInts(roomCount, desc1, bytes, game);
-            DataLoader.ReadInts(roomCount, desc2, bytes, game);
-            DataLoader.ReadInts(roomCount, exits, bytes, game);
-            DataLoader.ReadPartialInts(roomCount, actions, bytes, game);
-            DataLoader.ReadPartialInts(roomCount, values, bytes, game);
-
-            var tempFlags = new List<int>();
-            DataLoader.ReadInts(roomCount, tempFlags, bytes, game);
-
-            for (int ridx = 1; ridx <= roomCount; ridx++)
-            {
-                var room = new Room
-                {
-                    Id = (RoomIds)ridx,
-                    Action = actions[ridx - 1],
-                    Description1 = desc1[ridx - 1],
-                    Description2 = desc2[ridx - 1],
-                    Exit = exits[ridx - 1],
-                    Flags = (RoomFlags)tempFlags[ridx - 1],
-                    Score = values[ridx - 1]
-                };
-
-                game.Rooms.Add(room.Id, room);
-            }
-
-            game.Rooms.Add(RoomIds.NoWhere, new Room
-            {
-                Id = RoomIds.NoWhere
-            });
+            LoadRooms(bytes, game);
 
             game.Exits.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
 
+            LoadObjects(bytes, game);
+
+            game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
+
+            game.Clock.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
+            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
+
+            game.Villians.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes, game);
+            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes, game);
+            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vopps, bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes, game);
+            DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes, game);
+
+            LoadAdventurers(bytes, game);
+
+            game.Star.mbase = DataLoader.ReadInt(bytes, game);
+            game.Messages.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
+            // Location of beginning of message text
+            game.Messages.mrloc = game.DataPosition;
+
+            // TODO: See if we can just store the DateTime object, not sure how all this is used currently.
+            var now = DateTime.Now;
+            game.Time.shour = now.Hour;
+            game.Time.smin = now.Minute;
+            game.Time.ssec = now.Second;
+
+            game.Player.Winner = ActorIds.Player;
+            game.Last.lastit = game.Adventurers[ActorIds.Player].ObjectId;
+            game.Player.Here = game.Adventurers[game.Player.Winner].CurrentRoom.Id;
+
+            game.State.BalloonLocation = RoomHandler.GetRoomThatContainsObject(ObjectIds.Balloon, game);
+            game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id;
+
+            return game;
+        }
+
+        private static void LoadAdventurers(byte[] bytes, Game game)
+        {
+            var advCount = DataLoader.ReadInt(bytes, game);
+            var advRooms = new List<int>();
+            var advScores = new List<int>();
+            var advVehicles = new List<int>();
+            var advObjects = new List<int>();
+            var advActions = new List<int>();
+            var advStrengths = new List<int>();
+            var advFlags = new List<int>();
+
+            DataLoader.ReadInts(advCount, advRooms, bytes, game);
+            DataLoader.ReadPartialInts(advCount, advScores, bytes, game);
+            DataLoader.ReadPartialInts(advCount, advVehicles, bytes, game);
+            DataLoader.ReadInts(advCount, advObjects, bytes, game);
+            DataLoader.ReadInts(advCount, advActions, bytes, game);
+            DataLoader.ReadInts(advCount, advStrengths, bytes, game);
+            DataLoader.ReadPartialInts(advCount, advFlags, bytes, game);
+
+            for (int advIdx = 1; advIdx <= advCount; advIdx++)
+            {
+                var newAdventurer = new Adventurer
+                {
+                    Id = (ActorIds)advIdx,
+                    Action = advActions[advIdx - 1],
+                    Strength = advStrengths[advIdx - 1],
+                    CurrentRoom = game.Rooms[(RoomIds)advRooms[advIdx - 1]],
+                    Score = advScores[advIdx - 1],
+                    VehicleId = advVehicles[advIdx - 1],
+                    ObjectId = (ObjectIds)advObjects[advIdx - 1]
+                };
+
+                newAdventurer.CurrentRoom.Adventurers.Add(newAdventurer);
+                game.Adventurers.Add(newAdventurer.Id, newAdventurer);
+            }
+
+            game.Adventurers.Add(ActorIds.NoOne, new Adventurer());
+        }
+
+        private static void LoadObjects(byte[] bytes, Game game)
+        {
             var objectCount = DataLoader.ReadInt(bytes, game);
             var odesc1 = new List<int>();
             var odesc2 = new List<int>();
@@ -125,7 +174,7 @@ namespace Zork.Core
                     Description2 = odesc2[objIdx - 1],
                     odesco = odesco[objIdx - 1],
                     Action = oactio[objIdx - 1],
-                    ofval = ofval[objIdx - 1],
+                    Value = ofval[objIdx - 1],
                     otval = otval[objIdx - 1],
                     Size = Sizes[objIdx - 1],
                     Capacity = ocapac[objIdx - 1],
@@ -157,79 +206,45 @@ namespace Zork.Core
             }
 
             game.Objects.Add(ObjectIds.Nothing, new Object());
+        }
 
-            game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
+        private static void LoadRooms(byte[] bytes, Game game)
+        {
+            var roomCount = DataLoader.ReadInt(bytes, game);
+            var desc1 = new List<int>();
+            var desc2 = new List<int>();
+            var exits = new List<int>();
+            var actions = new List<int>();
+            var values = new List<int>();
+            DataLoader.ReadInts(roomCount, desc1, bytes, game);
+            DataLoader.ReadInts(roomCount, desc2, bytes, game);
+            DataLoader.ReadInts(roomCount, exits, bytes, game);
+            DataLoader.ReadPartialInts(roomCount, actions, bytes, game);
+            DataLoader.ReadPartialInts(roomCount, values, bytes, game);
 
-            game.Clock.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
-            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
+            var tempFlags = new List<int>();
+            DataLoader.ReadInts(roomCount, tempFlags, bytes, game);
 
-            game.Villians.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes, game);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes, game);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vopps, bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes, game);
-
-            var advCount = DataLoader.ReadInt(bytes, game);
-            var advRooms = new List<int>();
-            var advScores = new List<int>();
-            var advVehicles = new List<int>();
-            var advObjects = new List<int>();
-            var advActions = new List<int>();
-            var advStrengths = new List<int>();
-            var advFlags = new List<int>();
-
-            DataLoader.ReadInts(advCount, advRooms, bytes, game);
-            DataLoader.ReadPartialInts(advCount, advScores, bytes, game);
-            DataLoader.ReadPartialInts(advCount, advVehicles, bytes, game);
-            DataLoader.ReadInts(advCount, advObjects, bytes, game);
-            DataLoader.ReadInts(advCount, advActions, bytes, game);
-            DataLoader.ReadInts(advCount, advStrengths, bytes, game);
-            DataLoader.ReadPartialInts(advCount, advFlags, bytes, game);
-
-            for (int advIdx = 1; advIdx <= advCount; advIdx++)
+            for (int ridx = 1; ridx <= roomCount; ridx++)
             {
-                var newAdventurer = new Adventurer
+                var room = new Room
                 {
-                    Id = (ActorIds)advIdx,
-                    Action = advActions[advIdx - 1],
-                    Strength = advStrengths[advIdx - 1],
-                    CurrentRoom = game.Rooms[(RoomIds)advRooms[advIdx - 1]],
-                    Score = advScores[advIdx - 1],
-                    VehicleId = advVehicles[advIdx - 1],
-                    ObjectId = (ObjectIds)advObjects[advIdx - 1]
+                    Id = (RoomIds)ridx,
+                    Action = actions[ridx - 1],
+                    Description1 = desc1[ridx - 1],
+                    Description2 = desc2[ridx - 1],
+                    Exit = exits[ridx - 1],
+                    Flags = (RoomFlags)tempFlags[ridx - 1],
+                    Score = values[ridx - 1]
                 };
 
-                newAdventurer.CurrentRoom.Adventurers.Add(newAdventurer);
-                game.Adventurers.Add(newAdventurer.Id, newAdventurer);
+                game.Rooms.Add(room.Id, room);
             }
 
-            game.Adventurers.Add(ActorIds.NoOne, new Adventurer());
-
-            game.Star.mbase = DataLoader.ReadInt(bytes, game);
-            game.Messages.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
-            // Location of beginning of message text
-            game.Messages.mrloc = game.DataPosition;
-
-            // TODO: See if we can just store the DateTime object, not sure how all this is used currently.
-            var now = DateTime.Now;
-            game.Time.shour = now.Hour;
-            game.Time.smin = now.Minute;
-            game.Time.ssec = now.Second;
-
-            game.Player.Winner = ActorIds.Player;
-            game.Last.lastit = game.Adventurers[ActorIds.Player].ObjectId;
-            game.Player.Here = game.Adventurers[game.Player.Winner].CurrentRoom.Id;
-
-            game.State.BalloonLocation = RoomHandler.GetRoomThatContainsObject(ObjectIds.Balloon, game);
-            game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id;
-
-            return game;
+            game.Rooms.Add(RoomIds.NoWhere, new Room
+            {
+                Id = RoomIds.NoWhere
+            });
         }
 
         private static void ReadPartialInts(int count, List<int> list, byte[] bytes, Game game)

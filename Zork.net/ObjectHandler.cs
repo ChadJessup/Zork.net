@@ -451,12 +451,12 @@ namespace Zork.Core
 
             i = (ObjectIds)653;
             // !NOVELTY 1.
-            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.FITEBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsFighting) != 0)
             {
                 i = (ObjectIds)654;
             }
 
-            game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.FITEBT;
+            game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.IsFighting;
             MessageHandler.rspsub_((int)i, odi2, game);
             return ret_val;
 
@@ -1131,7 +1131,7 @@ namespace Zork.Core
 
             L21100:
             if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.VICTBT) == 0
-                && (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) == 0)
+                && (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsVillian) == 0)
             {
                 goto L21200;
             }
@@ -2460,7 +2460,7 @@ namespace Zork.Core
             // O130--	CRYPT FUNCTION
 
             L61000:
-            if (!game.Flags.EndGame)
+            if (!game.Flags.IsEndGame)
             {
                 goto HEADS;
             }
@@ -3065,7 +3065,7 @@ namespace Zork.Core
                 || game.Objects[game.ParserVectors.DirectObject].Container != 0
                 || RoomHandler.GetRoomThatContainsObject(game.ParserVectors.DirectObject, game).Id  != RoomIds.Treasure
                 || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id  != RoomIds.Treasure
-                || (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.FITEBT) == 0
+                || (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.IsFighting) == 0
                 || !game.Hack.IsThiefActive)
             {
                 goto L10;
@@ -3086,7 +3086,7 @@ namespace Zork.Core
             // !MUNG?
             MessageHandler.Speak(205, game);
             // !DESTROY PAINTING.
-            game.Objects[game.ParserVectors.DirectObject].ofval = 0;
+            game.Objects[game.ParserVectors.DirectObject].Value = 0;
             game.Objects[game.ParserVectors.DirectObject].otval  = 0;
             game.Objects[game.ParserVectors.DirectObject].Description1 = 207;
             game.Objects[game.ParserVectors.DirectObject].Description2 = 206;

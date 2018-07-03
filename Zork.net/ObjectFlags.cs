@@ -10,9 +10,9 @@ namespace Zork.Core
         IsTakeable = 8192,
         DOORBT = 4096,
         IsTransparent = 2048,
-        FOODBT = 1024,
+        IsFood = 1024,
         HasNoDescription = 512,
-        DRNKBT = 256,
+        IsDrinkable = 256,
         CONTBT = 128,
         LITEBT = 64,
         VICTBT = 32,
@@ -29,13 +29,13 @@ namespace Zork.Core
         FINDBT = 32768,
         IsSleeping = 16384,
         SCRDBT = 8192,
-        TIEBT = 4096,
+        IsTied = 4096,
         IsClimbable = 2048,
         ACTRBT = 1024,
         IsWeapon = 512,
-        FITEBT = 256,
-        VILLBT = 128,
-        STAGBT = 64,
+        IsFighting = 256,
+        IsVillian = 128,
+        IsStaggered = 64,
         TRYBT = 32,
         NOCHBT = 16,
         IsOpen = 8,
@@ -46,6 +46,7 @@ namespace Zork.Core
         IsSearchable = 1,
     }
 
+    [Flags]
     public enum SyntaxObjectFlags
     {
         SearchAdventurer = 16384,
@@ -57,6 +58,7 @@ namespace Zork.Core
         VPMASK = 511,
     }
 
+    [Flags]
     public enum SyntaxFlags
     {
         SDIR = 16384,

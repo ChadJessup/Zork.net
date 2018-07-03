@@ -3,10 +3,10 @@
     public enum VerbIds
     {
         cintw = 1,
-        deadxw = 2,
+        Dead = 2,
         frstqw = 3,
         inxw = 4,
-        outxw = 5,
+        OutCold = 5,
         WalkIn = 6,
         Fight = 7,
         foow = 8,
@@ -46,7 +46,7 @@
         invenw = 133,
         Fill = 134,
         Eat = 135,
-        drinkw = 136,
+        Drink = 136,
         Burn = 137,
         Mung = 138,
         Kill = 139,

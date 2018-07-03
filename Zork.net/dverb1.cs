@@ -100,14 +100,14 @@ namespace Zork.Core
             }
 
             // !TAKE OBJECT FOR WINNER.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.DirectObject, 0, 0, 0, game.Player.Winner, game);
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 0, 0, 0, game.Player.Winner, game);
             game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.WasTouched;
 
             // !UPDATE SCORE.
-            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].ofval);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].Value);
 
             // !CANT BE SCORED AGAIN.
-            game.Objects[game.ParserVectors.DirectObject].ofval = 0;
+            game.Objects[game.ParserVectors.DirectObject].Value = 0;
 
             // !TELL TAKEN.
             if (tellUser)
@@ -181,9 +181,9 @@ namespace Zork.Core
             }
 
             // !SCORE OBJECT.
-            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].ofval);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].Value);
             // !CANT BE SCORED AGAIN.
-            game.Objects[game.ParserVectors.DirectObject].ofval = 0;
+            game.Objects[game.ParserVectors.DirectObject].Value = 0;
             game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.WasTouched;
 
             if (ObjectHandler.ApplyObjectsFromParseVector(game))
@@ -346,9 +346,9 @@ namespace Zork.Core
             return ret_val;
 
             L900:
-            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].ofval);
+            AdventurerHandler.ScoreUpdate(game, game.Objects[game.ParserVectors.DirectObject].Value);
             // !SCORE OBJECT.
-            game.Objects[game.ParserVectors.DirectObject].ofval = 0;
+            game.Objects[game.ParserVectors.DirectObject].Value = 0;
             game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.WasTouched;
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.DirectObject, 0, 0, 0, game.Player.Winner, game);
             // !TEMPORARILY ON WINNER.
@@ -378,33 +378,34 @@ namespace Zork.Core
             bool f1;
             int savep, saveh;
 
-            f = true;
             // !ASSUME NO ACTIONS.
-            i = 579;
+            f = true;
             // !ASSUME NOT LIT.
+            i = 579;
+            // !IF NOT LIT, PUNT.
             if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
                 goto L4000;
             }
-            // !IF NOT LIT, PUNT.
-            i = 677;
             // !ASSUME WRONG VERB.
-            savep = (int)game.ParserVectors.DirectObject;
+            i = 677;
             // !SAVE PRSO.
-            saveh = (int)game.Player.Here;
+            savep = (int)game.ParserVectors.DirectObject;
             // !SAVE HERE.
+            saveh = (int)game.Player.Here;
 
             // L100:
+            // !TAKE EVERY/VALUA?
             if (game.ParserVectors.prsa != VerbIds.Take)
             {
                 goto L1000;
             }
-            // !TAKE EVERY/VALUA?
+
             i__1 = game.Objects.Count;
             for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)i__1; ++game.ParserVectors.DirectObject)
             {
                 // !LOOP THRU OBJECTS.
-                if (!ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.DirectObject, game.Player.Here, game)
+                if (!ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game)
                     || (game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsVisible) == 0
                     || (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.ACTRBT) != 0
                     || savep == v && game.Objects[game.ParserVectors.DirectObject].otval <= 0)
@@ -412,8 +413,8 @@ namespace Zork.Core
                     goto L500;
                 }
 
-                if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) == 0 && (
-                    game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.TRYBT) == 0)
+                if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) == 0 &&
+                    (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.TRYBT) == 0)
                 {
                     goto L500;
                 }
@@ -431,11 +432,12 @@ namespace Zork.Core
             goto L3000;
 
             L1000:
+            // !DROP EVERY/VALUA?
             if (game.ParserVectors.prsa != VerbIds.Drop)
             {
                 goto L2000;
             }
-            // !DROP EVERY/VALUA?
+
             i__1 = game.Objects.Count;
             for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)i__1; ++game.ParserVectors.DirectObject)
             {

@@ -187,7 +187,9 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.Player.Winner != ActorIds.Player || RoomHandler.IsRoomLit(game.Player.Here, game) || RoomHandler.prob_(game, 25, 25))
+            if (game.Player.Winner != ActorIds.Player ||
+                RoomHandler.IsRoomLit(game.Player.Here, game) ||
+                RoomHandler.prob_(game, 25, 25))
             {
                 goto L500;
             }
@@ -222,47 +224,49 @@ namespace Zork.Core
             }
             // !NO, FLAG ON?
             L200:
-            AdventurerHandler.jigsup_(game, 523);
             // !BAD EXIT, GRUE
+            AdventurerHandler.jigsup_(game, 523);
             // !
             return ret_val;
 
             L300:
+            // !DOOR... RETURNED ROOM?
             if (cxappl_(game, game.curxt_.xactio) != 0)
             {
                 goto L400;
             }
-            // !DOOR... RETURNED ROOM?
+            // !NO, DOOR OPEN?
             if ((game.Objects[game.curxt_.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L400;
             }
-            // !NO, DOOR OPEN?
-            AdventurerHandler.jigsup_(game, 523);
+
             // !BAD EXIT, GRUE
+            AdventurerHandler.jigsup_(game, 523);
             // !
             return ret_val;
 
             L400:
+            // !VALID ROOM, IS IT LIT?
             if (RoomHandler.IsRoomLit(game.curxt_.xroom1, game))
             {
                 goto L900;
             }
-            // !VALID ROOM, IS IT LIT?
             L450:
-            AdventurerHandler.jigsup_(game, 522);
             // !NO, GRUE
             // !
+            AdventurerHandler.jigsup_(game, 522);
             return ret_val;
 
             // ROOM IS LIT, OR WINNER IS NOT PLAYER (NO GRUE).
 
             L500:
+            // !EXIT EXIST?
             if (dso3.FindExit(game, (int)game.ParserVectors.DirectObject, game.Player.Here))
             {
                 goto L550;
             }
-            // !EXIT EXIST?
+
             L525:
             game.curxt_.xstrng = 678;
             // !ASSUME WALL.
@@ -294,6 +298,7 @@ namespace Zork.Core
                 case 3: goto L700;
                 case 4: goto L800;
             }
+
             // !BRANCH ON EXIT TYPE.
             throw new InvalidOperationException();
             //bug_(9, curxt_.xtype);

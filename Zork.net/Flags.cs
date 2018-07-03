@@ -11,7 +11,7 @@
         public bool IsRopeTiedToRailingInDomeRoom { get; set; }
         public bool IsGlacierFullyMelted { get; set; }
         public bool echof { get; set; }
-        public bool riddlf { get; set; }
+        public bool WasRiddleSolved { get; set; }
         public bool lldf { get; set; }
         public bool cyclof { get; set; }
         public bool IsDoorToCyclopsRoomOpen { get; set; }
@@ -34,7 +34,7 @@
         public bool deflaf { get; set; }
         public bool IsGlacierPartiallyMelted { get; set; }
         public bool frobzf { get; set; }
-        public bool EndGame { get; set; }
+        public bool IsEndGame { get; set; }
         public bool HasBadLuck { get; set; }
         public bool thfenf { get; set; }
         public bool HasBirdSangSong { get; set; }

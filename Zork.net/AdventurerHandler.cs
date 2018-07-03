@@ -116,7 +116,7 @@ namespace Zork.Core
 
             L100:
             // !NO RECOVERY IN END GAME.
-            if (game.Flags.EndGame)
+            if (game.Flags.IsEndGame)
             {
                 goto L900;
             }
@@ -140,7 +140,7 @@ namespace Zork.Core
                 // !TURN OFF FIGHTING.
                 if (ObjectHandler.IsObjectInRoom((ObjectIds)j, game.Player.Here, game))
                 {
-                    game.Objects[j].Flag2 &= ~ObjectFlags2.FITEBT;
+                    game.Objects[j].Flag2 &= ~ObjectFlags2.IsFighting;
                 }
                 // L50:
             }
@@ -373,7 +373,7 @@ namespace Zork.Core
 
             intAs = game.Adventurers[game.Player.Winner].Score;
 
-            if (game.Flags.EndGame)
+            if (game.Flags.IsEndGame)
             {
                 goto L60;
             }
@@ -451,7 +451,7 @@ namespace Zork.Core
         public static void ScoreUpdate(Game game, int incrementAmount)
         {
             // !ENDGAME?
-            if (game.Flags.EndGame)
+            if (game.Flags.IsEndGame)
             {
                 goto L100;
             }

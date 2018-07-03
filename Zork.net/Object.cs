@@ -12,7 +12,7 @@ namespace Zork.Core
         public int Action { get; set; }
         public ObjectFlags Flag1 { get; set; }
         public ObjectFlags2 Flag2 { get; set; }
-        public int ofval { get; set; }
+        public int Value { get; set; }
         public int otval { get; set; }
         public int Size { get; set; }
         public int Capacity { get; set; }
