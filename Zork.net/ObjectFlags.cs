@@ -20,7 +20,7 @@ namespace Zork.Core
         FLAMBT = 8,
         IsTool = 4,
         TURNBT = 2,
-        ONBT = 1,
+        IsOn = 1,
     }
 
     [Flags]
@@ -32,7 +32,7 @@ namespace Zork.Core
         TIEBT = 4096,
         IsClimbable = 2048,
         ACTRBT = 1024,
-        WEAPBT = 512,
+        IsWeapon = 512,
         FITEBT = 256,
         VILLBT = 128,
         STAGBT = 64,
@@ -41,19 +41,19 @@ namespace Zork.Core
         IsOpen = 8,
         // Was TCHBt - I believe that means 'touched', whatever that means.
         WasTouched = 4,
-        VEHBT = 2,
+        IsVehicle = 2,
         // Was SCHBT - I believe that means 'searchable'.
         IsSearchable = 1,
     }
 
     public enum SyntaxObjectFlags
     {
-        VABIT = 16384,
-        VRBIT = 8192,
-        VTBIT = 4096,
-        VCBIT = 2048,
+        SearchAdventurer = 16384,
+        SearchRoom = 8192,
+        TryTake = 4096,
+        AdventurerMustHave = 2048,
         VEBIT = 1024,
-        VFBIT = 512,
+        MustBeReachable = 512,
         VPMASK = 511,
     }
 

@@ -124,7 +124,7 @@ namespace Zork.Core
                     Description1 = odesc1[objIdx - 1],
                     Description2 = odesc2[objIdx - 1],
                     odesco = odesco[objIdx - 1],
-                    oactio = oactio[objIdx - 1],
+                    Action = oactio[objIdx - 1],
                     ofval = ofval[objIdx - 1],
                     otval = otval[objIdx - 1],
                     Size = Sizes[objIdx - 1],
@@ -193,15 +193,18 @@ namespace Zork.Core
 
             for (int advIdx = 1; advIdx <= advCount; advIdx++)
             {
-                var newAdventurer = new Adventurer();
-                newAdventurer.Id = (ActorIds)advIdx;
-                newAdventurer.Action = advActions[advIdx - 1];
-                newAdventurer.Strength = advStrengths[advIdx - 1];
-                newAdventurer.CurrentRoom = game.Rooms[(RoomIds)advRooms[advIdx - 1]];
-                newAdventurer.Score = advScores[advIdx - 1];
-                newAdventurer.VehicleId = advVehicles[advIdx - 1];
-                newAdventurer.ObjectId = (ObjectIds)advObjects[advIdx - 1];
+                var newAdventurer = new Adventurer
+                {
+                    Id = (ActorIds)advIdx,
+                    Action = advActions[advIdx - 1],
+                    Strength = advStrengths[advIdx - 1],
+                    CurrentRoom = game.Rooms[(RoomIds)advRooms[advIdx - 1]],
+                    Score = advScores[advIdx - 1],
+                    VehicleId = advVehicles[advIdx - 1],
+                    ObjectId = (ObjectIds)advObjects[advIdx - 1]
+                };
 
+                newAdventurer.CurrentRoom.Adventurers.Add(newAdventurer);
                 game.Adventurers.Add(newAdventurer.Id, newAdventurer);
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Zork.Core
 {
@@ -24,20 +25,12 @@ namespace Zork.Core
             }
 
             // !IF NOT ME.
-            for (j = (ObjectIds)1; j <= (ObjectIds)game.Adventurers[adventurerId].HeldObjects.Count; ++j)
+            foreach (var obj in game.Adventurers[adventurerId].HeldObjects.Where(obj => obj.IsVisible))
             {
-                // !LOOP
-                if (game.Objects[j].Adventurer != adventurerId || (game.Objects[j].Flag1 & ObjectFlags.IsVisible) == 0)
-                {
-                    goto L10;
-                }
-
                 MessageHandler.rspsub_(i, game.Objects[game.Adventurers[adventurerId].ObjectId].Description2, game);
                 i = 0;
 
-                MessageHandler.rspsub_(502, game.Objects[j].Description2, game);
-                L10:
-                ;
+                MessageHandler.rspsub_(502, obj.Description2, game);
             }
 
             if (i == 0)
@@ -55,27 +48,16 @@ namespace Zork.Core
             return;
 
             L25:
-            i__1 = (ObjectIds)game.Objects.Count;
-            for (j = (ObjectIds)1; j <= i__1; ++j)
+            foreach(var obj in game.Adventurers[adventurerId].HeldObjects.Where(o => o.CanSeeInside))
             {
-                // !LOOP.
-                if (game.Objects[j].Adventurer != adventurerId
-                    || (game.Objects[j].Flag1 & ObjectFlags.IsVisible) == 0
-                    || (game.Objects[j].Flag1 & ObjectFlags.IsTransparent) == 0
-                    && (game.Objects[j].Flag2 & ObjectFlags2.IsOpen) == 0)
-                {
-                    goto L100;
-                }
-
-                if (!ObjectHandler.IsObjectEmpty((ObjectIds)j, game))
-                {
-                    ObjectHandler.PrintDescription(j, 573, game);
-                }
-
-                // !IF NOT EMPTY, LIST.
-                L100:
-                ;
+                    ObjectHandler.PrintDescription(obj.Id, 573, game);
             }
+        }
+
+        public static void AddObjectToAdventurer(Object obj, Adventurer adventurer, Game game)
+        {
+            obj.Adventurer = adventurer.Id;
+            adventurer.HeldObjects.Add(obj);
         }
 
         /// <summary>
@@ -280,64 +262,56 @@ namespace Zork.Core
             game.Exit();
         }
 
-        public static bool moveto_(Game game, RoomIds nr, ActorIds who)
+        public static bool moveto_(Game game, RoomIds newRoom, ActorIds who)
         {
-            // System generated locals
-            bool ret_val;
+            bool ret_val = false;
 
-            // Local variables
-            ObjectIds j;
-            bool lhr;
-            bool lnr, nlv;
+            ObjectIds vehicleId = (ObjectIds)game.Adventurers[who].VehicleId;
+            bool isOnLand = game.Rooms[game.Player.Here].Flags.HasFlag(RoomFlags.LAND);
+            bool isGoingToLand = game.Rooms[newRoom].Flags.HasFlag(RoomFlags.LAND);
+            bool nlv;
             int bits;
 
-            ret_val = false;
-            // !ASSUME FAILS.
-            lhr = (game.Rooms[game.Player.Here].Flags & RoomFlags.LAND) != 0;
-            lnr = (game.Rooms[nr].Flags & RoomFlags.LAND) != 0;
-
-            // !HIS VEHICLE
-            j = (ObjectIds)game.Adventurers[who].VehicleId;
-
-            if (j != 0)
+            // !IN VEHICLE?
+            if (vehicleId != 0)
             {
                 goto L100;
             }
 
-            // !IN VEHICLE?
-            if (lnr)
+            // !NO, GOING TO LAND?
+            if (isGoingToLand)
             {
                 goto L500;
             }
 
-            // !NO, GOING TO LAND?
-            MessageHandler.Speak(427, game);
             // !CAN'T GO WITHOUT VEHICLE.
+            MessageHandler.Speak(427, game);
+
             return ret_val;
 
             L100:
             bits = 0;
             // !ASSUME NOWHERE.
-            if (j == ObjectIds.rboat)
+            if (vehicleId == ObjectIds.rboat)
             {
                 bits = (int)RoomFlags.WATER;
             }
 
             // !IN BOAT?
-            if (j == ObjectIds.Balloon)
+            if (vehicleId == ObjectIds.Balloon)
             {
                 bits = (int)RoomFlags.AIR;
             }
 
             // !IN BALLOON?
-            if (j == ObjectIds.Bucket)
+            if (vehicleId == ObjectIds.Bucket)
             {
                 bits = (int)RoomFlags.RBUCK;
             }
 
             // !IN BUCKET?
-            nlv = (game.Rooms[nr].Flags & (RoomFlags)bits) == 0;
-            if (!lnr && nlv || lnr && lhr && nlv && bits != (int)RoomFlags.LAND)
+            nlv = (game.Rooms[newRoom].Flags & (RoomFlags)bits) == 0;
+            if (!isGoingToLand && nlv || isGoingToLand && isOnLand && nlv && bits != (int)RoomFlags.LAND)
             {
                 goto L800;
             }
@@ -345,36 +319,41 @@ namespace Zork.Core
             L500:
             ret_val = true;
             // !MOVE SHOULD SUCCEED.
-            if ((game.Rooms[nr].Flags & RoomFlags.RMUNG) == 0)
+            if (!game.Rooms[newRoom].Flags.HasFlag(RoomFlags.RMUNG))
             {
                 goto L600;
             }
 
-            MessageHandler.Speak(game.Rooms[nr].Action, game);
             // !YES, TELL HOW.
+            MessageHandler.Speak(game.Rooms[newRoom].Action, game);
+
             return ret_val;
 
             L600:
             if (who != ActorIds.Player)
             {
-                ObjectHandler.SetNewObjectStatus(game.Adventurers[who].ObjectId, 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(game.Adventurers[who].ObjectId, 0, newRoom, 0, 0, game);
             }
 
-            if (j != 0)
+            if (vehicleId != 0)
             {
-                ObjectHandler.SetNewObjectStatus(j, 0, nr, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(vehicleId, 0, newRoom, 0, 0, game);
             }
 
-            game.Player.Here = nr;
+            game.Player.Here = newRoom;
+            game.Adventurers[who].CurrentRoom.Adventurers.Remove(game.Adventurers[who]);
             game.Adventurers[who].CurrentRoom = game.Rooms[game.Player.Here];
-            AdventurerHandler.ScoreUpdate(game, game.Rooms[nr].Score);
+            game.Rooms[game.Player.Here].Adventurers.Add(game.Adventurers[who]);
+
             // !SCORE ROOM
-            game.Rooms[nr].Score = 0;
+            AdventurerHandler.ScoreUpdate(game, game.Rooms[newRoom].Score);
+            game.Rooms[newRoom].Score = 0;
             return ret_val;
 
             L800:
-            MessageHandler.rspsub_(428, game.Objects[j].Description2, game);
             // !WRONG VEHICLE.
+            MessageHandler.rspsub_(428, game.Objects[vehicleId].Description2, game);
+
             return ret_val;
         }
 

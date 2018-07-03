@@ -15,7 +15,7 @@ namespace Zork.Core
                 goto L200;
             }
             // !READOUT?
-            if (game.ParserVectors.prsa != VerbIds.lookw)
+            if (game.ParserVectors.prsa != VerbIds.Look)
             {
                 goto L10;
             }
@@ -52,7 +52,7 @@ namespace Zork.Core
                 goto L300;
             }
             // !WALK?
-            if (dso3.FindExit(game, (int)game.ParserVectors.prso, game.Player.Here))
+            if (dso3.FindExit(game, (int)game.ParserVectors.DirectObject, game.Player.Here))
             {
                 goto L250;
             }
@@ -86,7 +86,7 @@ namespace Zork.Core
             return ret_val;
 
             L300:
-            if (game.ParserVectors.prsa != VerbIds.takew || game.ParserVectors.prso != (ObjectIds)game.Switches.IsBalloonInflated)
+            if (game.ParserVectors.prsa != VerbIds.Take || game.ParserVectors.DirectObject != (ObjectIds)game.Switches.IsBalloonInflated)
             {
                 goto L350;
             }
@@ -96,7 +96,7 @@ namespace Zork.Core
 
             L350:
             if (game.ParserVectors.prsa != VerbIds.Put
-                || game.ParserVectors.prsi != ObjectIds.recep
+                || game.ParserVectors.IndirectObject != ObjectIds.recep
                 || ObjectHandler.IsObjectEmpty(game, ObjectIds.recep))
             {
                 goto L10;
@@ -119,15 +119,15 @@ namespace Zork.Core
             goto L10;
 
             L600:
-            if (game.ParserVectors.prsa != VerbIds.burnw || game.Objects[game.ParserVectors.prso].Container != ObjectIds.recep)
+            if (game.ParserVectors.prsa != VerbIds.Burn || game.Objects[game.ParserVectors.DirectObject].Container != ObjectIds.recep)
             {
                 goto L700;
             }
 
-            MessageHandler.rspsub_(game, 550, game.Objects[game.ParserVectors.prso].Description2);
+            MessageHandler.rspsub_(game, 550, game.Objects[game.ParserVectors.DirectObject].Description2);
             // !LIGHT FIRE IN RECEP.
-            game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects[game.ParserVectors.prso].Size * 20;
-            game.Objects[game.ParserVectors.prso].Flag1 |= ((int)ObjectFlags.ONBT + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.IsTakeable + ObjectFlags.READBT);
+            game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects[game.ParserVectors.DirectObject].Size * 20;
+            game.Objects[game.ParserVectors.DirectObject].Flag1 |= ((int)ObjectFlags.IsOn + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.IsTakeable + ObjectFlags.READBT);
 
             if (game.Switches.IsBalloonInflated != 0)
             {
@@ -140,7 +140,7 @@ namespace Zork.Core
             }
 
             game.Flags.blabf = true;
-            game.Switches.IsBalloonInflated = (int)game.ParserVectors.prso;
+            game.Switches.IsBalloonInflated = (int)game.ParserVectors.DirectObject;
             game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
             MessageHandler.Speak(game, 551);
             return ret_val;

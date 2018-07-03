@@ -25,7 +25,7 @@
         // OBJECT DESCRIPTIONS CONSIST OF A FLAG WORD AND TWO FWIM WORDS.
         // THE FLAG WORD HAS THE FOLLOWING FORMAT--
 
-        // BIT <14>	IF 1, SEARCH ADVENTURER FOR OBJECT
+        // BIT <14>	IF 1, SEARCH ADVENTURER FOR OBJECT // VRBIT
         // BIT <13>	IF 1, SEARCH ROOM FOR OBJECT
         // BIT <12>	IF 1, PARSER WILL TRY TO TAKE OBJECT
         // BIT <11>	IF 1, ADVENTURER MUST HAVE OBJECT
@@ -42,10 +42,10 @@
         // 	BIT 12	BIT 11	MDLDESC		INTERPRETATION
         // 	------	------	-------		---------------
 
-        // 	  0	  0	 ---		NO PARSER ACTION
-        // 	  0	  1	 HAVE		ADVENTURER MUST HAVE OBJECT
-        // 	  1	  0	 TRY		TRY TO TAKE, DONT CARE IF FAIL
-        // 	  1	  1	 TAKE		TRY TO TAKE, CARE IF FAIL
+        //    0         0    ---		NO PARSER ACTION
+        //    0         1    HAVE		ADVENTURER MUST HAVE OBJECT
+        //    1         0    TRY		TRY TO TAKE, DONT CARE IF FAIL
+        //    1         1    TAKE		TRY TO TAKE, CARE IF FAIL
 
         //   THE FOLLOWING DATA STATEMENT WAS ORIGINALLY:
 

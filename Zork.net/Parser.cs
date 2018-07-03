@@ -44,8 +44,8 @@ namespace Zork.Core
             game.ParserVectors.prsa = 0;
 
             // !ZERO OUTPUTS.
-            game.ParserVectors.prsi = ObjectIds.Nothing;
-            game.ParserVectors.prso = ObjectIds.Nothing;
+            game.ParserVectors.IndirectObject = ObjectIds.Nothing;
+            game.ParserVectors.DirectObject = ObjectIds.Nothing;
 
             if (!Parser.Lex(input, outbuf, out int outlnt, vbflag, game))
             {
@@ -82,9 +82,9 @@ namespace Zork.Core
                 goto L100;
             }
 
-            if (game.ParserVectors.prso > 0 & game.ParserVectors.prso < (ObjectIds)XSearch.xmin)
+            if (game.ParserVectors.DirectObject > 0 & game.ParserVectors.DirectObject < (ObjectIds)XSearch.xmin)
             {
-                game.Last.lastit = game.ParserVectors.prso;
+                game.Last.lastit = game.ParserVectors.DirectObject;
             }
 
             L300:
@@ -463,18 +463,18 @@ namespace Zork.Core
             // !GET DIR OBJ.
             L5000:
             game.ParserVectors.prsa = (VerbIds)(game.Syntax.vflag & SyntaxFlags.SVMASK);
-            game.ParserVectors.prso = game.objvec.o1;
+            game.ParserVectors.DirectObject = game.objvec.o1;
             // !GET IND OBJ.
-            game.ParserVectors.prsi = game.objvec.o2;
+            game.ParserVectors.IndirectObject = game.objvec.o2;
 
             // !TRY TAKE.
-            if (!TakeObject(game.ParserVectors.prso, game.Syntax.dobj, game))
+            if (!TakeObject(game.ParserVectors.DirectObject, game.Syntax.dobj, game))
             {
                 return ret_val;
             }
 
             // !TRY TAKE.
-            if (!TakeObject(game.ParserVectors.prsi, game.Syntax.iobj, game))
+            if (!TakeObject(game.ParserVectors.IndirectObject, game.Syntax.iobj, game))
             {
                 return ret_val;
             }
@@ -507,16 +507,16 @@ namespace Zork.Core
             ret_val = -1;
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
             nobj = 0;
-            nocare = (sflag & (int)SyntaxObjectFlags.VCBIT) == 0;
+            nocare = (sflag & (int)SyntaxObjectFlags.AdventurerMustHave) == 0;
 
             // FIRST SEARCH ADVENTURER
 
-            if ((sflag & (int)SyntaxObjectFlags.VABIT) != 0)
+            if ((sflag & (int)SyntaxObjectFlags.SearchAdventurer) != 0)
             {
                 nobj = FindWhatIMean(sfw1, (ObjectFlags2)sfw2, 0, 0, game.Player.Winner, nocare, game);
             }
 
-            if ((sflag & (int)SyntaxObjectFlags.VRBIT) != 0)
+            if ((sflag & (int)SyntaxObjectFlags.SearchRoom) != 0)
             {
                 goto L100;
             }
@@ -696,7 +696,7 @@ namespace Zork.Core
             // !GET CONTAINER.
             x = game.Objects[obj].Container;
 
-            if (x == 0 || (sflag & (int)SyntaxObjectFlags.VFBIT) == 0)
+            if (x == 0 || (sflag & (int)SyntaxObjectFlags.MustBeReachable) == 0)
             {
                 goto L500;
             }
@@ -711,12 +711,12 @@ namespace Zork.Core
             return ret_val;
 
             L500:
-            if ((sflag & (int)SyntaxObjectFlags.VRBIT) == 0)
+            if ((sflag & (int)SyntaxObjectFlags.SearchRoom) == 0)
             {
                 goto L1000;
             }
 
-            if ((sflag & (int)SyntaxObjectFlags.VTBIT) == 0)
+            if ((sflag & (int)SyntaxObjectFlags.TryTake) == 0)
             {
                 goto L2000;
             }
@@ -736,7 +736,7 @@ namespace Zork.Core
             }
 
             // NOT TAKEABLE.  IF WE CARE, FAIL.
-            if ((sflag & (int)SyntaxObjectFlags.VCBIT) == 0)
+            if ((sflag & (int)SyntaxObjectFlags.AdventurerMustHave) == 0)
             {
                 goto L4000;
             }
@@ -748,7 +748,7 @@ namespace Zork.Core
             // 2000--	IT CANT BE TAKEN.
 
             L2000:
-            if ((sflag & (int)SyntaxObjectFlags.VCBIT) == 0)
+            if ((sflag & (int)SyntaxObjectFlags.AdventurerMustHave) == 0)
             {
                 goto L4000;
             }
@@ -860,6 +860,7 @@ namespace Zork.Core
             {
                 return;
             }
+
             game.Syntax.dfl1 = -1;
             // !ASSUME STD.
             game.Syntax.dfl2 = -1;
@@ -870,7 +871,7 @@ namespace Zork.Core
             game.Syntax.dfw1 = -1;
             // !YES.
             game.Syntax.dfw2 = -1;
-            game.Syntax.dobj = (int)SyntaxObjectFlags.VABIT + (int)SyntaxObjectFlags.VRBIT + (int)SyntaxObjectFlags.VFBIT;
+            game.Syntax.dobj = (int)SyntaxObjectFlags.SearchAdventurer + (int)SyntaxObjectFlags.SearchRoom + (int)SyntaxObjectFlags.MustBeReachable;
             goto L200;
 
             L100:
@@ -1508,7 +1509,7 @@ namespace Zork.Core
                 L2000:
 
                 game.ParserVectors.prsa = VerbIds.Walk;
-                game.ParserVectors.prso = (ObjectIds)ParserConstants.Directions[j + 1];
+                game.ParserVectors.DirectObject = (ObjectIds)ParserConstants.Directions[j + 1];
 
                 ret_val = 1;
                 return ret_val;
@@ -1961,21 +1962,21 @@ namespace Zork.Core
             ret_val = true;
             // !ASSUME WINS.
 
-            if (game.ParserVectors.prso > (ObjectIds)220)
+            if (game.ParserVectors.DirectObject > (ObjectIds)220)
             {
                 goto L5;
             }
 
-            if (game.ParserVectors.prso != 0)
+            if (game.ParserVectors.DirectObject != 0)
             {
-                odo2 = game.Objects[game.ParserVectors.prso].Description2;
+                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2;
             }
 
             // !SET UP DESCRIPTORS.
             L5:
-            if (game.ParserVectors.prsi != 0)
+            if (game.ParserVectors.IndirectObject != 0)
             {
-                odi2 = game.Objects[game.ParserVectors.prsi].Description2;
+                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2;
             }
 
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
@@ -2024,44 +2025,44 @@ namespace Zork.Core
                 case 20: goto L40000;
                 case 21: goto L41000;
                 case 22: goto L42000;
-                case 23: goto L43000;
-                case 24: goto L44000;
-                case 25: goto L45000;
-                case 26: goto L46000;
-                case 27: goto L47000;
-                case 28: goto L48000;
-                case 29: goto L49000;
-                case 30: goto L50000;
-                case 31: goto L51000;
-                case 32: goto L52000;
-                case 33: goto L53000;
-                case 34: goto L55000;
-                case 35: goto L56000;
-                case 36: goto L58000;
-                case 37: goto L59000;
-                case 38: goto L60000;
-                case 39: goto L63000;
-                case 40: goto L64000;
-                case 41: goto L65000;
-                case 42: goto L66000;
-                case 43: goto LWALK;
-                case 44: goto L69000;
-                case 45: goto L70000;
-                case 46: goto L71000;
-                case 47: goto L72000;
-                case 48: goto L73000;
-                case 49: goto L74000;
-                case 50: goto L77000;
-                case 51: goto L78000;
-                case 52: goto L80000;
-                case 53: goto L81000;
-                case 54: goto L82000;
-                case 55: goto L83000;
-                case 56: goto L84000;
-                case 57: goto L85000;
-                case 58: goto L86000;
-                case 59: goto L87000;
-                case 60: goto L88000;
+                case 23: goto MOVE;
+                case 24: goto TURNON;
+                case 25: goto TURNOFF;
+                case 26: goto OPENVERB;
+                case 27: goto CLOSE;
+                case 28: goto FIND;
+                case 29: goto WAIT;
+                case 30: goto SPIN;
+                case 31: goto BOARD;
+                case 32: goto DISEMBARK;
+                case 33: goto TAKE;
+                case 34: goto INVENTORY;
+                case 35: goto FILL;
+                case 36: goto EAT;
+                case 37: goto DRINK;
+                case 38: goto BURN;
+                case 39: goto MUNG;
+                case 40: goto KILL;
+                case 41: goto SWING;
+                case 42: goto ATTACK;
+                case 43: goto WALK;
+                case 44: goto TELL;
+                case 45: goto PUT;
+                case 46: goto DROP;
+                case 47: goto GIVE;
+                case 48: goto POUR;
+                case 49: goto THROW;
+                case 50: goto SAVE;
+                case 51: goto RESTORE;
+                case 52: goto HELLO;
+                case 53: goto LOOKINTO;
+                case 54: goto LOOKUNDER;
+                case 55: goto PUMP;
+                case 56: goto WIND;
+                case 57: goto CLIMB;
+                case 58: goto CLIMBUP;
+                case 59: goto CLIMBDOWN;
+                case 60: goto TURNTO;
             }
 
             throw new InvalidOperationException("7");
@@ -2094,13 +2095,13 @@ namespace Zork.Core
             return ret_val;
 
             L18100:
-            if (game.ParserVectors.prsi == 0)
+            if (game.ParserVectors.IndirectObject == 0)
             {
                 goto L18200;
             }
 
             // !READ THROUGH OBJ?
-            if ((game.Objects[game.ParserVectors.prsi].Flag1 & ObjectFlags.IsTransparent) != 0)
+            if ((game.Objects[game.ParserVectors.IndirectObject].Flag1 & ObjectFlags.IsTransparent) != 0)
             {
                 goto L18200;
             }
@@ -2110,7 +2111,7 @@ namespace Zork.Core
             return ret_val;
 
             L18200:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.READBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.READBT) != 0)
             {
                 goto L18300;
             }
@@ -2120,9 +2121,9 @@ namespace Zork.Core
             return ret_val;
 
             L18300:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
-                MessageHandler.Speak(game.Objects[game.ParserVectors.prso].oread, game);
+                MessageHandler.Speak(game.Objects[game.ParserVectors.DirectObject].oread, game);
             }
 
             return ret_val;
@@ -2130,7 +2131,7 @@ namespace Zork.Core
             // V101--	MELT.  UNLESS OBJECT HANDLES, JOKE.
 
             L20000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsub_(361, odo2, game);
             }
@@ -2140,7 +2141,7 @@ namespace Zork.Core
             // V102--	INFLATE.  WORKS ONLY WITH BOATS.
 
             L22000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.Speak(368, game);
             }
@@ -2151,7 +2152,7 @@ namespace Zork.Core
             // V103--	DEFLATE.
 
             L23000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.Speak(369, game);
             }
@@ -2164,12 +2165,12 @@ namespace Zork.Core
 
             L24000:
             // !SLEEPING, LET OBJ DO.
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsSleeping) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsSleeping) == 0)
             {
                 goto L24100;
             }
 
-            ret_val = ObjectHandler.objact_(game);
+            ret_val = ObjectHandler.ApplyObjectsFromParseVector(game);
             return ret_val;
 
             L24100:
@@ -2182,14 +2183,14 @@ namespace Zork.Core
 
             L25000:
             // !OBJECTS HANDLE.
-            f = ObjectHandler.objact_(game);
+            f = ObjectHandler.ApplyObjectsFromParseVector(game);
 
             return ret_val;
 
             // V106--	PLUG.  LET OBJECTS HANDLE.
 
             L26000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.Speak(371, game);
             }
@@ -2199,7 +2200,7 @@ namespace Zork.Core
             // V107--	KICK.  IF OBJECT IGNORES, JOKE.
 
             L27000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(378, odo2, rmk, game);
             }
@@ -2209,7 +2210,7 @@ namespace Zork.Core
             // V108--	WAVE.  SAME.
 
             L28000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(379, odo2, rmk, game);
             }
@@ -2220,7 +2221,7 @@ namespace Zork.Core
 
             L29000:
             L30000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(380, odo2, rmk, game);
             }
@@ -2230,7 +2231,7 @@ namespace Zork.Core
             // V111--	RUB.  SAME.
 
             L31000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(381, odo2, rmk, game);
             }
@@ -2240,7 +2241,7 @@ namespace Zork.Core
             // V112--	PUSH.  SAME.
 
             L32000:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(382, odo2, rmk, game);
             }
@@ -2251,7 +2252,7 @@ namespace Zork.Core
             // V113--	UNTIE.  IF OBJECT IGNORES, JOKE.
 
             L33000:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -2259,7 +2260,7 @@ namespace Zork.Core
             // !OBJECT HANDLE?
             i = (ObjectIds)383;
             // !NO, NOT TIED.
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.TIEBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.TIEBT) == 0)
             {
                 i = (ObjectIds)384;
             }
@@ -2270,7 +2271,7 @@ namespace Zork.Core
             // V114--	TIE.  NEVER REALLY WORKS.
 
             L34000:
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.TIEBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.TIEBT) != 0)
             {
                 goto L34100;
             }
@@ -2280,7 +2281,7 @@ namespace Zork.Core
             return ret_val;
 
             L34100:
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsub_(386, odo2, game);
             }
@@ -2290,7 +2291,7 @@ namespace Zork.Core
             // V115--	TIE UP.  NEVER REALLY WORKS.
 
             L35000:
-            if ((game.Objects[game.ParserVectors.prsi].Flag2 & ObjectFlags2.TIEBT) != 0)
+            if ((game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.TIEBT) != 0)
             {
                 goto L35100;
             }
@@ -2303,7 +2304,7 @@ namespace Zork.Core
             i = (ObjectIds)388;
 
             // !ASSUME VILLAIN.
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VILLBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) == 0)
             {
                 i = (ObjectIds)389;
             }
@@ -2315,7 +2316,7 @@ namespace Zork.Core
             // V116--	TURN.  OBJECT MUST HANDLE.
 
             L36000:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.TURNBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.TURNBT) != 0)
             {
                 goto L36100;
             }
@@ -2325,7 +2326,7 @@ namespace Zork.Core
             return ret_val;
 
             L36100:
-            if ((game.Objects[game.ParserVectors.prsi].Flag1 & ObjectFlags.IsTool) != 0)
+            if ((game.Objects[game.ParserVectors.IndirectObject].Flag1 & ObjectFlags.IsTool) != 0)
             {
                 goto L36200;
             }
@@ -2335,7 +2336,7 @@ namespace Zork.Core
             return ret_val;
 
             L36200:
-            ret_val = ObjectHandler.objact_(game);
+            ret_val = ObjectHandler.ApplyObjectsFromParseVector(game);
             // !LET OBJECT HANDLE.
             return ret_val;
 
@@ -2343,14 +2344,14 @@ namespace Zork.Core
 
             L38000:
             game.ParserVectors.prsa = VerbIds.Inflate;
-            game.ParserVectors.prsi = ObjectIds.lungs;
+            game.ParserVectors.IndirectObject = ObjectIds.lungs;
             goto L22000;
             // !HANDLE LIKE INFLATE.
 
             // V118--	KNOCK.  MOSTLY JOKE.
 
             L39000:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -2358,7 +2359,7 @@ namespace Zork.Core
             // !OBJ HANDLE?
             i = (ObjectIds)394;
             // !JOKE FOR DOOR.
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.DOORBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.DOORBT) == 0)
             {
                 i = (ObjectIds)395;
             }
@@ -2370,7 +2371,7 @@ namespace Zork.Core
             // V119--	LOOK.
 
             L40000:
-            if (game.ParserVectors.prso != 0)
+            if (game.ParserVectors.DirectObject != 0)
             {
                 goto L41500;
             }
@@ -2383,7 +2384,7 @@ namespace Zork.Core
             // V120--	EXAMINE.
 
             L41000:
-            if (game.ParserVectors.prso != 0)
+            if (game.ParserVectors.DirectObject != 0)
             {
                 goto L41500;
             }
@@ -2394,13 +2395,13 @@ namespace Zork.Core
             return ret_val;
 
             L41500:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !OBJ HANDLE?
-            i = (ObjectIds)game.Objects[game.ParserVectors.prso].oread;
+            i = (ObjectIds)game.Objects[game.ParserVectors.DirectObject].oread;
             // !GET READING MATERIAL.
             if (i != 0)
             {
@@ -2421,13 +2422,13 @@ namespace Zork.Core
             // V121--	SHAKE.  IF HOLLOW OBJECT, SOME ACTION.
 
             L42000:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !OBJECT HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VILLBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) == 0)
             {
                 goto L42100;
             }
@@ -2438,12 +2439,12 @@ namespace Zork.Core
             return ret_val;
 
             L42100:
-            if (ObjectHandler.IsObjectEmpty(game.ParserVectors.prso, game) || (game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTakeable) == 0)
+            if (ObjectHandler.IsObjectEmpty(game.ParserVectors.DirectObject, game) || (game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) == 0)
             {
                 goto L10;
             }
 
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L42300;
             }
@@ -2459,7 +2460,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 // !SPILL CONTENTS.
-                if (game.Objects[i].Container != game.ParserVectors.prso)
+                if (game.Objects[i].Container != game.ParserVectors.DirectObject)
                 {
                     goto L42500;
                 }
@@ -2493,8 +2494,8 @@ namespace Zork.Core
 
             // V122--	MOVE.  MOSTLY JOKES.
 
-            L43000:
-            if (ObjectHandler.objact_(game))
+            MOVE:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -2502,7 +2503,7 @@ namespace Zork.Core
             // !OBJ HANDLE?
             i = (ObjectIds)398;
             // !ASSUME NOT HERE.
-            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.prso, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game))
             {
                 i = (ObjectIds)399;
             }
@@ -2514,16 +2515,16 @@ namespace Zork.Core
 
             // V123--	TURN ON.
 
-            L44000:
+            TURNON:
             f = RoomHandler.IsRoomLit(game.Player.Here, game);
             // !RECORD IF LIT.
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 goto L44300;
             }
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.LITEBT) != 0
-                && game.Objects[game.ParserVectors.prso].Adventurer == game.Player.Winner)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.LITEBT) != 0
+                && game.Objects[game.ParserVectors.DirectObject].Adventurer == game.Player.Winner)
             {
                 goto L44100;
             }
@@ -2533,7 +2534,7 @@ namespace Zork.Core
             return ret_val;
 
             L44100:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.ONBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsOn) == 0)
             {
                 goto L44200;
             }
@@ -2542,7 +2543,7 @@ namespace Zork.Core
             return ret_val;
 
             L44200:
-            game.Objects[game.ParserVectors.prso].Flag1 |= ObjectFlags.ONBT;
+            game.Objects[game.ParserVectors.DirectObject].Flag1 |= ObjectFlags.IsOn;
             MessageHandler.rspsub_(404, odo2, game);
 
             L44300:
@@ -2555,85 +2556,95 @@ namespace Zork.Core
 
             // V124--	TURN OFF.
 
-            L45000:
-            if (ObjectHandler.objact_(game))
+            TURNOFF:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 goto L45300;
             }
+
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.LITEBT) != 0 &&
-                game.Objects[game.ParserVectors.prso].Adventurer == game.Player.Winner)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.LITEBT) != 0 &&
+                game.Objects[game.ParserVectors.DirectObject].Adventurer == game.Player.Winner)
             {
                 goto L45100;
             }
+
             MessageHandler.Speak(402, game);
             // !CANT DO IT.
             return ret_val;
 
             L45100:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.ONBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsOn) != 0)
             {
                 goto L45200;
             }
+
             MessageHandler.Speak(403, game);
             // !ALREADY OFF.
             return ret_val;
 
             L45200:
-            game.Objects[game.ParserVectors.prso].Flag1 &= ~ObjectFlags.ONBT;
+            game.Objects[game.ParserVectors.DirectObject].Flag1 &= ~ObjectFlags.IsOn;
             MessageHandler.rspsub_(405, odo2, game);
+
             L45300:
             if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
                 MessageHandler.Speak(406, game);
             }
+
             // !MAY BE DARK.
             return ret_val;
 
             // V125--	OPEN.  A FINE MESS.
-
-            L46000:
-            if (ObjectHandler.objact_(game))
+            OPENVERB:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
+
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.CONTBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.CONTBT)))
             {
                 goto L46100;
             }
+
+            // !NOT OPENABLE.
             L46050:
             MessageHandler.rspsub_(407, odo2, game);
-            // !NOT OPENABLE.
             return ret_val;
 
             L46100:
-            if (game.Objects[game.ParserVectors.prso].Capacity != 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Capacity != 0)
             {
                 goto L46200;
             }
-            MessageHandler.rspsub_(408, odo2, game);
+
             // !NOT OPENABLE.
+            MessageHandler.rspsub_(408, odo2, game);
             return ret_val;
 
             L46200:
-            if (!((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsOpen) != 0))
+            if (!((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsOpen) != 0))
             {
                 goto L46225;
             }
-            MessageHandler.Speak(412, game);
+
             // !ALREADY OPEN.
+            MessageHandler.Speak(412, game);
             return ret_val;
 
             L46225:
-            game.Objects[game.ParserVectors.prso].Flag2 |= ObjectFlags2.IsOpen;
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTransparent) != 0 || ObjectHandler.IsObjectEmpty((ObjectIds)game.ParserVectors.prso, game))
+            game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.IsOpen;
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTransparent) != 0 ||
+                ObjectHandler.IsObjectEmpty(game.ParserVectors.DirectObject, game))
             {
                 goto L46300;
             }
 
-            ObjectHandler.PrintDescription(game.ParserVectors.prso, 410, game);
             // !PRINT CONTENTS.
+            ObjectHandler.PrintDescription(game.ParserVectors.DirectObject, 410, game);
+
             return ret_val;
 
             L46300:
@@ -2643,40 +2654,41 @@ namespace Zork.Core
 
             // V126--	CLOSE.
 
-            L47000:
-            if (ObjectHandler.objact_(game))
+            CLOSE:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.CONTBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.CONTBT) == 0)
             {
                 goto L46050;
             }
 
-            if (game.Objects[game.ParserVectors.prso].Capacity != 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Capacity != 0)
             {
                 goto L47100;
             }
 
-            MessageHandler.rspsub_(411, odo2, game);
             // !NOT CLOSABLE.
+            MessageHandler.rspsub_(411, odo2, game);
             return ret_val;
 
             L47100:
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsOpen) != 0)
+            // !OPEN?
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L47200;
             }
 
-            // !OPEN?
-            MessageHandler.Speak(413, game);
             // !NO, JOKE.
+            MessageHandler.Speak(413, game);
+
             return ret_val;
 
             L47200:
-            game.Objects[game.ParserVectors.prso].Flag2 &= ~ObjectFlags2.IsOpen;
+            game.Objects[game.ParserVectors.DirectObject].Flag2 &= ~ObjectFlags2.IsOpen;
             MessageHandler.Speak(414, game);
             // !DONE.
             return ret_val;
@@ -2684,25 +2696,25 @@ namespace Zork.Core
 
             // V127--	FIND.  BIG MEGILLA.
 
-            L48000:
-            if (ObjectHandler.objact_(game))
+            FIND:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
             // !OBJ HANDLE?
             i = (ObjectIds)415;
             // !DEFAULT CASE.
-            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.prso, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game))
             {
                 goto L48300;
             }
             // !IN ROOM?
-            if (game.Objects[game.ParserVectors.prso].Adventurer == game.Player.Winner)
+            if (game.Objects[game.ParserVectors.DirectObject].Adventurer == game.Player.Winner)
             {
                 goto L48200;
             }
             // !ON WINNER?
-            j = game.Objects[game.ParserVectors.prso].Container;
+            j = game.Objects[game.ParserVectors.DirectObject].Container;
             // !DOWN ONE LEVEL.
             if (j == 0)
             {
@@ -2740,7 +2752,7 @@ namespace Zork.Core
 
             // V128--	WAIT.  RUN CLOCK DEMON.
 
-            L49000:
+            WAIT:
             MessageHandler.Speak(419, game);
             // !TIME PASSES.
             for (i = (ObjectIds)1; i <= (ObjectIds)3; ++i)
@@ -2756,9 +2768,9 @@ namespace Zork.Core
             // V129--	SPIN.
             // V159--	TURN TO.
 
-            L50000:
-            L88000:
-            if (!ObjectHandler.objact_(game))
+            SPIN:
+            TURNTO:
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.Speak(663, game);
             }
@@ -2767,8 +2779,8 @@ namespace Zork.Core
 
             // V130--	BOARD.  WORKS WITH VEHICLES.
 
-            L51000:
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VEHBT) != 0)
+            BOARD:
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsVehicle) != 0)
             {
                 goto L51100;
             }
@@ -2777,7 +2789,7 @@ namespace Zork.Core
             return ret_val;
 
             L51100:
-            if (ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.prso, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.DirectObject, game.Player.Here, game))
             {
                 goto L51200;
             }
@@ -2799,7 +2811,7 @@ namespace Zork.Core
             return ret_val;
 
             L51300:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -2808,18 +2820,19 @@ namespace Zork.Core
             MessageHandler.rspsub_(423, odo2, game);
             // !DESCRIBE.
 
-            game.Adventurers[game.Player.Winner].VehicleId = (int)game.ParserVectors.prso;
+            game.Adventurers[game.Player.Winner].VehicleId = (int)game.ParserVectors.DirectObject;
 
             if (game.Player.Winner != ActorIds.Player)
             {
-                game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Container = game.ParserVectors.prso;
+                game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Container = game.ParserVectors.DirectObject;
             }
+
             return ret_val;
 
             // V131--	DISEMBARK.
 
-            L52000:
-            if (av == game.ParserVectors.prso)
+            DISEMBARK:
+            if (av == game.ParserVectors.DirectObject)
             {
                 goto L52100;
             }
@@ -2829,15 +2842,17 @@ namespace Zork.Core
             return ret_val;
 
             L52100:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
+
             // !OBJ HANDLE?
             if ((game.Rooms[game.Player.Here].Flags & RoomFlags.LAND) != 0)
             {
                 goto L52200;
             }
+
             MessageHandler.Speak(425, game);
             // !NOT ON LAND.
             return ret_val;
@@ -2854,21 +2869,21 @@ namespace Zork.Core
 
             // V132--	TAKE.  HANDLED EXTERNALLY.
 
-            L53000:
+            TAKE:
             ret_val = dverb1.TakeParsedObject(game, true);
             return ret_val;
 
             // V133--	INVENTORY.  PROCESSED EXTERNALLY.
 
-            L55000:
+            INVENTORY:
             AdventurerHandler.PrintContents(game.Player.Winner, game);
             return ret_val;
             // VAPPLI, PAGE 8
 
             // V134--	FILL.  STRANGE DOINGS WITH WATER.
 
-            L56000:
-            if (game.ParserVectors.prsi != 0)
+            FILL:
+            if (game.ParserVectors.IndirectObject != 0)
             {
                 goto L56050;
             }
@@ -2887,16 +2902,16 @@ namespace Zork.Core
             return ret_val;
 
             L56025:
-            game.ParserVectors.prsi = ObjectIds.gwate;
+            game.ParserVectors.IndirectObject = ObjectIds.gwate;
 
             // !USE GLOBAL WATER.
             L56050:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
             // !OBJ HANDLE?
-            if (game.ParserVectors.prsi != ObjectIds.gwate && game.ParserVectors.prsi != ObjectIds.Water)
+            if (game.ParserVectors.IndirectObject != ObjectIds.gwate && game.ParserVectors.IndirectObject != ObjectIds.Water)
             {
                 MessageHandler.rspsb2_(444, odi2, odo2, game);
             }
@@ -2904,28 +2919,28 @@ namespace Zork.Core
 
             // V135,V136--	EAT/DRINK
 
-            L58000:
-            L59000:
+            EAT:
+            DRINK:
             // !OBJ HANDLE?
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !DRINK GLOBAL WATER?
-            if (game.ParserVectors.prso == ObjectIds.gwate)
+            if (game.ParserVectors.DirectObject == ObjectIds.gwate)
             {
                 goto L59500;
             }
 
             // !EDIBLE?
-            if (!((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.FOODBT) != 0))
+            if (!((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.FOODBT) != 0))
             {
                 goto L59400;
             }
 
             // !YES, ON WINNER?
-            if (game.Objects[game.ParserVectors.prso].Adventurer == game.Player.Winner)
+            if (game.Objects[game.ParserVectors.DirectObject].Adventurer == game.Player.Winner)
             {
                 goto L59200;
             }
@@ -2943,7 +2958,7 @@ namespace Zork.Core
             }
 
             // !NO, IT DISAPPEARS.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 455, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 455, 0, 0, 0, game);
             return ret_val;
 
             L59300:
@@ -2953,23 +2968,23 @@ namespace Zork.Core
 
             L59400:
             // !DRINKABLE?
-            if (!((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.DRNKBT) != 0))
+            if (!((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.DRNKBT) != 0))
             {
                 goto L59600;
             }
 
             // !YES, IN SOMETHING?
-            if (game.Objects[game.ParserVectors.prso].Container == 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Container == 0)
             {
                 goto L59100;
             }
 
-            if (game.Objects[game.Objects[game.ParserVectors.prso].Container].Adventurer != game.Player.Winner)
+            if (game.Objects[game.Objects[game.ParserVectors.DirectObject].Container].Adventurer != game.Player.Winner)
             {
                 goto L59100;
             }
 
-            if ((game.Objects[game.Objects[game.ParserVectors.prso].Container].Flag2 & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.Objects[game.ParserVectors.DirectObject].Container].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L59500;
             }
@@ -2980,7 +2995,7 @@ namespace Zork.Core
             return ret_val;
 
             L59500:
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 458, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 458, 0, 0, 0, game);
             // !GONE.
             return ret_val;
 
@@ -2991,37 +3006,37 @@ namespace Zork.Core
 
             // V137--	BURN.  COMPLICATED.
 
-            L60000:
-            if (((int)game.Objects[game.ParserVectors.prsi].Flag1 & (int)ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.ONBT) != ((int)ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.ONBT))
+            BURN:
+            if (((int)game.Objects[game.ParserVectors.IndirectObject].Flag1 & (int)ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.IsOn) != ((int)ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.IsOn))
             {
                 goto L60400;
             }
 
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !OBJ HANDLE?
-            if (game.Objects[game.ParserVectors.prso].Container != ObjectIds.recep)
+            if (game.Objects[game.ParserVectors.DirectObject].Container != ObjectIds.recep)
             {
                 goto L60050;
             }
 
             // !BALLOON?
-            if (ObjectHandler.oappli_(game.Objects[ObjectIds.Balloon].oactio, 0, game))
+            if (ObjectHandler.DoObjectSpecialAction(game.Objects[ObjectIds.Balloon].Action, 0, game))
             {
                 return ret_val;
             }
 
             // !DID IT HANDLE?
             L60050:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.BURNBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.BURNBT) == 0)
             {
                 goto L60300;
             }
 
-            if (game.Objects[game.ParserVectors.prso].Adventurer != game.Player.Winner)
+            if (game.Objects[game.ParserVectors.DirectObject].Adventurer != game.Player.Winner)
             {
                 goto L60100;
             }
@@ -3033,10 +3048,10 @@ namespace Zork.Core
             return ret_val;
 
             L60100:
-            j = game.Objects[game.ParserVectors.prso].Container;
+            j = game.Objects[game.ParserVectors.DirectObject].Container;
 
             // !GET CONTAINER.
-            if (ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.prso, game.Player.Here, game)
+            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game)
                 || av != 0
                 && j == av)
             {
@@ -3055,7 +3070,7 @@ namespace Zork.Core
             }
 
             // !OPEN?
-            if (ObjectHandler.IsObjectInRoom((ObjectIds)j, game.Player.Here, game)
+            if (ObjectHandler.IsObjectInRoom(j, game.Player.Here, game)
                 || av != 0
                 && game.Objects[j].Container == av)
             {
@@ -3071,7 +3086,7 @@ namespace Zork.Core
             MessageHandler.rspsub_(462, odo2, game);
 
             // !BURN IT.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.prso, 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 0, 0, 0, 0, game);
             return ret_val;
 
             L60300:
@@ -3087,15 +3102,15 @@ namespace Zork.Core
 
             // V138--	MUNG.  GO TO COMMON ATTACK CODE.
 
-            L63000:
+            MUNG:
             i = (ObjectIds)466;
             // !CHOOSE PHRASE.
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VILLBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) != 0)
             {
                 goto L66100;
             }
 
-            if (!ObjectHandler.objact_(game))
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsb2_(466, odo2, rmk, game);
             }
@@ -3104,33 +3119,33 @@ namespace Zork.Core
 
             // V139--	KILL.  GO TO COMMON ATTACK CODE.
 
-            L64000:
+            KILL:
             i = (ObjectIds)467;
             // !CHOOSE PHRASE.
             goto L66100;
 
             // V140--	SWING.  INVERT OBJECTS, FALL THRU TO ATTACK.
 
-            L65000:
-            j = game.ParserVectors.prso;
+            SWING:
+            j = game.ParserVectors.DirectObject;
             // !INVERT.
-            game.ParserVectors.prso = game.ParserVectors.prsi;
-            game.ParserVectors.prsi = j;
+            game.ParserVectors.DirectObject = game.ParserVectors.IndirectObject;
+            game.ParserVectors.IndirectObject = j;
             j = (ObjectIds)odo2;
             odo2 = odi2;
             odi2 = (int)j;
-            game.ParserVectors.prsa = VerbIds.attacw;
+            game.ParserVectors.prsa = VerbIds.Attack;
             // !FOR OBJACT.
 
             // V141--	ATTACK.  FALL THRU TO ATTACK CODE.
 
-            L66000:
+            ATTACK:
             i = (ObjectIds)468;
 
             // COMMON MUNG/ATTACK/SWING/KILL CODE.
 
             L66100:
-            if (game.ParserVectors.prso != 0)
+            if (game.ParserVectors.DirectObject != 0)
             {
                 goto L66200;
             }
@@ -3141,17 +3156,17 @@ namespace Zork.Core
             return ret_val;
 
             L66200:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VILLBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) != 0)
             {
                 goto L66300;
             }
 
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.VICTBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.VICTBT) == 0)
             {
                 MessageHandler.rspsub_(470, odo2, game);
             }
@@ -3161,12 +3176,12 @@ namespace Zork.Core
             L66300:
             j = (ObjectIds)471;
             // !ASSUME NO WEAPON.
-            if (game.ParserVectors.prsi == 0)
+            if (game.ParserVectors.IndirectObject == 0)
             {
                 goto L66500;
             }
 
-            if ((game.Objects[game.ParserVectors.prsi].Flag2 & ObjectFlags2.WEAPBT) == 0)
+            if ((game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsWeapon) == 0)
             {
                 goto L66400;
             }
@@ -3174,13 +3189,13 @@ namespace Zork.Core
             melee = (RoomIds)1;
 
             // !ASSUME SWORD.
-            if (game.ParserVectors.prsi != ObjectIds.Sword)
+            if (game.ParserVectors.IndirectObject != ObjectIds.Sword)
             {
                 melee = (RoomIds)2;
             }
 
             // !MUST BE KNIFE.
-            i = (ObjectIds)DemonHandler.StrikeBlow(game, ActorIds.Player, game.ParserVectors.prso, (int)melee, true, 0);
+            i = (ObjectIds)DemonHandler.StrikeBlow(game, ActorIds.Player, game.ParserVectors.DirectObject, (int)melee, true, 0);
             // !STRIKE BLOW.
             return ret_val;
 
@@ -3195,34 +3210,34 @@ namespace Zork.Core
 
             // V142--	WALK.  PROCESSED EXTERNALLY.
 
-            LWALK:
+            WALK:
             ret_val = dverb2.walk_(game);
             return ret_val;
 
             // V143--	TELL.  PROCESSED IN GAME.
 
-            L69000:
+            TELL:
             MessageHandler.Speak(603, game);
             return ret_val;
 
             // V144--	PUT.  PROCESSED EXTERNALLY.
 
-            L70000:
+            PUT:
             ret_val = dverb1.put_(game, true);
             return ret_val;
 
             // V145,V146,V147,V148--	DROP/GIVE/POUR/THROW
 
-            L71000:
-            L72000:
-            L73000:
-            L74000:
+            DROP:
+            GIVE:
+            POUR:
+            THROW:
             ret_val = dverb1.drop_(game, false);
             return ret_val;
 
             // V149--	SAVE
 
-            L77000:
+            SAVE:
             if ((game.Rooms[RoomIds.tstrs].Flags & RoomFlags.SEEN) == 0)
             {
                 goto L77100;
@@ -3238,7 +3253,7 @@ namespace Zork.Core
 
             // V150--	RESTORE
 
-            L78000:
+            RESTORE:
             if ((game.Rooms[RoomIds.tstrs].Flags & RoomFlags.SEEN) == 0)
             {
                 goto L78100;
@@ -3255,21 +3270,20 @@ namespace Zork.Core
 
             // V151--	HELLO
 
-            L80000:
-            if (game.ParserVectors.prso != 0)
+            HELLO:
+            if (game.ParserVectors.DirectObject != 0)
             {
                 goto L80100;
             }
 
             // !ANY OBJ?
-            i__1 = game.rnd_(4) + 346;
             // !NO, VANILLA HELLO.
-            MessageHandler.Speak(i__1, game);
+            MessageHandler.Speak(game.rnd_(4) + 346, game);
             return ret_val;
 
             L80100:
             // !HELLO AVIATOR?
-            if (game.ParserVectors.prso != ObjectIds.aviat)
+            if (game.ParserVectors.DirectObject != ObjectIds.Aviator)
             {
                 goto L80200;
             }
@@ -3280,7 +3294,7 @@ namespace Zork.Core
 
             L80200:
             // !HELLO SAILOR?
-            if (game.ParserVectors.prso != ObjectIds.sailo)
+            if (game.ParserVectors.DirectObject != ObjectIds.Sailor)
             {
                 goto L80300;
             }
@@ -3306,7 +3320,7 @@ namespace Zork.Core
             return ret_val;
 
             L80300:
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -3314,7 +3328,7 @@ namespace Zork.Core
             // !OBJ HANDLE?
             i = (ObjectIds)354;
             // !ASSUME VILLAIN.
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & (int)ObjectFlags2.VILLBT + ObjectFlags2.ACTRBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & (int)ObjectFlags2.VILLBT + ObjectFlags2.ACTRBT) == 0)
             {
                 i = (ObjectIds)355;
             }
@@ -3326,19 +3340,19 @@ namespace Zork.Core
 
             // V152--	LOOK INTO
 
-            L81000:
-            if (ObjectHandler.objact_(game))
+            LOOKINTO:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
 
             // !OBJ HANDLE?
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.DOORBT) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.DOORBT) == 0)
             {
                 goto L81300;
             }
 
-            if (!((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsOpen) != 0))
+            if (!((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsOpen) != 0))
             {
                 goto L81200;
             }
@@ -3354,46 +3368,46 @@ namespace Zork.Core
             return ret_val;
 
             L81300:
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VEHBT) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2.HasFlag(ObjectFlags2.IsVehicle)))
             {
                 goto L81400;
             }
 
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsOpen) != 0
-                || (game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTransparent) != 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Flag2.HasFlag(ObjectFlags2.IsOpen) ||
+                game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.IsTransparent))
             {
                 goto L81400;
             }
 
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.CONTBT) != 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.CONTBT))
             {
                 goto L81200;
             }
 
-            MessageHandler.rspsub_(630, odo2, game);
             // !CANT LOOK INSIDE.
+            MessageHandler.rspsub_(630, odo2, game);
             return ret_val;
 
             L81400:
-            if (ObjectHandler.IsObjectEmpty((ObjectIds)game.ParserVectors.prso, game))
+            // !VEH OR SEE IN.  EMPTY?
+            if (ObjectHandler.IsObjectEmpty(game.ParserVectors.DirectObject, game))
             {
                 goto L81500;
             }
 
-            // !VEH OR SEE IN.  EMPTY?
-            ObjectHandler.PrintDescription(game.ParserVectors.prso, 573, game);
             // !NO, LIST CONTENTS.
+            ObjectHandler.PrintDescription(game.ParserVectors.DirectObject, 573, game);
             return ret_val;
 
             L81500:
-            MessageHandler.rspsub_(629, odo2, game);
             // !EMPTY.
+            MessageHandler.rspsub_(629, odo2, game);
             return ret_val;
 
             // V153--	LOOK UNDER
 
-            L82000:
-            if (!ObjectHandler.objact_(game))
+            LOOKUNDER:
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.Speak(631, game);
             }
@@ -3404,20 +3418,22 @@ namespace Zork.Core
 
             // V154--	PUMP
 
-            L83000:
-            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Pump, game).Id == game.Player.Here
-              || game.Objects[ObjectIds.Pump].Adventurer == game.Player.Winner)
+            PUMP:
+            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Pump, game).Id == game.Player.Here ||
+                game.Objects[ObjectIds.Pump].Adventurer == game.Player.Winner)
             {
                 goto L83100;
             }
 
-            MessageHandler.Speak(632, game);
             // !NO.
+            MessageHandler.Speak(632, game);
+
             return ret_val;
 
             L83100:
             // !BECOMES INFLATE
-            game.ParserVectors.prsi = ObjectIds.Pump;
+            game.ParserVectors.IndirectObject = ObjectIds.Pump;
+
             // !X WITH PUMP.
             game.ParserVectors.prsa = VerbIds.Inflate;
 
@@ -3426,8 +3442,8 @@ namespace Zork.Core
 
             // V155--	WIND
 
-            L84000:
-            if (!ObjectHandler.objact_(game))
+            WIND:
+            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 MessageHandler.rspsub_(634, odo2, game);
             }
@@ -3439,9 +3455,9 @@ namespace Zork.Core
             // V157--	CLIMB UP
             // V158--	CLIMB DOWN
 
-            L85000:
-            L86000:
-            L87000:
+            CLIMB:
+            CLIMBUP:
+            CLIMBDOWN:
             // !ASSUME UP.
             i = (ObjectIds)XSearch.xup;
 
@@ -3452,13 +3468,13 @@ namespace Zork.Core
             }
 
             // !ANYTHING TO CLIMB?
-            f = (game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.IsClimbable) != 0;
+            f = (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsClimbable) != 0;
             if (f && dso3.FindExit(game, (int)i, game.Player.Here))
             {
                 goto L87500;
             }
 
-            if (ObjectHandler.objact_(game))
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
@@ -3471,9 +3487,9 @@ namespace Zork.Core
             }
 
             // !VARIETY OF JOKES.
-            if (!f && (game.ParserVectors.prso == ObjectIds.wall
-                || game.ParserVectors.prso >= ObjectIds.wnort
-                && game.ParserVectors.prso <= ObjectIds.wnort + 3))
+            if (!f && (game.ParserVectors.DirectObject == ObjectIds.Wall
+                || game.ParserVectors.DirectObject >= ObjectIds.wnort
+                && game.ParserVectors.DirectObject <= ObjectIds.wnort + 3))
             {
                 i = (ObjectIds)656;
             }
@@ -3486,7 +3502,7 @@ namespace Zork.Core
             // !WALK
             game.ParserVectors.prsa = VerbIds.Walk;
             // !IN SPECIFIED DIR.
-            game.ParserVectors.prso = i;
+            game.ParserVectors.DirectObject = i;
 
             ret_val = dverb2.walk_(game);
             return ret_val;
@@ -3520,15 +3536,15 @@ namespace Zork.Core
 
             ret_val = true;
             // !ASSUME WINS.
-            if (game.ParserVectors.prso != 0)
+            if (game.ParserVectors.DirectObject != 0)
             {
-                odo2 = game.Objects[game.ParserVectors.prso].Description2;
+                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2;
             }
 
             // !SET UP DESCRIPTORS.
-            if (game.ParserVectors.prsi != 0)
+            if (game.ParserVectors.IndirectObject != 0)
             {
-                odi2 = game.Objects[game.ParserVectors.prsi].Description2;
+                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2;
             }
 
             if (ri == 0)
@@ -3553,37 +3569,37 @@ namespace Zork.Core
             switch (ri - mxjoke)
             {
                 case 1: goto L65000;
-                case 2: goto L66000;
-                case 3: goto L67000;
+                case 2: goto OBJECTS;
+                case 3: goto ROOMNAME;
                 case 4: goto L68000;
                 case 5: goto L69000;
-                case 6: goto L1000;
-                case 7: goto L2000;
-                case 8: goto L3000;
-                case 9: goto L4000;
-                case 10: goto L5000;
-                case 11: goto L6000;
-                case 12: goto L7000;
-                case 13: goto L8000;
+                case 6: goto BRIEF;
+                case 7: goto VERBOSE;
+                case 8: goto SUPERBRIEF;
+                case 9: goto STAY;
+                case 10: goto VERSION;
+                case 11: goto SWIM;
+                case 12: goto GERONIMO;
+                case 13: goto SINBAD;
                 case 14: goto L9000;
-                case 15: goto L10000;
-                case 16: goto L11000;
-                case 17: goto L12000;
-                case 18: goto L13000;
-                case 19: goto L14000;
-                case 20: goto L15000;
-                case 21: goto L16000;
+                case 15: goto PRAY;
+                case 16: goto TREASURE;
+                case 17: goto TEMPLE;
+                case 18: goto BLAST;
+                case 19: goto SCORE;
+                case 20: goto QUIT;
+                case 21: goto FOLLOW;
                 case 22: goto L17000;
-                case 23: goto L18000;
-                case 24: goto L19000;
-                case 25: goto L20000;
-                case 26: goto L21000;
-                case 27: goto L22000;
-                case 28: goto L23000;
-                case 29: goto L24000;
-                case 30: goto L25000;
+                case 23: goto RING;
+                case 24: goto BRUSH;
+                case 25: goto DIG;
+                case 26: goto TIME;
+                case 27: goto LEAP;
+                case 28: goto LOCK;
+                case 29: goto UNLOCK;
+                case 30: goto DIAGNOSE;
                 case 31: goto L26000;
-                case 32: goto L27000;
+                case 32: goto ANSWER;
             }
 
             throw new InvalidOperationException();
@@ -3616,15 +3632,15 @@ namespace Zork.Core
             // V65--	ROOM
 
             L65000:
-            ret_val = RoomHandler.RoomDescription(game, 2);
             // !DESCRIBE ROOM ONLY.
+            ret_val = RoomHandler.RoomDescription(game, 2);
             return ret_val;
 
             // V66--	OBJECTS
 
-            L66000:
-            ret_val = RoomHandler.RoomDescription(game, 1);
+            OBJECTS:
             // !DESCRIBE OBJ ONLY.
+            ret_val = RoomHandler.RoomDescription(game, 1);
             if (!game.Player.TelFlag)
             {
                 MessageHandler.rspeak_(game, 138);
@@ -3634,7 +3650,7 @@ namespace Zork.Core
 
             // V67--	RNAME
 
-            L67000:
+            ROOMNAME:
             i__1 = game.Rooms[game.Player.Here].Description2;
             MessageHandler.rspeak_(game, i__1);
             // !SHORT ROOM NAME.
@@ -3653,7 +3669,7 @@ namespace Zork.Core
 
             // V70--	BRIEF.  SET FLAG.
 
-            L1000:
+            BRIEF:
             game.Flags.BriefDescriptions = true;
             // !BRIEF DESCRIPTIONS.
             game.Flags.SuperBriefDescriptions = false;
@@ -3662,7 +3678,7 @@ namespace Zork.Core
 
             // V71--	VERBOSE.  CLEAR FLAGS.
 
-            L2000:
+            VERBOSE:
             game.Flags.BriefDescriptions = false;
             // !LONG DESCRIPTIONS.
             game.Flags.SuperBriefDescriptions = false;
@@ -3671,17 +3687,19 @@ namespace Zork.Core
 
             // V72--	SUPERBRIEF.  SET FLAG.
 
-            L3000:
+            SUPERBRIEF:
             game.Flags.SuperBriefDescriptions = true;
             MessageHandler.rspeak_(game, 328);
             return ret_val;
 
             // V73-- STAY (USED IN ENDGAME).
 
-            L4000:
-            if (game.Player.Winner != ActorIds.Master) {
+            STAY:
+            if (game.Player.Winner != ActorIds.Master)
+            {
                 goto L4100;
             }
+
             // !TELL MASTER, STAY.
             MessageHandler.rspeak_(game, 781);
             // !HE DOES.
@@ -3694,12 +3712,13 @@ namespace Zork.Core
             {
                 MessageHandler.rspeak_(game, 664);
             }
+
             // !JOKE.
             return ret_val;
 
             // V74--	VERSION.  PRINT INFO.
 
-            L5000:
+            VERSION:
             MessageHandler.more_output(game, string.Empty);
 //            game.WriteOutputLine("V%1d.%1d%c\n", vers_1.vmaj, vers_1.vmin, vers_1.vedit);
             game.Player.TelFlag = true;
@@ -3707,7 +3726,7 @@ namespace Zork.Core
 
             // V75--	SWIM.  ALWAYS A JOKE.
 
-            L6000:
+            SWIM:
             i = 330;
             // !ASSUME WATER.
             if ((game.Rooms[game.Player.Here].Flags & (int)RoomFlags.WATER + RoomFlags.RFILL) == 0)
@@ -3720,14 +3739,16 @@ namespace Zork.Core
 
             // V76--	GERONIMO.  IF IN BARREL, FATAL, ELSE JOKE.
 
-            L7000:
-            if (game.Player.Here == RoomIds.mbarr)
+            GERONIMO:
+            // !IN BARREL?
+            if (game.Player.Here == RoomIds.Barrel)
             {
                 goto L7100;
             }
-            // !IN BARREL?
-            MessageHandler.rspeak_(game, 334);
+
             // !NO, JOKE.
+            MessageHandler.rspeak_(game, 334);
+
             return ret_val;
 
             L7100:
@@ -3737,8 +3758,8 @@ namespace Zork.Core
 
             // V77--	SINBAD ET AL.  CHASE CYCLOPS, ELSE JOKE.
 
-            L8000:
-            if (game.Player.Here == RoomIds.mcycl && ObjectHandler.IsObjectInRoom(ObjectIds.cyclo, game.Player.Here, game))
+            SINBAD:
+            if (game.Player.Here == RoomIds.Cyclops && ObjectHandler.IsObjectInRoom(ObjectIds.Cyclops, game.Player.Here, game))
             {
                 goto L8100;
             }
@@ -3748,12 +3769,14 @@ namespace Zork.Core
             return ret_val;
 
             L8100:
-            ObjectHandler.SetNewObjectStatus(ObjectIds.cyclo, 337, 0, 0, 0, game);
             // !CYCLOPS FLEES.
-            game.Flags.cyclof = true;
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Cyclops, 337, 0, 0, 0, game);
+
             // !SET ALL FLAGS.
-            game.Flags.magicf = true;
-            game.Objects[ObjectIds.cyclo].Flag2 &= ~ObjectFlags2.FITEBT;
+            game.Flags.cyclof = true;
+            game.Flags.IsDoorToCyclopsRoomOpen = true;
+
+            game.Objects[ObjectIds.Cyclops].Flag2 &= ~ObjectFlags2.FITEBT;
             return ret_val;
 
             // V78--	WELL.  OPEN DOOR, ELSE JOKE.
@@ -3777,20 +3800,23 @@ namespace Zork.Core
             // V79--	PRAY.  IF IN TEMP2, POOF
             // !
 
-            L10000:
-            if (game.Player.Here != RoomIds.temp2)
+            PRAY:
+            // !IN TEMPLE?
+            if (game.Player.Here != RoomIds.Temple2)
             {
                 goto L10050;
             }
-            // !IN TEMPLE?
+
+            // !FORE1 STILL THERE?
             if (AdventurerHandler.moveto_(game, RoomIds.Forest1, game.Player.Winner))
             {
                 goto L10100;
             }
-            // !FORE1 STILL THERE?
+
             L10050:
-            MessageHandler.rspeak_(game, 340);
             // !JOKE.
+            MessageHandler.rspeak_(game, 340);
+
             return ret_val;
 
             L10100:
@@ -3801,34 +3827,36 @@ namespace Zork.Core
             // V80--	TREASURE.  IF IN TEMP1, POOF
             // !
 
-            L11000:
-            if (game.Player.Here != RoomIds.temp1)
+            TREASURE:
+            // !IN TEMPLE?
+            if (game.Player.Here != RoomIds.Temple1)
             {
                 goto L11050;
             }
 
-            // !IN TEMPLE?
+            // !TREASURE ROOM THERE?
             if (AdventurerHandler.moveto_(game, RoomIds.Treasure, game.Player.Winner))
             {
                 goto L10100;
             }
-            // !TREASURE ROOM THERE?
+
             L11050:
-            MessageHandler.rspeak_(game, 341);
             // !NOTHING HAPPENS.
+            MessageHandler.rspeak_(game, 341);
+
             return ret_val;
 
             // V81--	TEMPLE.  IF IN TREAS, POOF
             // !
 
-            L12000:
+            TEMPLE:
             if (game.Player.Here != RoomIds.Treasure)
             {
                 goto L12050;
             }
 
             // !IN TREASURE?
-            if (AdventurerHandler.moveto_(game, RoomIds.temp1, game.Player.Winner))
+            if (AdventurerHandler.moveto_(game, RoomIds.Temple1, game.Player.Winner))
             {
                 goto L10100;
             }
@@ -3840,10 +3868,10 @@ namespace Zork.Core
 
             // V82--	BLAST.  USUALLY A JOKE.
 
-            L13000:
+            BLAST:
             i = 342;
             // !DONT UNDERSTAND.
-            if (game.ParserVectors.prso == ObjectIds.safe)
+            if (game.ParserVectors.DirectObject == ObjectIds.safe)
             {
                 i = 252;
             }
@@ -3853,13 +3881,13 @@ namespace Zork.Core
 
             // V83--	SCORE.  PRINT SCORE.
 
-            L14000:
+            SCORE:
             AdventurerHandler.PrintScore(game, false);
             return ret_val;
 
             // V84--	QUIT.  FINISH OUT THE GAME.
 
-            L15000:
+            QUIT:
             // !TELLL SCORE.
             AdventurerHandler.PrintScore(game, true);
             // !ASK FOR Y/N DECISION.
@@ -3875,7 +3903,7 @@ namespace Zork.Core
 
             // V85--	FOLLOW (USED IN ENDGAME)
 
-            L16000:
+            FOLLOW:
             if (game.Player.Winner != ActorIds.Master)
             {
                 return ret_val;
@@ -3891,8 +3919,8 @@ namespace Zork.Core
 
             L17000:
             if (game.Screen.scolrm == 0
-                || game.ParserVectors.prso != ObjectIds.scol
-                && (game.ParserVectors.prso != ObjectIds.wnort
+                || game.ParserVectors.DirectObject != ObjectIds.ScreenOfLight
+                && (game.ParserVectors.DirectObject != ObjectIds.wnort
                 || game.Player.Here != RoomIds.bkbox))
             {
                 goto L17100;
@@ -3901,7 +3929,7 @@ namespace Zork.Core
             // !WALKED THRU SCOL.
             game.Screen.scolac = game.Screen.scolrm;
             // !FAKE OUT FROMDR.
-            game.ParserVectors.prso = 0;
+            game.ParserVectors.DirectObject = 0;
 
             // !START ALARM.
             game.Clock.Ticks[(int)ClockIndices.cevscl - 1] = 6;
@@ -3926,7 +3954,7 @@ namespace Zork.Core
             for (i = 1; i <= 12; i += 3)
             {
                 // !WALK THRU PROPER WALL?
-                if (game.Screen.scolwl[i - 1] == (int)game.Player.Here && game.Screen.scolwl[i] == (int)game.ParserVectors.prso)
+                if (game.Screen.scolwl[i - 1] == (int)game.Player.Here && game.Screen.scolwl[i] == (int)game.ParserVectors.DirectObject)
                 {
                     goto L17500;
                 }
@@ -3934,14 +3962,14 @@ namespace Zork.Core
             }
 
             L17300:
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTakeable) != 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) != 0)
             {
                 goto L17400;
             }
 
             i = 669;
             // !NO, JOKE.
-            if (game.ParserVectors.prso == ObjectIds.scol)
+            if (game.ParserVectors.DirectObject == ObjectIds.ScreenOfLight)
             {
                 i = 670;
             }
@@ -3953,7 +3981,7 @@ namespace Zork.Core
             L17400:
             i = 671;
             // !JOKE.
-            if (RoomHandler.GetRoomThatContainsObject(game.ParserVectors.prso, game).Id != 0)
+            if (RoomHandler.GetRoomThatContainsObject(game.ParserVectors.DirectObject, game).Id != 0)
             {
                 i = game.rnd_(5) + 552;
             }
@@ -3963,12 +3991,12 @@ namespace Zork.Core
             return ret_val;
 
             L17500:
-            game.ParserVectors.prso = (ObjectIds)game.Screen.scolwl[i + 1];
+            game.ParserVectors.DirectObject = (ObjectIds)game.Screen.scolwl[i + 1];
             // !THRU SCOL WALL...
             for (i = 1; i <= 8; i += 2)
             {
                 // !FIND MATCHING ROOM.
-                if (game.ParserVectors.prso == (ObjectIds)game.Screen.scoldr[i - 1])
+                if (game.ParserVectors.DirectObject == (ObjectIds)game.Screen.scoldr[i - 1])
                 {
                     game.Screen.scolrm = game.Screen.scoldr[i];
                 }
@@ -3988,10 +4016,10 @@ namespace Zork.Core
 
             // V87--	RING.  A JOKE.
 
-            L18000:
+            RING:
             i = 359;
             // !CANT RING.
-            if (game.ParserVectors.prso == ObjectIds.bell)
+            if (game.ParserVectors.DirectObject == ObjectIds.Bell)
             {
                 i = 360;
             }
@@ -4003,8 +4031,8 @@ namespace Zork.Core
 
             // V88--	BRUSH.  JOKE WITH OBSCURE TRAP.
 
-            L19000:
-            if (game.ParserVectors.prso == ObjectIds.teeth)
+            BRUSH:
+            if (game.ParserVectors.DirectObject == ObjectIds.Teeth)
             {
                 goto L19100;
             }
@@ -4016,7 +4044,7 @@ namespace Zork.Core
             return ret_val;
 
             L19100:
-            if (game.ParserVectors.prsi != 0)
+            if (game.ParserVectors.IndirectObject != 0)
             {
                 goto L19200;
             }
@@ -4027,7 +4055,8 @@ namespace Zork.Core
             return ret_val;
 
             L19200:
-            if (game.ParserVectors.prsi == ObjectIds.putty && game.Objects[ObjectIds.putty].Adventurer == game.Player.Winner)
+            if (game.ParserVectors.IndirectObject == ObjectIds.Putty &&
+                game.Objects[ObjectIds.Putty].Adventurer == game.Player.Winner)
             {
                 goto L19300;
             }
@@ -4049,8 +4078,8 @@ namespace Zork.Core
 
             // V89--	DIG.  UNLESS SHOVEL, A JOKE.
 
-            L20000:
-            if (game.ParserVectors.prso == ObjectIds.Shovel)
+            DIG:
+            if (game.ParserVectors.DirectObject == ObjectIds.Shovel)
             {
                 return ret_val;
             }
@@ -4058,7 +4087,7 @@ namespace Zork.Core
             // !SHOVEL?
             i = 392;
             // !ASSUME TOOL.
-            if ((game.Objects[game.ParserVectors.prso].Flag1 & ObjectFlags.IsTool) == 0)
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTool) == 0)
             {
                 i = 393;
             }
@@ -4068,9 +4097,9 @@ namespace Zork.Core
 
             // V90--	TIME.  PRINT OUT DURATION OF GAME.
 
-            L21000:
-            //gttime_(k);
+            TIME:
             // !GET PLAY TIME.
+            //gttime_(k);
             k = DateTime.Now.Minute;
             i = k / 60;
             j = k % 60;
@@ -4101,12 +4130,12 @@ namespace Zork.Core
 
             // V91--	LEAP.  USUALLY A JOKE, WITH A CATCH.
 
-            L22000:
-            if (game.ParserVectors.prso == 0) {
+            LEAP:
+            if (game.ParserVectors.DirectObject == 0) {
                 goto L22200;
             }
             // !OVER SOMETHING?
-            if (ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.prso, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game))
             {
                 goto L22100;
             }
@@ -4116,11 +4145,13 @@ namespace Zork.Core
             return ret_val;
 
             L22100:
-            if ((game.Objects[game.ParserVectors.prso].Flag2 & ObjectFlags2.VILLBT) == 0) {
+            if ((game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.VILLBT) == 0)
+            {
                 goto L22300;
             }
-            MessageHandler.rspsub_(game, 448, odo2);
+
             // !CANT JUMP VILLAIN.
+            MessageHandler.rspsub_(game, 448, odo2);
             return ret_val;
 
             L22200:
@@ -4150,20 +4181,22 @@ namespace Zork.Core
 
             // V92--	LOCK.
 
-            L23000:
-            if (game.ParserVectors.prso == ObjectIds.grate && game.Player.Here == RoomIds.mgrat)
+            LOCK:
+            if (game.ParserVectors.DirectObject == ObjectIds.Grate &&
+                game.Player.Here == RoomIds.mgrat)
             {
                 goto L23200;
             }
 
             L23100:
-            MessageHandler.rspeak_(game, 464);
             // !NOT LOCK GRATE.
+            MessageHandler.rspeak_(game, 464);
             return ret_val;
 
             L23200:
-            game.Flags.grunlf = false;
             // !GRATE NOW LOCKED.
+            game.Flags.IsGrateUnlocked = false;
+
             MessageHandler.rspeak_(game, 214);
             game.Exits.Travel[game.Rooms[game.Player.Here].Exit] = 214;
             // !CHANGE EXIT STATUS.
@@ -4171,43 +4204,50 @@ namespace Zork.Core
 
             // V93--	UNLOCK
 
-            L24000:
-            if (game.ParserVectors.prso != ObjectIds.grate || game.Player.Here != RoomIds.mgrat)
+            UNLOCK:
+            if (game.ParserVectors.DirectObject != ObjectIds.Grate ||
+                game.Player.Here != RoomIds.mgrat)
             {
                 goto L23100;
             }
 
-            if (game.ParserVectors.prsi == ObjectIds.keys)
+            // !GOT KEYS?
+            if (game.ParserVectors.IndirectObject == ObjectIds.Keys)
             {
                 goto L24200;
             }
-            // !GOT KEYS?
-            MessageHandler.rspsub_(game, 465, odi2);
+
             // !NO, JOKE.
+            MessageHandler.rspsub_(game, 465, odi2);
+
             return ret_val;
 
             L24200:
-            game.Flags.grunlf = true;
             // !UNLOCK GRATE.
+            game.Flags.IsGrateUnlocked = true;
             MessageHandler.rspeak_(game, 217);
-            game.Exits.Travel[game.Rooms[game.Player.Here].Exit] = 217;
+
             // !CHANGE EXIT STATUS.
+            game.Exits.Travel[game.Rooms[game.Player.Here].Exit] = 217;
             return ret_val;
 
             // V94--	DIAGNOSE.
 
-            L25000:
-            i = dso4.ComputeFightStrength(game, game.Player.Winner, false);
+            DIAGNOSE:
             // !GET FIGHTS STRENGTH.
-            j = game.Adventurers[game.Player.Winner].Strength;
+            i = dso4.ComputeFightStrength(game, game.Player.Winner, false);
             // !GET HEALTH.
-            // Computing MIN
+            j = game.Adventurers[game.Player.Winner].Strength;
             i__1 = i + j;
+            // Computing MIN
             k = Math.Min(i__1, 4);
+
             // !GET STATE.
-            if (!game.Clock.Flags[(int)ClockIndices.cevcur - 1]) {
+            if (!game.Clock.Flags[(int)ClockIndices.cevcur - 1])
+            {
                 j = 0;
             }
+
             // !IF NO WOUNDS.
             // Computing MIN
             i__1 = 4;
@@ -4215,10 +4255,11 @@ namespace Zork.Core
             l = Math.Min(i__1, i__2);
             // !SCALE.
             i__1 = l + 473;
-            MessageHandler.rspeak_(game, i__1);
             // !DESCRIBE HEALTH.
-            i = (-j - 1) * 30 + game.Clock.Ticks[(int)ClockIndices.cevcur - 1];
+            MessageHandler.rspeak_(game, i__1);
+
             // !COMPUTE WAIT.
+            i = (-j - 1) * 30 + game.Clock.Ticks[(int)ClockIndices.cevcur - 1];
 
             if (j != 0)
             {
@@ -4227,31 +4268,35 @@ namespace Zork.Core
             }
 
             i__1 = k + 478;
-            MessageHandler.rspeak_(game, i__1);
             // !HOW MUCH MORE?
+            MessageHandler.rspeak_(game, i__1);
+            // !HOW MANY DEATHS?
             if (game.State.Deaths != 0)
             {
                 i__1 = game.State.Deaths + 482;
                 MessageHandler.rspeak_(game, i__1);
             }
-            // !HOW MANY DEATHS?
+
             return ret_val;
             // SVERBS, PAGE 7
 
             // V95--	INCANT
 
             L26000:
-            for (i = 1; i <= 6; ++i) {
+            for (i = 1; i <= 6; ++i)
+            {
                 // !SET UP PARSE.
                 pp1[i - 1] = ' ';
                 pp2[i - 1] = ' ';
                 // L26100:
             }
+
             wp = 1;
             // !WORD POINTER.
             cp = 1;
             // !CHAR POINTER.
-            if (game.ParserVectors.prscon <= 1) {
+            if (game.ParserVectors.prscon <= 1)
+            {
                 goto L26300;
             }
 
@@ -4259,24 +4304,34 @@ namespace Zork.Core
             {
                 // !PARSE INPUT
                 if (z == ',')
+                {
                     goto L26300;
+                }
+
                 // !END OF PHRASE?
                 if (z != ' ')
+                {
                     goto L26150;
+                }
+
                 // !SPACE?
-                if (cp != 1) {
+                if (cp != 1)
+                {
                     ++wp;
                 }
+
                 cp = 1;
                 goto L26200;
                 L26150:
-                if (wp == 1) {
+                if (wp == 1)
+                {
                     pp1[cp - 1] = z;
                 }
                 // !STUFF INTO HOLDER.
                 if (wp == 2) {
                     pp2[cp - 1] = z;
                 }
+
                 // Computing MIN
                 i__2 = cp + 1;
                 cp = Math.Min(i__2, 6);
@@ -4285,11 +4340,13 @@ namespace Zork.Core
             }
 
             L26300:
-            game.ParserVectors.prscon = 1;
             // !KILL REST OF LINE.
-            if (pp1[0] != ' ') {
+            game.ParserVectors.prscon = 1;
+            if (pp1[0] != ' ')
+            {
                 goto L26400;
             }
+
             // !ANY INPUT?
             MessageHandler.rspeak_(game, 856);
             // !NO, HO HUM.
@@ -4325,13 +4382,13 @@ namespace Zork.Core
             return ret_val;
 
             L26550:
-            MessageHandler.rspeak_(game, 857);
             // !HE'S GOT ONE ALREADY.
+            MessageHandler.rspeak_(game, 857);
             return ret_val;
 
             L26575:
-            MessageHandler.rspeak_(game, 858);
             // !HE'S NOT IN ENDGAME.
+            MessageHandler.rspeak_(game, 858);
             return ret_val;
 
             L26600:
@@ -4365,8 +4422,10 @@ namespace Zork.Core
 
             // V96--	ANSWER
 
-            L27000:
-            if (game.ParserVectors.prscon > 1 && game.Player.Here == RoomIds.fdoor && game.Flags.inqstf)
+            ANSWER:
+            if (game.ParserVectors.prscon > 1 &&
+                game.Player.Here == RoomIds.FrontDoor &&
+                game.Flags.inqstf)
             {
                 goto L27100;
             }
@@ -4413,9 +4472,11 @@ namespace Zork.Core
             // !KILL REST OF LINE.
             ++game.Switches.nqatt;
             // !WRONG, CRETIN.
-            if (game.Switches.nqatt >= 5) {
+            if (game.Switches.nqatt >= 5)
+            {
                 goto L27400;
             }
+
             // !TOO MANY WRONG?
             i__1 = game.Switches.nqatt + 800;
             MessageHandler.rspeak_(game, i__1);

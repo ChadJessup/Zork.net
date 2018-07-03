@@ -94,7 +94,7 @@ namespace Zork.Core
             // 9100		PANEL
 
             L9100:
-            if (roomId == RoomIds.fdoor)
+            if (roomId == RoomIds.FrontDoor)
             {
                 return ret_val;
             }
@@ -107,7 +107,7 @@ namespace Zork.Core
             // 10000--	MASTER
 
             L10000:
-            ret_val = roomId == RoomIds.fdoor || roomId == RoomIds.ncorr || roomId == RoomIds.parap || roomId == RoomIds.Cell;
+            ret_val = roomId == RoomIds.FrontDoor || roomId == RoomIds.ncorr || roomId == RoomIds.parap || roomId == RoomIds.Cell;
             return ret_val;
 
             // 11000--	LADDER

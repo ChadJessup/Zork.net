@@ -199,7 +199,7 @@ namespace Zork.Core
             for (i = 1; i <= i__1; ++i)
             {
                 // !SEE IF  BEST WEAPON.
-                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.prsi == (ObjectIds)game.Villians.vbest[i - 1])
+                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.IndirectObject == (ObjectIds)game.Villians.vbest[i - 1])
                 {
                     // Computing MAX
                     i__2 = 1;

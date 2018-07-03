@@ -30,7 +30,7 @@ namespace Zork.Core
                 // !GET OBJECT NO.
                 obj = (ObjectIds)game.Villians.villns[i - 1];
                 // !GET HIS ACTION.
-                ra = game.Objects[obj].oactio;
+                ra = game.Objects[obj].Action;
 
                 // !ADVENTURER STILL HERE?
                 if (game.Player.Here != RoomHandler.GetRoomThatContainsObject(obj, game).Id)
@@ -65,7 +65,7 @@ namespace Zork.Core
                 // !ANYTHING TO DO?
                 game.ParserVectors.prsa = VerbIds.inxw;
                 // !YES, WAKE HIM UP.
-                f = ObjectHandler.oappli_(ra, 0, game);
+                f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
                 goto L2400;
                 // !NOTHING ELSE HAPPENS.
 
@@ -94,7 +94,7 @@ namespace Zork.Core
                 // !NOT FIGHTING,
                 game.ParserVectors.prsa = VerbIds.frstqw;
                 // !SET UP PROBABILITY
-                if (!ObjectHandler.oappli_(ra, 0, game))
+                if (!ObjectHandler.DoObjectSpecialAction(ra, 0, game))
                 {
                     goto L2400;
                 }
@@ -112,7 +112,7 @@ namespace Zork.Core
                 }
                 game.ParserVectors.prsa = VerbIds.Fight;
                 // !HAVE A FIGHT.
-                f = ObjectHandler.oappli_(ra, 0, game);
+                f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
                 L2300:
                 if (obj == ObjectIds.thief)
                 {
@@ -127,7 +127,7 @@ namespace Zork.Core
                 }
                 game.ParserVectors.prsa = VerbIds.inxw;
                 // !WAKE HIM UP.
-                f = ObjectHandler.oappli_(ra, 0, game);
+                f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
                 i__2 = game.Objects[obj].Capacity;
                 game.Objects[obj].Capacity = Math.Abs(i__2);
                 L2400:
@@ -152,7 +152,7 @@ namespace Zork.Core
                 // !SLOT EMPTY?
                 game.ParserVectors.prscon = 1;
                 // !STOP CMD STREAM.
-                ra = game.Objects[j].oactio;
+                ra = game.Objects[j].Action;
                 if (ra == 0)
                 {
                     goto L2650;
@@ -160,7 +160,7 @@ namespace Zork.Core
                 // !VILLAIN ACTION?
                 game.ParserVectors.prsa = VerbIds.Fight;
                 // !SEE IF
-                if (ObjectHandler.oappli_(ra, 0, game))
+                if (ObjectHandler.DoObjectSpecialAction(ra, 0, game))
                 {
                     goto L2700;
                 }
@@ -225,7 +225,7 @@ namespace Zork.Core
             int dweap;
             int pblose;
 
-            ra = game.Objects[v].oactio;
+            ra = game.Objects[v].Action;
             // !GET VILLAIN ACTION,
             dv = game.Objects[v].Description2;
             // !DESCRIPTION.
@@ -267,7 +267,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
                 // !SEARCH VILLAIN.
-                if (game.Objects[i].Container == v && (game.Objects[i].Flag2 & ObjectFlags2.WEAPBT) != 0)
+                if (game.Objects[i].Container == v && (game.Objects[i].Flag2 & ObjectFlags2.IsWeapon) != 0)
                 {
                     dweap = (int)i;
                 }
@@ -323,7 +323,7 @@ namespace Zork.Core
 
             // !DONT ALLOW DEAD DEF.
             od = dso4.ComputeFightStrength(game, h, false);
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, h, true, game);
             dweap = Math.Abs(i__1);
             // !FIND A WEAPON.
             // BLOW, PAGE 4
@@ -500,7 +500,7 @@ namespace Zork.Core
             }
 
             // !IF HERO, DONE.
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.WEAPBT, 0, 0, h, true, game);
+            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, h, true, game);
             dweap = Math.Abs(i__1);
             // !GET NEW.
             if (dweap != 0)
@@ -537,7 +537,7 @@ namespace Zork.Core
             // !IF NX TO DO, EXIT.
             game.ParserVectors.prsa = VerbIds.deadxw;
             // !LET HIM KNOW.
-            f = ObjectHandler.oappli_(ra, 0, game);
+            f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
 
             L4100:
@@ -548,7 +548,7 @@ namespace Zork.Core
 
             game.ParserVectors.prsa = VerbIds.outxw;
             // !LET HIM BE OUT.
-            f = ObjectHandler.oappli_(ra, 0, game);
+            f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
 
             L4500:
@@ -673,7 +673,7 @@ namespace Zork.Core
 
             if (!game.Flags.EndGame)
             {
-                ret_val = RoomHandler.GetRoomThatContainsObject(ObjectIds.cyclo, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.Troll, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id == roomId && game.Hack.IsThiefActive;
+                ret_val = RoomHandler.GetRoomThatContainsObject(ObjectIds.Cyclops, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.Troll, game).Id == roomId || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id == roomId && game.Hack.IsThiefActive;
             }
             else
             {

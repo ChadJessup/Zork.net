@@ -28,7 +28,7 @@ namespace Zork.Core
         /// </summary>
         public List<Object> Objects { get; set; } = new List<Object>();
 
-        public bool HasObject(ObjectIds objId) => this.Objects.Any(o => o.IsOrHasObject(objId));
+        public bool HasObject(ObjectIds objId) => this.Objects.Any(o => o.IsOrHasObject(objId)) || this.Adventurers.Any(a => a.HasObject(objId));
         public Object GetObject(ObjectIds objId) => this.Objects.FirstOrDefault(o => o.Id == objId);
 
         public override string ToString() => $"{this.Id} - {this.Flags} - {"items".ToQuantity(this.Objects.Count)}";

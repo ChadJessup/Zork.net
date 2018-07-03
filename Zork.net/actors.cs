@@ -42,8 +42,8 @@ namespace Zork.Core
             // A1--	ROBOT.  PROCESS MOST COMMANDS GIVEN TO ROBOT.
 
             L1000:
-            if (game.ParserVectors.prsa != VerbIds.raisew
-             || game.ParserVectors.prso != ObjectIds.rcage)
+            if (game.ParserVectors.prsa != VerbIds.Raise
+             || game.ParserVectors.DirectObject != ObjectIds.rcage)
             {
                 goto L1200;
             }
@@ -69,13 +69,13 @@ namespace Zork.Core
             // !CAGE SOLVED.
             game.Flags.cagesf = true;
             game.Objects[ObjectIds.Robot].Flag1 &= ~ObjectFlags.HasNoDescription;
-            game.Objects[ObjectIds.spher].Flag1 |=  ObjectFlags.IsTakeable;
+            game.Objects[ObjectIds.Sphere].Flag1 |=  ObjectFlags.IsTakeable;
 
             return ret_val;
 
             L1200:
             if (game.ParserVectors.prsa != VerbIds.drinkw
-                && game.ParserVectors.prsa != VerbIds.eatw)
+                && game.ParserVectors.prsa != VerbIds.Eat)
             {
                 goto L1300;
             }
@@ -97,12 +97,12 @@ namespace Zork.Core
 
             L1400:
             if (game.ParserVectors.prsa == VerbIds.Walk
-             || game.ParserVectors.prsa == VerbIds.takew
+             || game.ParserVectors.prsa == VerbIds.Take
              || game.ParserVectors.prsa == VerbIds.Drop
              || game.ParserVectors.prsa == VerbIds.Put
-             || game.ParserVectors.prsa == VerbIds.pushw
+             || game.ParserVectors.prsa == VerbIds.Push
              || game.ParserVectors.prsa == VerbIds.Throw
-             || game.ParserVectors.prsa == VerbIds.turnw
+             || game.ParserVectors.prsa == VerbIds.Turn
              || game.ParserVectors.prsa == VerbIds.Leap)
             {
                 goto L10;
@@ -135,9 +135,9 @@ namespace Zork.Core
             i = 784;
             // !ASSUME WONT.
             if (game.Player.Here == RoomIds.scorr
-                && (game.ParserVectors.prso == (ObjectIds)XSearch.xnorth || game.ParserVectors.prso == (ObjectIds)XSearch.xenter)
+                && (game.ParserVectors.DirectObject == (ObjectIds)XSearch.xnorth || game.ParserVectors.DirectObject == (ObjectIds)XSearch.xenter)
                 || game.Player.Here == RoomIds.ncorr
-                && (game.ParserVectors.prso == (ObjectIds)XSearch.xsouth || game.ParserVectors.prso == (ObjectIds)XSearch.xenter))
+                && (game.ParserVectors.DirectObject == (ObjectIds)XSearch.xsouth || game.ParserVectors.DirectObject == (ObjectIds)XSearch.xenter))
             {
                 i = 785;
             }
@@ -146,19 +146,19 @@ namespace Zork.Core
             return ret_val;
 
             L2200:
-            if (game.ParserVectors.prsa == VerbIds.takew
+            if (game.ParserVectors.prsa == VerbIds.Take
                 || game.ParserVectors.prsa == VerbIds.Drop
                 || game.ParserVectors.prsa == VerbIds.Put
                 || game.ParserVectors.prsa == VerbIds.Throw
-                || game.ParserVectors.prsa == VerbIds.pushw
-                || game.ParserVectors.prsa == VerbIds.turnw
+                || game.ParserVectors.prsa == VerbIds.Push
+                || game.ParserVectors.prsa == VerbIds.Turn
                 || game.ParserVectors.prsa == VerbIds.Spin
                 || game.ParserVectors.prsa == VerbIds.trntow
                 || game.ParserVectors.prsa == VerbIds.follow
                 || game.ParserVectors.prsa == VerbIds.stayw
-                || game.ParserVectors.prsa == VerbIds.openw
-                || game.ParserVectors.prsa == VerbIds.closew
-                || game.ParserVectors.prsa == VerbIds.killw)
+                || game.ParserVectors.prsa == VerbIds.Open
+                || game.ParserVectors.prsa == VerbIds.Close
+                || game.ParserVectors.prsa == VerbIds.Kill)
             {
                 goto L10;
             }
@@ -444,7 +444,7 @@ namespace Zork.Core
             L1700:
             if (game.Objects[ObjectIds.Rope].Adventurer == (ActorIds)(-(int)ObjectIds.thief))
             {
-                game.Flags.domef = false;
+                game.Flags.IsRopeTiedToRailingInDomeRoom = false;
             }
 
             if (once)

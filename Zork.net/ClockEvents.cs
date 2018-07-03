@@ -129,14 +129,14 @@ namespace Zork.Core
             L2000:
             if (game.Player.Here == RoomIds.Maintenance)
             {
-                i__1 = game.Switches.rvmnt / 2 + 71;
+                i__1 = game.Switches.IsReservoirLeaking / 2 + 71;
                 MessageHandler.rspeak_(game, i__1);
             }
 
             // !DESCRIBE.
-            ++game.Switches.rvmnt;
+            ++game.Switches.IsReservoirLeaking;
             // !RAISE WATER LEVEL.
-            if (game.Switches.rvmnt <= 16)
+            if (game.Switches.IsReservoirLeaking <= 16)
             {
                 return;
             }
@@ -168,7 +168,7 @@ namespace Zork.Core
             L4000:
             MessageHandler.rspeak_(game, 153);
             // !MATCH IS OUT.
-            game.Objects[ObjectIds.match].Flag1 &= ~ObjectFlags.ONBT;
+            game.Objects[ObjectIds.Match].Flag1 &= ~ObjectFlags.IsOn;
             return;
 
             // CEV5--	CANDLE.  DESCRIBE GROWING DIMNESS.
@@ -779,7 +779,7 @@ namespace Zork.Core
             ObjectHandler.SetNewObjectStatus(ObjectIds.Sword, 0, 0, 0, ActorIds.Player, game);
             // !GIVE HIM SWORD.
 
-            game.Objects[ObjectIds.Lamp].Flag1 = (game.Objects[ObjectIds.Lamp].Flag1 | ObjectFlags.LITEBT) & ~ObjectFlags.ONBT;
+            game.Objects[ObjectIds.Lamp].Flag1 = (game.Objects[ObjectIds.Lamp].Flag1 | ObjectFlags.LITEBT) & ~ObjectFlags.IsOn;
             game.Objects[ObjectIds.Lamp].Flag2 |= ObjectFlags2.WasTouched;
             game.Clock.Flags[(int)ClockIndices.cevlnt - 1] = false;
             // !LAMP IS GOOD AS NEW.
@@ -793,7 +793,7 @@ namespace Zork.Core
             // !THIEF GONE.
             game.Flags.EndGame = true;
             // !ENDGAME RUNNING.
-            game.Clock.Flags[(int)ClockIndices.cevmat - 1] = false;
+            game.Clock.Flags[(int)ClockIndices.MatchCountdown - 1] = false;
             // !MATCHES GONE,
             game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
             // !CANDLES GONE.
@@ -844,7 +844,7 @@ namespace Zork.Core
             // CEV23--	INQUISITOR'S QUESTION
 
             L23000:
-            if (game.Adventurers[ActorIds.Player].CurrentRoom.Id != RoomIds.fdoor)
+            if (game.Adventurers[ActorIds.Player].CurrentRoom.Id != RoomIds.FrontDoor)
             {
                 return;
             }
@@ -920,7 +920,7 @@ namespace Zork.Core
                 goto L100;
             }
             // !EXPIRED?
-            game.Objects[obj].Flag1 &= ~((int)ObjectFlags.LITEBT + (int)ObjectFlags.FLAMBT + ObjectFlags.ONBT);
+            game.Objects[obj].Flag1 &= ~((int)ObjectFlags.LITEBT + (int)ObjectFlags.FLAMBT + ObjectFlags.IsOn);
             if (RoomHandler.GetRoomThatContainsObject(obj, game).Id == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
             {
                 MessageHandler.rspsub_(game, 293, game.Objects[obj].Description2);

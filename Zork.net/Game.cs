@@ -36,8 +36,8 @@ namespace Zork.Core
             this.Flags.mr2f = true;
             this.Flags.follwf = true;
 
-            this.Switches.ormtch = 4;
-            this.Switches.lcell = 1;
+            this.Switches.MatchCount = 4;
+            this.Switches.LeftCell = 1;
             this.Switches.pnumb = 1;
             this.Switches.mdir = 270;
             this.Switches.mloc = RoomIds.mrb;
@@ -152,7 +152,7 @@ namespace Zork.Core
                 }
 
                 L300:
-                if (this.ParserVectors.prso == ObjectIds.valua || this.ParserVectors.prso == ObjectIds.every)
+                if (this.ParserVectors.DirectObject == ObjectIds.valua || this.ParserVectors.DirectObject == ObjectIds.every)
                 {
                     goto L900;
                 }
@@ -168,7 +168,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                f = RoomHandler.rappli_(this.Rooms[this.Player.Here].Action, this);
+                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here].Action, this);
 
                 L400:
                 // !DO END OF MOVE.
@@ -216,7 +216,7 @@ namespace Zork.Core
                     goto L1400;
                 }
 
-                if (dso3.FindExit(this, (int)this.ParserVectors.prso, this.Player.Here))
+                if (dso3.FindExit(this, (int)this.ParserVectors.DirectObject, this.Player.Here))
                 {
                     goto L300;
                 }
@@ -234,7 +234,7 @@ namespace Zork.Core
                 // NOTE THAT WE CANNOT BE IN THE ECHO ROOM.
 
                 L2000:
-                if ((this.Objects[this.ParserVectors.prso].Flag2 & ObjectFlags2.ACTRBT) != 0)
+                if ((this.Objects[this.ParserVectors.DirectObject].Flag2 & ObjectFlags2.ACTRBT) != 0)
                 {
                     goto L2100;
                 }
@@ -245,7 +245,7 @@ namespace Zork.Core
                 // !VAPPLI SUCCEEDS.
 
                 L2100:
-                this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.prso, this);
+                this.Player.Winner = ObjectHandler.GetActor(this.ParserVectors.DirectObject, this);
                 // !NEW PLAYER.
                 this.Player.Here = this.Adventurers[this.Player.Winner].CurrentRoom.Id;
 
@@ -290,7 +290,7 @@ namespace Zork.Core
                 //}
 
                 // !VEHICLE HANDLE?
-                if (this.ParserVectors.prso == ObjectIds.valua || this.ParserVectors.prso == ObjectIds.every)
+                if (this.ParserVectors.DirectObject == ObjectIds.valua || this.ParserVectors.DirectObject == ObjectIds.every)
                 {
                     goto L2900;
                 }
@@ -300,7 +300,7 @@ namespace Zork.Core
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.rappli_(this.Rooms[this.Player.Here].Action, this);
+                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here].Action, this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);
@@ -320,40 +320,41 @@ namespace Zork.Core
         {
             bool f;
 
+            // !DEFAULT REMARK.
             if (!(flag))
             {
                 MessageHandler.rspeak_(this, 341);
             }
-            // !DEFAULT REMARK.
+
+            // !THIEF DEMON.
             if (this.Hack.IsThiefActive)
             {
                 Actors.thiefd_(this);
             }
 
-            // !THIEF DEMON.
+            // !FIGHT DEMON.
             if (this.ParserVectors.prswon)
             {
                 DemonHandler.fightd_(this);
             }
 
-            // !FIGHT DEMON.
+            // !SWORD DEMON.
             if (this.Hack.IsSwordActive)
             {
                 DemonHandler.swordd_(this);
             }
 
-            // !SWORD DEMON.
+            // !CLOCK DEMON.
             if (this.ParserVectors.prswon)
             {
                 f = ClockEvents.clockd_(this);
             }
 
-            // !CLOCK DEMON.
+            // !VEHICLE READOUT.
             if (this.ParserVectors.prswon)
             {
                 f = xvehic_(2);
             }
-            // !VEHICLE READOUT.
         }
 
         // XVEHIC- EXECUTE VEHICLE FUNCTION
@@ -368,7 +369,7 @@ namespace Zork.Core
             av = (ObjectIds)this.Adventurers[this.Player.Winner].VehicleId;
             if (av != 0)
             {
-                ret_val = ObjectHandler.oappli_(this.Objects[av].oactio, n, this);
+                ret_val = ObjectHandler.DoObjectSpecialAction(this.Objects[av].Action, n, this);
             }
 
             return ret_val;

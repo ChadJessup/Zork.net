@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Zork.Core
 {
@@ -13,5 +14,7 @@ namespace Zork.Core
         public int Action { get; set; }
         public int Strength { get; set; }
         public int Flag { get; set; }
+
+        public bool HasObject(ObjectIds objId) => this.HeldObjects.Any(co => co.IsOrHasObject(objId));
     }
 }

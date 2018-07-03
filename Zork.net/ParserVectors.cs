@@ -3,8 +3,8 @@
     public class ParserVectors
     {
         public VerbIds prsa { get; set; }
-        public ObjectIds prsi { get; set; }
-        public ObjectIds prso { get; set; }
+        public ObjectIds IndirectObject { get; set; }
+        public ObjectIds DirectObject { get; set; }
         public bool prswon { get; set; }
         public int prscon { get; set; }
     }

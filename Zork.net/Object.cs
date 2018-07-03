@@ -9,7 +9,7 @@ namespace Zork.Core
         public int Description1 { get; set; }
         public int Description2 { get; set; }
         public int odesco { get; set; }
-        public int oactio { get; set; }
+        public int Action { get; set; }
         public ObjectFlags Flag1 { get; set; }
         public ObjectFlags2 Flag2 { get; set; }
         public int ofval { get; set; }
@@ -30,6 +30,7 @@ namespace Zork.Core
         /// Objects can be containers, this is the collection for the contained objects.
         /// </summary>
         public List<Object> ContainedObjects { get; set; } = new List<Object>();
+        public bool IsVisible => this.Flag1.HasFlag(ObjectFlags.IsVisible);
 
         public override string ToString() => $"{this.Id} held by {this.Adventurer}";
     }
