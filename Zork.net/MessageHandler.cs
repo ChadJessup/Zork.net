@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Text;
 
 namespace Zork.Core
 {
     public static class MessageHandler
     {
-        public static void rspeak_(Game game, ObjectIds objectId) => MessageHandler.Speak(game, (int)objectId);
-        public static void rspeak_(Game game, int messageNumber) => MessageHandler.Speak(game, messageNumber);
-        public static void Speak(ObjectIds objectId, Game game) => MessageHandler.Speak(game, (int)objectId);
-        public static void Speak(Game game, int messageNumber) => MessageHandler.Speak(messageNumber, game);
-        public static void Speak(int messageNumber, Game game) => MessageHandler.rspsb2nl_(messageNumber, 0, 0, true, game);
+        public static string rspeak_(Game game, ObjectIds objectId) => MessageHandler.Speak(game, (int)objectId);
+        public static string rspeak_(Game game, int messageNumber) => MessageHandler.Speak(game, messageNumber);
+        public static string Speak(ObjectIds objectId, Game game) => MessageHandler.Speak(game, (int)objectId);
+        public static string Speak(Game game, int messageNumber) => MessageHandler.Speak(messageNumber, game);
+        public static string Speak(int messageNumber, Game game) => MessageHandler.rspsb2nl_(messageNumber, 0, 0, true, game);
 
         public static void more_output(Game game, string output) => game.WriteOutput(output);
         public static void more_input() { }
@@ -19,9 +20,9 @@ namespace Zork.Core
         /// <param name="messageNumber"></param>
         /// <param name="s1"></param>
         /// <param name="game"></param>
-        public static void rspsub_(Game game, int messageNumber, int s1 = 0) => rspsub_(messageNumber, s1, game);
-        public static void rspsub_(int messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_(messageNumber, s1, 0, true, game);
-        public static void rspsub_(ObjectIds messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_((int)messageNumber, s1, 0, true, game);
+        public static string rspsub_(Game game, int messageNumber, int s1 = 0) => rspsub_(messageNumber, s1, game);
+        public static string rspsub_(int messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_(messageNumber, s1, 0, true, game);
+        public static string rspsub_(ObjectIds messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_((int)messageNumber, s1, 0, true, game);
         /// <summary>
         /// rspsb2_ - Output random message with up to two substitutable arguments.
         /// </summary>
@@ -29,16 +30,17 @@ namespace Zork.Core
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <param name="game"></param>
-        public static void rspsb2_(Game game, int n, int s1, int s2) => rspsb2_(n, s1, s2, game);
-        public static void rspsb2_(int n, int s1, int s2, Game game) => rspsb2nl_(n, s1, s2, true, game);
+        public static string rspsb2_(Game game, int n, int s1, int s2) => rspsb2_(n, s1, s2, game);
+        public static string rspsb2_(int n, int s1, int s2, Game game) => rspsb2nl_(n, s1, s2, true, game);
 
         /// <summary>
         /// Display a substitutable message with an optional newline
         /// </summary>
-        private static void rspsb2nl_(int messageNumber, int y, int z, bool newLine, Game game)
+        private static string rspsb2nl_(int messageNumber, int y, int z, bool newLine, Game game)
         {
             string zkey = "IanLanceTaylorJr";
             int x = messageNumber;
+            StringBuilder finalOutput = new StringBuilder();
 
             if (x > 0)
             {
@@ -48,7 +50,7 @@ namespace Zork.Core
             // !IF >0, LOOK UP IN RTEXT.
             if (x == 0)
             {
-                return;
+                return string.Empty;
             }
 
             // !ANYTHING TO DO?
@@ -65,7 +67,8 @@ namespace Zork.Core
 
             if (newLine)
             {
-              //  game.WriteOutput(Environment.NewLine);
+                // game.WriteOutput?.Invoke(Environment.NewLine);
+                // finalOutput.Append(Environment.NewLine);
             }
 
             while (true)
@@ -90,17 +93,20 @@ namespace Zork.Core
                 }
                 else if (i == '\n')
                 {
-                    game.WriteOutput(Environment.NewLine);
+                    game.WriteOutput?.Invoke(Environment.NewLine);
+                    finalOutput.Append(Environment.NewLine);
+
                     if (newLine)
                     {
-                        // game.WriteOutput(Environment.NewLine);
+                        // game.WriteOutput?.Invoke(Environment.NewLine);
+                        // finalOutput.Append(Environment.NewLine);
                     }
                 }
                 else if (i == '#' && y != 0)
                 {
                     long iloc = game.DataPosition;
 
-                    rspsb2nl_(y, 0, 0, false, game);
+                    finalOutput.Append(rspsb2nl_(y, 0, 0, false, game));
                     if (iloc > game.Data.Length)
                     {
                         throw new InvalidOperationException($"Error seeking database loc {iloc}");
@@ -113,14 +119,17 @@ namespace Zork.Core
                 }
                 else
                 {
-                    game.WriteOutput(((char)i).ToString());
+                    game.WriteOutput?.Invoke(((char)i).ToString());
+                    finalOutput.Append((char)i);
                 }
             }
 
             if (newLine)
             {
-                game.WriteOutput(Environment.NewLine);
+                game.WriteOutput?.Invoke(Environment.NewLine);
             }
+
+            return finalOutput.ToString();
         }
 
         /// <summary>

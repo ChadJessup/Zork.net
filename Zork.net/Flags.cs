@@ -36,7 +36,7 @@
         public bool frobzf { get; set; }
         public bool IsEndGame { get; set; }
         public bool HasBadLuck { get; set; }
-        public bool thfenf { get; set; }
+        public bool IsThiefEngrossed { get; set; }
         public bool HasBirdSangSong { get; set; }
         public bool mrpshf { get; set; }
         public bool mropnf { get; set; }

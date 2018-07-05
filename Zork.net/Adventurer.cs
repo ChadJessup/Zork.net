@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Zork.Core
@@ -16,5 +17,18 @@ namespace Zork.Core
         public int Flag { get; set; }
 
         public bool HasObject(ObjectIds objId) => this.HeldObjects.Any(co => co.IsOrHasObject(objId));
+
+        public void DropObject(Object obj)
+        {
+            obj.Adventurer = ActorIds.NoOne;
+            this.HeldObjects.Remove(obj);
+        }
+
+        public void PickupObject(Object obj)
+        {
+            obj.Adventurer = this.Id;
+            this.HeldObjects.Add(obj);
+            // obj.Container = adventurer.ObjectId;
+        }
     }
 }

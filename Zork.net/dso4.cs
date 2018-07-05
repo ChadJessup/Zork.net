@@ -169,42 +169,33 @@ namespace Zork.Core
         /// <param name="game"></param>
         /// <param name="villianId"></param>
         /// <returns></returns>
-        public static int ComputeVillianStrength(Game game, int villianId)
+        public static int ComputeVillianStrength(Game game, ObjectIds villianId)
         {
-            // System generated locals
-            int ret_val, i__1, i__2, i__3;
-
-            // Local variables
-            int i;
-
-            ret_val = game.Objects[(ObjectIds)villianId].Capacity;
+            int ret_val = game.Objects[villianId].Capacity;
             if (ret_val <= 0)
             {
                 return ret_val;
             }
 
-            if (villianId != (int)ObjectIds.thief || !game.Flags.thfenf)
+            if (villianId != ObjectIds.Thief || !game.Flags.IsThiefEngrossed)
             {
                 goto L100;
             }
 
             // !THIEF UNENGROSSED.
-            game.Flags.thfenf = false;
+            game.Flags.IsThiefEngrossed = false;
 
             // !NO BETTER THAN 2.
             ret_val = Math.Min(ret_val, 2);
 
             L100:
-            i__1 = game.Villians.Count;
-            for (i = 1; i <= i__1; ++i)
+            foreach (var villian in game.Villians.Values)
             {
                 // !SEE IF  BEST WEAPON.
-                if (game.Villians.villns[i - 1] == villianId && game.ParserVectors.IndirectObject == (ObjectIds)game.Villians.vbest[i - 1])
+                if (villian.Id == villianId && game.ParserVectors.IndirectObject == villian.BestWeapon)
                 {
                     // Computing MAX
-                    i__2 = 1;
-                    i__3 = ret_val - 1;
-                    ret_val = Math.Max(i__2, i__3);
+                    ret_val = Math.Max(1, ret_val - 1);
                 }
                 // L200:
             }

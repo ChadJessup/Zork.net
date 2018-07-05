@@ -1191,14 +1191,14 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id != game.Player.Here)
+            if (RoomHandler.GetRoomThatContainsObject(ObjectIds.Thief, game).Id != game.Player.Here)
             {
-                ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 82, game.Player.Here, 0, 0, game);
+                ObjectHandler.SetNewObjectStatus(ObjectIds.Thief, 82, game.Player.Here, 0, 0, game);
             }
 
             game.Hack.ThiefPosition = game.Player.Here;
             // !RESET SEARCH PATTERN.
-            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.IsFighting;
+            game.Objects[ObjectIds.Thief].Flag2 |= ObjectFlags2.IsFighting;
             if (RoomHandler.GetRoomThatContainsObject(ObjectIds.chali, game).Id == game.Player.Here)
             {
                 game.Objects[ObjectIds.chali].Flag1 &= ~ObjectFlags.IsTakeable;
@@ -1210,7 +1210,7 @@ namespace Zork.Core
             // !ASSUME NOTHING TO VANISH.
             for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
-                if (i == ObjectIds.chali || i == ObjectIds.thief || !ObjectHandler.IsObjectInRoom((ObjectIds)i, game.Player.Here, game))
+                if (i == ObjectIds.chali || i == ObjectIds.Thief || !ObjectHandler.IsObjectInRoom((ObjectIds)i, game.Player.Here, game))
                 {
                     goto L27200;
                 }

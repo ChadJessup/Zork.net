@@ -7,6 +7,11 @@ namespace Zork.Core
 {
     public static class DataLoader
     {
+        /// <summary>
+        /// Loads game data from the original Dungeon data file dtextc.dat.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
         public static Game LoadDataFile(string filename = "dtextc.dat")
         {
             if (!File.Exists(filename))
@@ -17,47 +22,37 @@ namespace Zork.Core
             var bytes = File.ReadAllBytes(filename);
             var game = new Game(bytes);
 
-            int i = DataLoader.ReadInt(bytes, game);
-            int j = DataLoader.ReadInt(bytes, game);
-            int k = DataLoader.ReadInt(bytes, game);
+            // Order matters of everything below!
 
-            if (i != 2 || j != 7)
+            int major = DataLoader.ReadInt(bytes, game);
+            int minor = DataLoader.ReadInt(bytes, game);
+            int revision = DataLoader.ReadInt(bytes, game);
+
+            if (major != 2 || minor != 7)
             {
                 throw new InvalidOperationException("Bad version on data file");
             }
 
-            game.State.MaxScore = DataLoader.ReadInt(bytes, game);
-            game.Star.strbit = DataLoader.ReadInt(bytes, game);
-            game.State.egmxsc = DataLoader.ReadInt(bytes, game);
+            LoadStars(bytes, game);
 
             LoadRooms(bytes, game);
 
-            game.Exits.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
+            LoadExits(bytes, game);
 
             LoadObjects(bytes, game);
 
-            game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
-            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
+            LoadRoom2(bytes, game);
 
-            game.Clock.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
-            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
+            LoadClockEvents(bytes, game);
 
-            game.Villians.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.villns, bytes, game);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vprob, bytes, game);
-            DataLoader.ReadPartialInts(game.Villians.Count, game.Villians.vopps, bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vbest, bytes, game);
-            DataLoader.ReadInts(game.Villians.Count, game.Villians.vmelee, bytes, game);
+            LoadVillians(bytes, game);
 
             LoadAdventurers(bytes, game);
 
             game.Star.mbase = DataLoader.ReadInt(bytes, game);
             game.Messages.Count = DataLoader.ReadInt(bytes, game);
             DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
+
             // Location of beginning of message text
             game.Messages.mrloc = game.DataPosition;
 
@@ -72,9 +67,77 @@ namespace Zork.Core
             game.Player.Here = game.Adventurers[game.Player.Winner].CurrentRoom.Id;
 
             game.State.BalloonLocation = RoomHandler.GetRoomThatContainsObject(ObjectIds.Balloon, game);
-            game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id;
+            game.Hack.ThiefPosition = RoomHandler.GetRoomThatContainsObject(ObjectIds.Thief, game).Id;
+
+            SetRoomNames(game, game.Rooms);
 
             return game;
+        }
+
+        private static void SetRoomNames(Game game, Dictionary<RoomIds, Room> rooms)
+        {
+            foreach (var room in rooms.Values)
+            {
+                room.Name = MessageHandler.rspeak_(game, room.Description2);
+            }
+        }
+
+        private static void LoadStars(byte[] bytes, Game game)
+        {
+            game.State.MaxScore = DataLoader.ReadInt(bytes, game);
+            game.Star.strbit = DataLoader.ReadInt(bytes, game);
+            game.State.egmxsc = DataLoader.ReadInt(bytes, game);
+        }
+
+        private static void LoadExits(byte[] bytes, Game game)
+        {
+            game.Exits.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Exits.Count, game.Exits.Travel, bytes, game);
+        }
+
+        private static void LoadRoom2(byte[] bytes, Game game)
+        {
+            game.Rooms2.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.Rooms, bytes, game);
+            DataLoader.ReadInts(game.Rooms2.Count, game.Rooms2.RRoom, bytes, game);
+        }
+
+        private static void LoadClockEvents(byte[] bytes, Game game)
+        {
+            game.Clock.Count = DataLoader.ReadInt(bytes, game);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
+            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
+            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
+        }
+
+        private static void LoadVillians(byte[] bytes, Game game)
+        {
+            var count = DataLoader.ReadInt(bytes, game);
+            var villns = new List<int>();
+            var vprob = new List<int>();
+            var vopps = new List<int>();
+            var vbest = new List<int>();
+            var vmelee = new List<int>();
+
+            DataLoader.ReadInts(count, villns, bytes, game);
+            DataLoader.ReadPartialInts(count, vprob, bytes, game);
+            DataLoader.ReadPartialInts(count, vopps, bytes, game);
+            DataLoader.ReadInts(count, vbest, bytes, game);
+            DataLoader.ReadInts(count, vmelee, bytes, game);
+
+            for (int i = 1; i <= count; i++)
+            {
+                var newVillian = new Villian
+                {
+                    Id = (ObjectIds)villns[i - 1],
+                    WakeupProbability = vprob[i - 1],
+                    Opponent = (ObjectIds)vopps[i - 1],
+                    BestWeapon = (ObjectIds)vbest[i - 1],
+                    Melee = vmelee[i - 1]
+                };
+
+                game.Villians.Add(newVillian.Id, newVillian);
+            }
         }
 
         private static void LoadAdventurers(byte[] bytes, Game game)

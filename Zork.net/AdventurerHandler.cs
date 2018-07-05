@@ -54,12 +54,6 @@ namespace Zork.Core
             }
         }
 
-        public static void AddObjectToAdventurer(Object obj, Adventurer adventurer, Game game)
-        {
-            obj.Adventurer = adventurer.Id;
-            adventurer.HeldObjects.Add(obj);
-        }
-
         /// <summary>
         /// jigsup_ - You are dead
         /// </summary>

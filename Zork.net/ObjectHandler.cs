@@ -57,7 +57,13 @@ namespace Zork.Core
             currentRoom.Objects.Remove(obj);
             room.Objects.Add(obj);
 
-            AdventurerHandler.AddObjectToAdventurer(obj, game.Adventurers[actorId], game);
+            var currentAdv = game.Adventurers.Values.FirstOrDefault(a => a.HasObject(obj.Id));
+            currentAdv?.DropObject(obj);
+
+            if (actorId != ActorIds.NoOne)
+            {
+                game.Adventurers[actorId].PickupObject(obj);
+            }
         }
 
         private static void AddObjectToContainer(Object obj, Object containerObj, Game game)
@@ -3064,8 +3070,8 @@ namespace Zork.Core
             if (game.ParserVectors.prsa != VerbIds.Take
                 || game.Objects[game.ParserVectors.DirectObject].Container != 0
                 || RoomHandler.GetRoomThatContainsObject(game.ParserVectors.DirectObject, game).Id  != RoomIds.Treasure
-                || RoomHandler.GetRoomThatContainsObject(ObjectIds.thief, game).Id  != RoomIds.Treasure
-                || (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.IsFighting) == 0
+                || RoomHandler.GetRoomThatContainsObject(ObjectIds.Thief, game).Id  != RoomIds.Treasure
+                || (game.Objects[ObjectIds.Thief].Flag2 & ObjectFlags2.IsFighting) == 0
                 || !game.Hack.IsThiefActive)
             {
                 goto L10;

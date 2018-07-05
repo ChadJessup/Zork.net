@@ -7,6 +7,7 @@ namespace Zork.Core
     public class Room
     {
         public RoomIds Id { get; set; }
+        public string Name { get; set; }
         public int Description1 { get; set; }
         public int Description2 { get; set; }
         public int Exit { get; set; }
@@ -14,6 +15,11 @@ namespace Zork.Core
         public int Score { get; set; }
         public RoomFlags Flags { get; set;}
         public List<int> Travel { get; set; }
+
+        /// <summary>
+        /// Container for any villians that might be in this room.
+        /// </summary>
+        public List<Villian> Villians { get; set; } = new List<Villian>();
 
         /// <summary>
         /// Container for Adventurers that are in this room.
@@ -31,7 +37,7 @@ namespace Zork.Core
         public bool HasObject(ObjectIds objId) => this.Objects.Any(o => o.IsOrHasObject(objId)) || this.Adventurers.Any(a => a.HasObject(objId));
         public Object GetObject(ObjectIds objId) => this.Objects.FirstOrDefault(o => o.Id == objId);
 
-        public override string ToString() => $"{this.Id} - {this.Flags} - {"items".ToQuantity(this.Objects.Count)}";
+        public override string ToString() => $"{this.Name}: Id: {this.Id} - {this.Flags} - {"items".ToQuantity(this.Objects.Count)}";
         public override int GetHashCode() => this.Id.GetHashCode();
     }
 }

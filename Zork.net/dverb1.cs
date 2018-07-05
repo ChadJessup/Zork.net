@@ -67,7 +67,7 @@ namespace Zork.Core
             // OBJECT IS TAKEABLE AND IN POSITION TO BE TAKEN.
 
             L500:
-            if (x != 0 || ObjectHandler.IsObjectInRoom((ObjectIds)game.ParserVectors.DirectObject, game.Player.Here, game))
+            if (x != 0 || ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game))
             {
                 goto L600;
             }
@@ -224,10 +224,11 @@ namespace Zork.Core
 
             // Local variables
             ObjectIds j;
-            int svi, svo;
+            ObjectIds svi, svo;
 
             ret_val = false;
-            if (game.ParserVectors.DirectObject <= (ObjectIds)game.Star.strbit && game.ParserVectors.IndirectObject <= (ObjectIds)game.Star.strbit)
+            if (game.ParserVectors.DirectObject <= (ObjectIds)game.Star.strbit &&
+                game.ParserVectors.IndirectObject <= (ObjectIds)game.Star.strbit)
             {
                 goto L200;
             }
@@ -240,8 +241,9 @@ namespace Zork.Core
             return ret_val;
 
             L200:
-            if ((game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsOpen) != 0
-                || (game.Objects[game.ParserVectors.IndirectObject].Flag1 & (int)ObjectFlags.DOORBT + ObjectFlags.CONTBT) != 0 || (game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsVehicle) != 0)
+            if ((game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsOpen) != 0 ||
+                (game.Objects[game.ParserVectors.IndirectObject].Flag1 & (int)ObjectFlags.DOORBT + ObjectFlags.CONTBT) != 0 ||
+                (game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsVehicle) != 0)
             {
                 goto L300;
             }
@@ -281,7 +283,10 @@ namespace Zork.Core
             return ret_val;
 
             L600:
-            if (ObjectHandler.GetWeight(0, game.ParserVectors.DirectObject, 0, game) + ObjectHandler.GetWeight(0, game.ParserVectors.IndirectObject, 0, game) + game.Objects[game.ParserVectors.DirectObject].Size <= game.Objects[game.ParserVectors.IndirectObject].Capacity)
+            // TODO: chadj - commenting these out, not sure if needed.
+            // if (ObjectHandler.GetWeight(0, game.ParserVectors.DirectObject, 0, game)
+            //    + ObjectHandler.GetWeight(0, game.ParserVectors.IndirectObject, 0, game)
+            if (game.Objects[game.ParserVectors.DirectObject].Size <= game.Objects[game.ParserVectors.IndirectObject].Capacity)
             {
                 goto L700;
             }
@@ -296,10 +301,11 @@ namespace Zork.Core
             j = game.ParserVectors.DirectObject;
             // !START SEARCH.
             L725:
-            if (ObjectHandler.IsObjectInRoom((ObjectIds)j, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(j, game.Player.Here, game))
             {
                 goto L750;
             }
+
             // !IS IT HERE?
             j = game.Objects[j].Container;
             if (j != 0)
@@ -311,19 +317,22 @@ namespace Zork.Core
             // !NO, SCH FAILS.
 
             L750:
-            svo = (int)game.ParserVectors.DirectObject;
             // !SAVE PARSER.
-            svi = (int)game.ParserVectors.IndirectObject;
+            svo = game.ParserVectors.DirectObject;
+            svi = game.ParserVectors.IndirectObject;
+
             game.ParserVectors.prsa = VerbIds.Take;
             game.ParserVectors.IndirectObject = 0;
+
+            // !TAKE OBJECT.
             if (!TakeParsedObject(game, false))
             {
                 return ret_val;
             }
-            // !TAKE OBJECT.
+
             game.ParserVectors.prsa = VerbIds.Put;
-            game.ParserVectors.DirectObject = (ObjectIds)svo;
-            game.ParserVectors.IndirectObject = (ObjectIds)svi;
+            game.ParserVectors.DirectObject = svo;
+            game.ParserVectors.IndirectObject = svi;
             goto L1000;
 
             // NOW SEE IF OBJECT IS ON PERSON.
@@ -350,21 +359,22 @@ namespace Zork.Core
             // !SCORE OBJECT.
             game.Objects[game.ParserVectors.DirectObject].Value = 0;
             game.Objects[game.ParserVectors.DirectObject].Flag2 |= ObjectFlags2.WasTouched;
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.DirectObject, 0, 0, 0, game.Player.Winner, game);
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 0, 0, 0, game.Player.Winner, game);
             // !TEMPORARILY ON WINNER.
 
             L1000:
+            // !NO, GIVE OBJECT A SHOT.
             if (ObjectHandler.ApplyObjectsFromParseVector(game))
             {
                 return ret_val;
             }
-            // !NO, GIVE OBJECT A SHOT.
-            ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.DirectObject, 2, 0, (ObjectIds)game.ParserVectors.IndirectObject, 0, game);
+
             // !CONTAINED INSIDE.
+            ObjectHandler.SetNewObjectStatus(game.ParserVectors.DirectObject, 2, 0, game.ParserVectors.IndirectObject, 0, game);
+
             ret_val = true;
             return ret_val;
-
-        } // put_
+        }
 
         // VALUAC- HANDLES VALUABLES/EVERYTHING
         public static void valuac_(Game game, int v)
@@ -421,11 +431,14 @@ namespace Zork.Core
 
                 f = false;
                 MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2);
+
                 f1 = TakeParsedObject(game, true);
+
                 if (saveh != (int)game.Player.Here)
                 {
                     return;
                 }
+
                 L500:
                 ;
             }
@@ -446,9 +459,11 @@ namespace Zork.Core
                 {
                     goto L1500;
                 }
+
                 f = false;
                 MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2);
                 f1 = drop_(game, true);
+
                 if (saveh != (int)game.Player.Here)
                 {
                     return;
@@ -494,6 +509,7 @@ namespace Zork.Core
             {
                 i = 582;
             }
+
             // !CHOOSE MESSAGE.
             L4000:
             if (f)

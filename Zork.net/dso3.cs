@@ -31,7 +31,7 @@ namespace Zork.Core
                 goto L1000;
             }
 
-            L100:
+            GETENTRY:
             // !GET ENTRY.
             i = game.Exits.Travel[xi - 1];
 
@@ -45,7 +45,7 @@ namespace Zork.Core
             // !BRANCH ON ENTRY.
             switch (game.curxt_.xtype)
             {
-                case 1: goto L110;
+                case 1: goto NEXTENTRY;
                 case 2: goto L120;
                 case 3: goto L130;
                 case 4: goto L130;
@@ -57,10 +57,12 @@ namespace Zork.Core
             L130:
             game.curxt_.xobj = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.xrmask);
             game.curxt_.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
+
             L120:
-            game.curxt_.xstrng = game.Exits.Travel[xi];
             // !DOOR/CEXIT/NEXIT - STRING.
-            L110:
+            game.curxt_.xstrng = game.Exits.Travel[xi];
+
+            NEXTENTRY:
             // !ADVANCE TO NEXT ENTRY.
             xi += xpars_.xelnt[game.curxt_.xtype - 1];
             if ((i & xpars_.xdmask) == dir)
@@ -70,7 +72,7 @@ namespace Zork.Core
 
             if ((i & xpars_.xlflag) == 0)
             {
-                goto L100;
+                goto GETENTRY;
             }
 
             L1000:

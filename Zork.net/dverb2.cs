@@ -250,7 +250,7 @@ namespace Zork.Core
             // !VALID ROOM, IS IT LIT?
             if (RoomHandler.IsRoomLit(game.curxt_.xroom1, game))
             {
-                goto L900;
+                goto MOVETOROOM;
             }
             L450:
             // !NO, GRUE
@@ -293,10 +293,10 @@ namespace Zork.Core
             L550:
             switch (game.curxt_.xtype)
             {
-                case 1: goto L900;
+                case 1: goto MOVETOROOM;
                 case 2: goto L600;
                 case 3: goto L700;
-                case 4: goto L800;
+                case 4: goto CONDITIONALEXIT;
             }
 
             // !BRANCH ON EXIT TYPE.
@@ -306,7 +306,7 @@ namespace Zork.Core
             L700:
             if (cxappl_(game, game.curxt_.xactio) != 0)
             {
-                goto L900;
+                goto MOVETOROOM;
             }
             // !CEXIT... RETURNED ROOM?
             // TODO: chadj figure this out
@@ -330,16 +330,16 @@ namespace Zork.Core
             // !STOP CMD STREAM.
             return ret_val;
 
-            L800:
+            CONDITIONALEXIT:
             if (cxappl_(game, game.curxt_.xactio) != 0)
             {
-                goto L900;
+                goto MOVETOROOM;
             }
 
             // !DOOR... RETURNED ROOM?
             if ((game.Objects[game.curxt_.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
-                goto L900;
+                goto MOVETOROOM;
             }
 
             // !NO, DOOR OPEN?
@@ -354,7 +354,7 @@ namespace Zork.Core
             // !STOP CMD STREAM.
             return ret_val;
 
-            L900:
+            MOVETOROOM:
             ret_val = AdventurerHandler.moveto_(game, game.curxt_.xroom1, game.Player.Winner);
             // !MOVE TO ROOM.
             if (ret_val)

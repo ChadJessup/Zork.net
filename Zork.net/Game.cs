@@ -51,8 +51,9 @@ namespace Zork.Core
         public Dictionary<RoomIds, Room> Rooms { get; } = new Dictionary<RoomIds, Room>();
         public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
         public Dictionary<ActorIds, Adventurer> Adventurers { get; } = new Dictionary<ActorIds, Adventurer>();
+        public Dictionary<ObjectIds, Villian> Villians { get; } = new Dictionary<ObjectIds, Villian>();
 
-        public Villians Villians { get; } = new Villians();
+        //public Villians Villians { get; } = new Villians();
         public ClockEvents Clock { get; } = new ClockEvents();
 
         public Time Time { get; } = new Time();
@@ -68,7 +69,6 @@ namespace Zork.Core
         public Player Player { get; } = new Player();
         public Syntax Syntax { get; } = new Syntax();
         public curxt_ curxt_ { get; } = new curxt_();
-//        public Objects Objects { get; } = new Objects();
         public Orphans Orphans { get; } = new Orphans();
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
@@ -96,11 +96,18 @@ namespace Zork.Core
         /// </summary>
         public Action<string> WriteOutput { get; set; }
 
+        public EventHandler<MovedEventArgs> MoveOccurred { get; set; }
+
         public static Game Initialize() => DataLoader.LoadDataFile();
 
         public int rnd_(int maxVal) => this.Random.Next(maxVal);
 
         public bool IsRunning { get; set; } = true;
+
+        public string CurrentRoomName => this.Rooms[this.Player.Here].Name;
+        public int CurrentScore => this.State.RawScore;
+        public int MovesCount => this.State.Moves;
+
         public void Exit()
         {
             this.WriteOutput("The game is over.");
@@ -141,12 +148,12 @@ namespace Zork.Core
 
                 if (!this.ParserVectors.prswon)
                 {
-                    goto L400;
+                    goto ENDOFMOVE;
                 }
 
                 if (xvehic_(1))
                 {
-                    goto L400;
+                    goto ENDOFMOVE;
                 }
 
                 if (this.ParserVectors.prsa == VerbIds.Tell)
@@ -155,14 +162,15 @@ namespace Zork.Core
                 }
 
                 L300:
-                if (this.ParserVectors.DirectObject == ObjectIds.valua || this.ParserVectors.DirectObject == ObjectIds.every)
+                if (this.ParserVectors.DirectObject == ObjectIds.valua ||
+                    this.ParserVectors.DirectObject == ObjectIds.every)
                 {
                     goto L900;
                 }
 
                 if (!Parser.ProcessVerb(input, this.ParserVectors.prsa, this))
                 {
-                    goto L400;
+                    goto ENDOFMOVE;
                 }
 
                 L350:
@@ -173,7 +181,7 @@ namespace Zork.Core
 
                 f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here].Action, this);
 
-                L400:
+                ENDOFMOVE:
                 // !DO END OF MOVE.
                 xendmv_(this.Player.TelFlag);
 
@@ -212,7 +220,7 @@ namespace Zork.Core
                 // !FAKE OUT PARSER.
                 this.ParserVectors.prscon = 1;
                 // !FORCE NEW INPUT.
-                goto L400;
+                goto ENDOFMOVE;
 
                 L1300:
                 this.ParserVectors.prswon = Parser.Parse(input, false, this);
@@ -340,7 +348,7 @@ namespace Zork.Core
             // !FIGHT DEMON.
             if (this.ParserVectors.prswon)
             {
-                DemonHandler.fightd_(this);
+                DemonHandler.Fight(this);
             }
 
             // !SWORD DEMON.
@@ -360,6 +368,8 @@ namespace Zork.Core
             {
                 f = xvehic_(2);
             }
+
+            this.MoveOccurred?.Invoke(this, new MovedEventArgs(this));
         }
 
         // XVEHIC- EXECUTE VEHICLE FUNCTION

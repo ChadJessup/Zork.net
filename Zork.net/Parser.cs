@@ -4215,8 +4215,8 @@ namespace Zork.Core
             game.Flags.IsGrateUnlocked = false;
 
             MessageHandler.rspeak_(game, 214);
-            game.Exits.Travel[game.Rooms[game.Player.Here].Exit] = 214;
             // !CHANGE EXIT STATUS.
+            game.Exits.Travel[game.Rooms[game.Player.Here].Exit] = 214;
             return ret_val;
 
             // V93--	UNLOCK

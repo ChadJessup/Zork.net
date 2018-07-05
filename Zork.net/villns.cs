@@ -21,7 +21,7 @@ namespace Zork.Core
             }
 
             // !FIGHT?
-            if (game.Objects[ObjectIds.axe].Container == ObjectIds.Troll)
+            if (game.Objects[ObjectIds.Axe].Container == ObjectIds.Troll)
             {
                 goto L10;
             }
@@ -30,7 +30,7 @@ namespace Zork.Core
             i = 433;
 
             // !ASSUME CANT GET.
-            if (!ObjectHandler.IsObjectInRoom(ObjectIds.axe, game.Player.Here, game))
+            if (!ObjectHandler.IsObjectInRoom(ObjectIds.Axe, game.Player.Here, game))
             {
                 goto L1050;
             }
@@ -38,7 +38,7 @@ namespace Zork.Core
             // !HERE?
             i = 434;
             // !YES, RECOVER.
-            ObjectHandler.SetNewObjectStatus(ObjectIds.axe, 0, 0, ObjectIds.Troll, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Axe, 0, 0, ObjectIds.Troll, 0, game);
             L1050:
             if (ObjectHandler.IsObjectInRoom(ObjectIds.Troll, game.Player.Here, game))
             {
@@ -67,7 +67,7 @@ namespace Zork.Core
             // !OUT?
             game.Flags.trollf = true;
             // !PERMIT EXITS.
-            game.Objects[ObjectIds.axe].Flag1 &= ~ObjectFlags.IsVisible;
+            game.Objects[ObjectIds.Axe].Flag1 &= ~ObjectFlags.IsVisible;
             game.Objects[ObjectIds.Troll].Description1 = 435;
             // !TROLL OUT.
             return ret_val;
@@ -80,7 +80,7 @@ namespace Zork.Core
             // !WAKE UP?
             game.Flags.trollf = false;
             // !FORBID EXITS.
-            game.Objects[ObjectIds.axe].Flag1 |= ObjectFlags.IsVisible;
+            game.Objects[ObjectIds.Axe].Flag1 |= ObjectFlags.IsVisible;
             game.Objects[ObjectIds.Troll].Description1 = 436;
             // !TROLL IN.
             if (ObjectHandler.IsObjectInRoom(ObjectIds.Troll, game.Player.Here, game))
@@ -117,7 +117,7 @@ namespace Zork.Core
             // !TROLL OUT?
             game.Objects[ObjectIds.Troll].Capacity = -game.Objects[ObjectIds.Troll].Capacity;
             // !YES, WAKE HIM.
-            game.Objects[ObjectIds.axe].Flag1 |= ObjectFlags.IsVisible;
+            game.Objects[ObjectIds.Axe].Flag1 |= ObjectFlags.IsVisible;
             game.Flags.trollf = false;
             game.Objects[ObjectIds.Troll].Description1 = 436;
             MessageHandler.rspsub_(game, 437);
@@ -376,7 +376,7 @@ namespace Zork.Core
             }
 
             // !FIGHT?
-            if (game.Objects[ObjectIds.Stilletto].Container == ObjectIds.thief)
+            if (game.Objects[ObjectIds.Stilletto].Container == ObjectIds.Thief)
             {
                 goto L10;
             }
@@ -388,9 +388,9 @@ namespace Zork.Core
             }
 
             // !CAN HE RECOVER IT?
-            ObjectHandler.SetNewObjectStatus(ObjectIds.thief, 0, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Thief, 0, 0, 0, 0, game);
             // !NO, VANISH.
-            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Thief, game.Player.Here, game))
             {
                 MessageHandler.rspeak_(game, 498);
             }
@@ -399,9 +399,9 @@ namespace Zork.Core
             return ret_val;
 
             L50:
-            ObjectHandler.SetNewObjectStatus(ObjectIds.Stilletto, 0, 0, ObjectIds.thief, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Stilletto, 0, 0, ObjectIds.Thief, 0, game);
             // !YES, RECOVER.
-            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Thief, game.Player.Here, game))
             {
                 MessageHandler.rspeak_(game, 499);
             }
@@ -426,7 +426,7 @@ namespace Zork.Core
             {
                 // !CARRYING ANYTHING?
                 // L125:
-                if (game.Objects[i].Adventurer == (ActorIds)(-(int)ObjectIds.thief))
+                if (game.Objects[i].Adventurer == (ActorIds)(-(int)ObjectIds.Thief))
                 {
                     j = (ObjectIds)500;
                 }
@@ -441,7 +441,7 @@ namespace Zork.Core
             {
                 // !LOOP.
                 if (i == ObjectIds.chali
-                    || i == ObjectIds.thief
+                    || i == ObjectIds.Thief
                     || game.Player.Here != RoomIds.Treasure
                     || !ObjectHandler.IsObjectInRoom(i, game.Player.Here, game))
                 {
@@ -456,7 +456,7 @@ namespace Zork.Core
                 goto L150;
 
                 L135:
-                if (game.Objects[i].Adventurer == (ActorIds)(-(int)ObjectIds.thief))
+                if (game.Objects[i].Adventurer == (ActorIds)(-(int)ObjectIds.Thief))
                 {
                     ObjectHandler.SetNewObjectStatus((ObjectIds)i, 0, game.Player.Here, 0, 0, game);
                 }
@@ -475,7 +475,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.ParserVectors.prsa != VerbIds.Hello || game.Objects[ObjectIds.thief].Description1 != 504)
+            if (game.ParserVectors.prsa != VerbIds.Hello || game.Objects[ObjectIds.Thief].Description1 != 504)
             {
                 goto L300;
             }
@@ -492,7 +492,7 @@ namespace Zork.Core
             // !OUT?
             game.Hack.IsThiefActive = false;
             // !DISABLE DEMON.
-            game.Objects[ObjectIds.thief].Description1 = 504;
+            game.Objects[ObjectIds.Thief].Description1 = 504;
             // !CHANGE DESCRIPTION.
             game.Objects[ObjectIds.Stilletto].Flag1 &= ~ObjectFlags.IsVisible;
             game.Objects[ObjectIds.chali].Flag1 |= ObjectFlags.IsTakeable;
@@ -506,7 +506,7 @@ namespace Zork.Core
 
             // !IN?
             // !CAN HERO SEE?
-            if (ObjectHandler.IsObjectInRoom(ObjectIds.thief, game.Player.Here, game))
+            if (ObjectHandler.IsObjectInRoom(ObjectIds.Thief, game.Player.Here, game))
             {
                 MessageHandler.rspeak_(game, 505);
             }
@@ -515,7 +515,7 @@ namespace Zork.Core
             game.Hack.IsThiefActive = true;
 
             // !CHANGE DESCRIPTION.
-            game.Objects[ObjectIds.thief].Description1 = 503;
+            game.Objects[ObjectIds.Thief].Description1 = 503;
             game.Objects[ObjectIds.Stilletto].Flag1 |= ObjectFlags.IsVisible;
 
             if (game.Player.Here == RoomIds.Treasure && ObjectHandler.IsObjectInRoom(ObjectIds.chali, game.Player.Here, game))
@@ -538,7 +538,7 @@ namespace Zork.Core
 
             L600:
             if (game.ParserVectors.prsa != VerbIds.Throw || game.ParserVectors.DirectObject != ObjectIds.Knife ||
-                (game.Objects[ObjectIds.thief].Flag2 & ObjectFlags2.IsFighting) != 0)
+                (game.Objects[ObjectIds.Thief].Flag2 & ObjectFlags2.IsFighting) != 0)
             {
                 goto L700;
             }
@@ -551,7 +551,7 @@ namespace Zork.Core
             // !THREW KNIFE, 10%?
             MessageHandler.rspeak_(game, 507);
             // !NO, JUST MAKES
-            game.Objects[ObjectIds.thief].Flag2 |= ObjectFlags2.IsFighting;
+            game.Objects[ObjectIds.Thief].Flag2 |= ObjectFlags2.IsFighting;
             return ret_val;
 
             L650:
@@ -560,7 +560,7 @@ namespace Zork.Core
             i__1 = game.Objects.Count;
             for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
             {
-                if (game.Objects[i].Adventurer != (ActorIds)(-(int)ObjectIds.thief))
+                if (game.Objects[i].Adventurer != (ActorIds)(-(int)ObjectIds.Thief))
                 {
                     goto L675;
                 }
@@ -571,7 +571,7 @@ namespace Zork.Core
                 ;
             }
 
-            ObjectHandler.SetNewObjectStatus(ObjectIds.thief, (int)j, 0, 0, 0, game);
+            ObjectHandler.SetNewObjectStatus(ObjectIds.Thief, (int)j, 0, 0, 0, game);
             // !THIEF VANISHES.
             return ret_val;
 
@@ -579,26 +579,26 @@ namespace Zork.Core
             if (game.ParserVectors.prsa != VerbIds.Throw
                 && game.ParserVectors.prsa != VerbIds.Give
                 || game.ParserVectors.DirectObject == 0
-                || game.ParserVectors.DirectObject == ObjectIds.thief)
+                || game.ParserVectors.DirectObject == ObjectIds.Thief)
             {
                 goto L10;
             }
 
-            if (game.Objects[ObjectIds.thief].Capacity >= 0)
+            if (game.Objects[ObjectIds.Thief].Capacity >= 0)
             {
                 goto L750;
             }
 
             // !WAKE HIM UP.
-            game.Objects[ObjectIds.thief].Capacity = -game.Objects[ObjectIds.thief].Capacity;
+            game.Objects[ObjectIds.Thief].Capacity = -game.Objects[ObjectIds.Thief].Capacity;
             game.Hack.IsThiefActive = true;
             game.Objects[ObjectIds.Stilletto].Flag1 |= ObjectFlags.IsVisible;
-            game.Objects[ObjectIds.thief].Description1 = 503;
+            game.Objects[ObjectIds.Thief].Description1 = 503;
             MessageHandler.rspeak_(game, 510);
 
             L750:
-            if (game.ParserVectors.DirectObject != ObjectIds.brick
-                || game.Objects[ObjectIds.fuse].Container != ObjectIds.brick
+            if (game.ParserVectors.DirectObject != ObjectIds.Brick
+                || game.Objects[ObjectIds.Fuse].Container != ObjectIds.Brick
                 || game.Clock.Ticks[(int)ClockIndices.cevfus - 1] == 0)
             {
                 goto L800;
@@ -609,7 +609,7 @@ namespace Zork.Core
             return ret_val;
 
             L800:
-            i__1 = -(int)ObjectIds.thief;
+            i__1 = -(int)ObjectIds.Thief;
             ObjectHandler.SetNewObjectStatus((ObjectIds)game.ParserVectors.DirectObject, 0, 0, 0, (ActorIds)i__1, game);
 
             // !THIEF TAKES GIFT.
@@ -625,7 +625,7 @@ namespace Zork.Core
             L900:
             MessageHandler.rspsub_(game, 627, game.Objects[game.ParserVectors.DirectObject].Description2);
             // !THIEF ENGROSSED.
-            game.Flags.thfenf = true;
+            game.Flags.IsThiefEngrossed = true;
             return ret_val;
 
             L10:
