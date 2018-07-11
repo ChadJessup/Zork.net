@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Zork.Core
 {
-    public class Adventurer
+    public class Adventurer : IComparable, IComparable<Adventurer>
     {
         public ActorIds Id { get; set; }
         public Room CurrentRoom { get; set; }
@@ -29,6 +29,15 @@ namespace Zork.Core
             obj.Adventurer = this.Id;
             this.HeldObjects.Add(obj);
             // obj.Container = adventurer.ObjectId;
+        }
+
+        public int CompareTo(Adventurer other) => ((int)this.Id).CompareTo((int)other.Id);
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            Adventurer other = obj as Adventurer;
+            return this.CompareTo(other);
         }
     }
 }

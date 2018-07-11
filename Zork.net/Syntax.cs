@@ -2,16 +2,16 @@
 {
     public class Syntax
     {
-        public SyntaxFlags vflag { get; set; }
-        public SyntaxObjectFlags dobj { get; set; }
-        public int dfl1 { get; set; }
-        public int dfl2 { get; set; }
-        public int dfw1 { get; set; }
-        public int dfw2 { get; set; }
-        public SyntaxObjectFlags iobj { get; set; }
-        public int ifl1 { get; set; }
-        public int ifl2 { get; set; }
-        public int ifw1 { get; set; }
-        public int ifw2 { get; set; }
+        public SyntaxFlags Flags { get; set; }
+        public SyntaxObjectFlags DirectObject { get; set; }
+        public int DirectObjectFlag1 { get; set; }
+        public int DirectObjectFlag2 { get; set; }
+        public int DirectObjectWord1 { get; set; }
+        public int DirectObjectWord2 { get; set; }
+        public SyntaxObjectFlags IndirectObject { get; set; }
+        public int IndirectObjectFlag1 { get; set; }
+        public int IndirectObjectFlag2 { get; set; }
+        public int IndirectObjectWord1 { get; set; }
+        public int IndirectObjectWord2 { get; set; }
     }
 }

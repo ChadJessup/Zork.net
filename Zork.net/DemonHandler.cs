@@ -13,11 +13,9 @@ namespace Zork.Core
         {
             int rout = 1;
 
-            int i__1, i__2;
-
-            // Local variables
+            int i__2;
             bool f;
-            int i, ra;
+            Object ra;
             ObjectIds obj, j;
             int res;
             int output;
@@ -29,7 +27,7 @@ namespace Zork.Core
                 // !GET OBJECT NO.
                 obj = villian.Id;
                 // !GET HIS ACTION.
-                ra = game.Objects[obj].Action;
+                ra = game.Objects[obj];
 
                 // !ADVENTURER STILL HERE?
                 if (game.Player.Here != RoomHandler.GetRoomThatContainsObject(obj, game).Id)
@@ -59,7 +57,7 @@ namespace Zork.Core
 
                 villian.WakeupProbability = 0;
 
-                if (ra == 0)
+                if (ra.Id == 0)
                 {
                     continue;
                 }
@@ -88,7 +86,7 @@ namespace Zork.Core
                 continue;
 
                 L2100:
-                if (ra == 0)
+                if (ra.Id == 0)
                 {
                     continue;
                 }
@@ -109,7 +107,7 @@ namespace Zork.Core
                 continue;
 
                 L2200:
-                if ((game.Objects[obj].Flag2 & ObjectFlags2.IsFighting) == 0 || ra == 0)
+                if ((game.Objects[obj].Flag2 & ObjectFlags2.IsFighting) == 0 || ra.Id == 0)
                 {
                     goto L2300;
                 }
@@ -129,7 +127,7 @@ namespace Zork.Core
                 game.Adventurers[ActorIds.Player].Flag &= ~game.astag;
                 game.Objects[obj].Flag2 &= ~((int)ObjectFlags2.IsStaggered + ObjectFlags2.IsFighting);
 
-                if (game.Objects[obj].Capacity >= 0 || ra == 0)
+                if (game.Objects[obj].Capacity >= 0 || ra.Id == 0)
                 {
                     continue;
                 }
@@ -161,8 +159,8 @@ namespace Zork.Core
                 // !STOP CMD STREAM.
                 game.ParserVectors.prscon = 1;
                 // !VILLAIN ACTION?
-                ra = game.Objects[j].Action;
-                if (ra == 0)
+                ra = game.Objects[j];
+                if (ra.Id == 0)
                 {
                     goto STRIKEBLOW;
                 }
@@ -230,7 +228,8 @@ namespace Zork.Core
 
             // Local variables
             bool f;
-            int j, oa, ra, od, mi, dv, def;
+            int j, oa, od, mi, dv, def;
+            Object ra;
             ObjectIds i;
             int tbl;
             int att, res;
@@ -238,10 +237,10 @@ namespace Zork.Core
             int pblose;
 
             // !GET VILLAIN ACTION,
-            ra = game.Objects[villian].Action;
+            ra = game.Objects[villian];
 
             // !DESCRIPTION.
-            dv = game.Objects[villian].Description2;
+            dv = game.Objects[villian].Description2Id;
             // !ASSUME NO RESULT.
             ret_val = rmiss;
 
@@ -436,7 +435,7 @@ namespace Zork.Core
 
             if (!(isHeroAttacking) && dweap != 0)
             {
-                j = game.Objects[(ObjectIds)dweap].Description2;
+                j = game.Objects[(ObjectIds)dweap].Description2Id;
             }
 
             MessageHandler.rspsub_(i, j, game);
@@ -517,7 +516,7 @@ namespace Zork.Core
             dweap = (ObjectIds)Math.Abs(i__1);
             if (dweap != 0)
             {
-                MessageHandler.rspsub_(605, game.Objects[(ObjectIds)dweap].Description2, game);
+                MessageHandler.rspsub_(605, game.Objects[(ObjectIds)dweap].Description2Id, game);
             }
             // BLOW, PAGE 6
 
@@ -542,7 +541,7 @@ namespace Zork.Core
 
             // !MAKE HIM DISAPPEAR.
             ObjectHandler.SetNewObjectStatus(villian, 0, 0, 0, 0, game);
-            if (ra == 0)
+            if (ra.Id == 0)
             {
                 return ret_val;
             }
@@ -554,7 +553,7 @@ namespace Zork.Core
             return ret_val;
 
             L4100:
-            if (res != rout || ra == 0)
+            if (res != rout || ra.Id == 0)
             {
                 return ret_val;
             }

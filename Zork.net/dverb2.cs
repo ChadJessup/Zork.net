@@ -349,7 +349,7 @@ namespace Zork.Core
             }
 
             // !IF NO REASON, USE STD.
-            MessageHandler.rspsub_(game.curxt_.xstrng, game.Objects[game.curxt_.xobj].Description2, game);
+            MessageHandler.rspsub_(game.curxt_.xstrng, game.Objects[game.curxt_.xobj].Description2Id, game);
             game.ParserVectors.prscon = 1;
             // !STOP CMD STREAM.
             return ret_val;

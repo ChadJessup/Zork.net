@@ -16,15 +16,13 @@ namespace Zork.Core
             int i__1;
             bool ret_val;
 
-            // Local variables
-            int oa;
             ObjectIds x;
 
             // !ASSUME LOSES.
             ret_val = false;
 
             // !GET OBJECT ACTION.
-            oa = game.Objects[game.ParserVectors.DirectObject].Action;
+            Object oa = game.Objects[game.ParserVectors.DirectObject];
 
             // !STAR?
             if (game.ParserVectors.DirectObject <= (ObjectIds)game.Star.strbit)
@@ -146,7 +144,7 @@ namespace Zork.Core
             {
                 goto L300;
             }
-            MessageHandler.rspsub_(game, 525, game.Objects[x].Description2);
+            MessageHandler.rspsub_(game, 525, game.Objects[x].Description2Id);
             // !CANT REACH.
             return ret_val;
 
@@ -206,7 +204,7 @@ namespace Zork.Core
             {
                 i = (ObjectIds)659;
             }
-            MessageHandler.rspsub_(game, (int)i, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, (int)i, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             return ret_val;
 
             L1000:
@@ -242,7 +240,7 @@ namespace Zork.Core
 
             L200:
             if ((game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsOpen) != 0 ||
-                (game.Objects[game.ParserVectors.IndirectObject].Flag1 & (int)ObjectFlags.DOORBT + ObjectFlags.CONTBT) != 0 ||
+                (game.Objects[game.ParserVectors.IndirectObject].Flag1 & (int)ObjectFlags.IsDoor + ObjectFlags.CONTBT) != 0 ||
                 (game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsVehicle) != 0)
             {
                 goto L300;
@@ -278,7 +276,7 @@ namespace Zork.Core
                 goto L600;
             }
             // !ALREADY INSIDE.
-            MessageHandler.rspsb2_(game, 564, game.Objects[game.ParserVectors.DirectObject].Description2, game.Objects[game.ParserVectors.IndirectObject].Description2);
+            MessageHandler.rspsb2_(game, 564, game.Objects[game.ParserVectors.DirectObject].Description2Id, game.Objects[game.ParserVectors.IndirectObject].Description2Id);
             ret_val = true;
             return ret_val;
 
@@ -350,7 +348,7 @@ namespace Zork.Core
             }
 
             // !OPEN?
-            MessageHandler.rspsub_(game, 566, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, 566, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             // !LOSE.
             return ret_val;
 
@@ -417,20 +415,20 @@ namespace Zork.Core
                 // !LOOP THRU OBJECTS.
                 if (!ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game)
                     || (game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsVisible) == 0
-                    || (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.ACTRBT) != 0
+                    || (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsActor) != 0
                     || savep == v && game.Objects[game.ParserVectors.DirectObject].otval <= 0)
                 {
                     goto L500;
                 }
 
                 if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) == 0 &&
-                    (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.TRYBT) == 0)
+                    (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.CanTry) == 0)
                 {
                     goto L500;
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
 
                 f1 = TakeParsedObject(game, true);
 
@@ -461,7 +459,7 @@ namespace Zork.Core
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
                 f1 = drop_(game, true);
 
                 if (saveh != (int)game.Player.Here)
@@ -493,7 +491,7 @@ namespace Zork.Core
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2);
+                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
                 f1 = put_(game, true);
                 if (saveh != (int)game.Player.Here)
                 {

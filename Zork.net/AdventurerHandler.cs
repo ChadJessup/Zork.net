@@ -27,10 +27,10 @@ namespace Zork.Core
             // !IF NOT ME.
             foreach (var obj in game.Adventurers[adventurerId].HeldObjects.Where(obj => obj.IsVisible))
             {
-                MessageHandler.rspsub_(i, game.Objects[game.Adventurers[adventurerId].ObjectId].Description2, game);
+                MessageHandler.rspsub_(i, game.Objects[game.Adventurers[adventurerId].ObjectId].Description2Id, game);
                 i = 0;
 
-                MessageHandler.rspsub_(502, obj.Description2, game);
+                MessageHandler.rspsub_(502, obj.Description2Id, game);
             }
 
             if (i == 0)
@@ -101,7 +101,7 @@ namespace Zork.Core
 
             // !HIMSELF?
             // !NO, SAY WHO DIED.
-            MessageHandler.rspsub_(432, game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Description2, game);
+            MessageHandler.rspsub_(432, game.Objects[game.Adventurers[game.Player.Winner].ObjectId].Description2Id, game);
 
             // !SEND TO HYPER SPACE.
             ObjectHandler.SetNewObjectStatus(game.Adventurers[game.Player.Winner].ObjectId, 0, 0, 0, 0, game);
@@ -346,7 +346,7 @@ namespace Zork.Core
 
             L800:
             // !WRONG VEHICLE.
-            MessageHandler.rspsub_(428, game.Objects[vehicleId].Description2, game);
+            MessageHandler.rspsub_(428, game.Objects[vehicleId].Description2Id, game);
 
             return ret_val;
         }

@@ -1,7 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using Zork.Core.Attributes;
+using Zork.Core.Converters;
 
 namespace Zork.Core
 {
@@ -12,11 +18,16 @@ namespace Zork.Core
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public static Game LoadDataFile(string filename = "dtextc.dat")
+        public static Game LoadDataFile(string filename = "dtextc.dat", bool useJson = false)
         {
             if (!File.Exists(filename))
             {
                 throw new FileNotFoundException("Unable to find data file: " + filename);
+            }
+
+            if (useJson)
+            {
+                return LoadFromJson(@"C:\Users\shabu\Desktop\zork.json");
             }
 
             var bytes = File.ReadAllBytes(filename);
@@ -74,11 +85,70 @@ namespace Zork.Core
             return game;
         }
 
+        private static Game LoadFromJson(string path)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                PreserveReferencesHandling = PreserveReferencesHandling.None,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
+            settings.Converters.Add(new StringEnumConverter());
+            settings.Converters.Add(new RoomConverter());
+            settings.Converters.Add(new GameConverter());
+            settings.Converters.Add(new AdventurerConverter());
+            settings.Converters.Add(new ObjectConverter());
+            settings.Converters.Add(new VillianConverter());
+
+            return JsonConvert.DeserializeObject<Game>(File.ReadAllText(path), settings);
+        }
+
+        private static Dictionary<RoomIds, (RoomActionAttribute attrib, Func<Game, bool> action)> LoadRoomActions()
+        {
+            var dic = new Dictionary<RoomIds, (RoomActionAttribute, Func<Game, bool>)>();
+
+            foreach (var type in Assembly.GetCallingAssembly().GetTypes())
+            {
+                foreach (var method in type.GetMethods())
+                {
+                    foreach (var attrib in method.GetCustomAttributes<RoomActionAttribute>(inherit: true))
+                    {
+                        var func = (Func<Game, bool>)Delegate.CreateDelegate(typeof(Func<Game, bool>), null, method);
+                        dic.Add(attrib.RoomId, (attrib, func));
+                    }
+                }
+            }
+
+            return dic;
+        }
+
+        private static Dictionary<ObjectIds, (ObjectActionAttribute attrib, Func<Game, bool> action)> LoadObjectActions()
+        {
+            var dic = new Dictionary<ObjectIds, (ObjectActionAttribute, Func<Game, bool>)>();
+
+            foreach (var type in Assembly.GetCallingAssembly().GetTypes())
+            {
+                foreach (var method in type.GetMethods())
+                {
+                    foreach (var attrib in method.GetCustomAttributes<ObjectActionAttribute>(inherit: true))
+                    {
+                        var func = (Func<Game, bool>)Delegate.CreateDelegate(typeof(Func<Game, bool>), null, method);
+                        dic.Add(attrib.ObjectId, (attrib, func));
+                    }
+                }
+            }
+
+            return dic;
+        }
+
         private static void SetRoomNames(Game game, Dictionary<RoomIds, Room> rooms)
         {
             foreach (var room in rooms.Values)
             {
-                room.Name = MessageHandler.rspeak_(game, room.Description2);
+                room.Name = MessageHandler.rspeak_(game, room.Description2Id);
             }
         }
 
@@ -181,6 +251,8 @@ namespace Zork.Core
 
         private static void LoadObjects(byte[] bytes, Game game)
         {
+            var objectActions = LoadObjectActions();
+
             var objectCount = DataLoader.ReadInt(bytes, game);
             var odesc1 = new List<int>();
             var odesc2 = new List<int>();
@@ -233,9 +305,9 @@ namespace Zork.Core
                 var newObject = new Object
                 {
                     Id = (ObjectIds)objIdx,
-                    Description1 = odesc1[objIdx - 1],
-                    Description2 = odesc2[objIdx - 1],
-                    odesco = odesco[objIdx - 1],
+                    Description1Id = odesc1[objIdx - 1],
+                    Description2Id = odesc2[objIdx - 1],
+                    odescoId = odesco[objIdx - 1],
                     Action = oactio[objIdx - 1],
                     Value = ofval[objIdx - 1],
                     otval = otval[objIdx - 1],
@@ -243,7 +315,7 @@ namespace Zork.Core
                     Capacity = ocapac[objIdx - 1],
                     Adventurer = (ActorIds)oadv[objIdx - 1],
                     Container = (ObjectIds)ocan[objIdx - 1],
-                    oread = oread[objIdx - 1],
+                    oreadId = oread[objIdx - 1],
                     Flag1 = oflag1[objIdx - 1],
                     Flag2 = oflag2[objIdx - 1],
                 };
@@ -259,6 +331,11 @@ namespace Zork.Core
                     containerHolding.Add(newObject);
                 }
 
+                if (objectActions.TryGetValue(newObject.Id, out var value))
+                {
+                    newObject.DoAction = value.action;
+                }
+
                 game.Objects.Add(newObject.Id, newObject);
             }
 
@@ -268,11 +345,14 @@ namespace Zork.Core
                 container.Value.ContainedObjects.Add(containedItem);
             }
 
+
             game.Objects.Add(ObjectIds.Nothing, new Object());
         }
 
         private static void LoadRooms(byte[] bytes, Game game)
         {
+            var roomActions = LoadRoomActions();
+
             var roomCount = DataLoader.ReadInt(bytes, game);
             var desc1 = new List<int>();
             var desc2 = new List<int>();
@@ -294,12 +374,17 @@ namespace Zork.Core
                 {
                     Id = (RoomIds)ridx,
                     Action = actions[ridx - 1],
-                    Description1 = desc1[ridx - 1],
-                    Description2 = desc2[ridx - 1],
+                    Description1Id = desc1[ridx - 1],
+                    Description2Id = desc2[ridx - 1],
                     Exit = exits[ridx - 1],
                     Flags = (RoomFlags)tempFlags[ridx - 1],
-                    Score = values[ridx - 1]
+                    Score = values[ridx - 1],
                 };
+
+                if (roomActions.TryGetValue(room.Id, out var value))
+                {
+                    room.DoAction = value.action;
+                }
 
                 game.Rooms.Add(room.Id, room);
             }
@@ -308,6 +393,8 @@ namespace Zork.Core
             {
                 Id = RoomIds.NoWhere
             });
+
+            var room2 = game.Rooms[RoomIds.WestOfHouse];
         }
 
         private static void ReadPartialInts(int count, List<int> list, byte[] bytes, Game game)

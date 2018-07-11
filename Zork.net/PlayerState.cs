@@ -7,7 +7,7 @@
         public int RawScore { get; set; }
         public int MaxScore { get; set; }
         public int MaxLoad { get; set; }
-        public int ltshft { get; set; }
+        public int LightShaft { get; set; }
         public Room BalloonLocation { get; set; }
         public Room mungrm { get; set; }
 

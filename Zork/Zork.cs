@@ -18,7 +18,7 @@ namespace Zork
 
         public void Go()
         {
-            var game = Game.Initialize();
+            var game = Game.Initialize(useJson: true);
             this.DrawHeader("", 0, 0);
 
             game.MoveOccurred += this.OnMoveOccurred;

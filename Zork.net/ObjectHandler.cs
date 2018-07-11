@@ -54,7 +54,7 @@ namespace Zork.Core
             ObjectHandler.RemoveObjectFromContainer(obj, game);
             ObjectHandler.AddObjectToContainer(obj, game.Objects[containerObjectId], game);
 
-            currentRoom.Objects.Remove(obj);
+            currentRoom?.Objects.Remove(obj);
             room.Objects.Add(obj);
 
             var currentAdv = game.Adventurers.Values.FirstOrDefault(a => a.HasObject(obj.Id));
@@ -87,13 +87,13 @@ namespace Zork.Core
         /// <param name="game"></param>
         public static void PrintDescription(ObjectIds objectId, int descriptionId, Game game)
         {
-            MessageHandler.rspsub_(descriptionId, game.Objects[objectId].Description2, game);
+            MessageHandler.rspsub_(descriptionId, game.Objects[objectId].Description2Id, game);
             // !PRINT HEADER.
             foreach (var obj in game.Objects.Values)
             {
                 if (obj.Container == objectId)
                 {
-                    MessageHandler.rspsub_(502, obj.Description2, game);
+                    MessageHandler.rspsub_(502, obj.Description2Id, game);
                 }
             }
         }
@@ -153,15 +153,11 @@ namespace Zork.Core
         /// <returns></returns>
         public static bool IsObjectEmpty(Game game, ObjectIds obj)
         {
-            int i__1;
-            bool ret_val;
+            bool ret_val = false;
 
             ObjectIds i;
 
-            ret_val = false;
-            // !ASSUME LOSE.
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 if (game.Objects[i].Container == obj)
                 {
@@ -170,6 +166,7 @@ namespace Zork.Core
                 // !INSIDE TARGET?
                 // L100:
             }
+
             ret_val = true;
             return ret_val;
         }
@@ -203,7 +200,7 @@ namespace Zork.Core
             return false;
         }
 
-        public static bool nobjs_(Game game, int ri, int arg)
+        public static bool nobjs_(Game game, Object obj, int arg)
         {
             int i__1, i__2;
             bool ret_val;
@@ -217,18 +214,23 @@ namespace Zork.Core
 
             if (game.ParserVectors.DirectObject != 0)
             {
-                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2;
+                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2Id;
             }
 
             if (game.ParserVectors.IndirectObject != 0)
             {
-                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2;
+                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2Id;
             }
 
             av = game.Adventurers[game.Player.Winner].VehicleId;
             ret_val = true;
 
-            switch (ri - 31)
+            if (obj.DoAction != null)
+            {
+                return obj.DoAction(game);
+            }
+
+            switch (obj.Action - 31)
             {
                 case 1: goto BILLS;
                 case 2: goto SCREENOFLIGHT;
@@ -239,9 +241,9 @@ namespace Zork.Core
                 case 7: goto WALL;
                 case 8: goto L8000;
                 case 9: goto L9000;
-                case 10: goto L10000;
-                case 11: goto L11000;
-                case 12: goto L12000;
+                case 10: goto SHORTPOLE;
+                case 11: goto MIRRORSWITCH;
+                case 12: goto BEAMFUNCTION;
                 case 13: goto BRONZEDOOR;
                 case 14: goto L14000;
                 case 15: goto LOCKEDDOOR;
@@ -449,8 +451,8 @@ namespace Zork.Core
             L4300:
             i = (ObjectIds)652;
             // !MUNG MESSAGE.
-            if ((game.Objects[game.ParserVectors.IndirectObject].Flag1 & ObjectFlags.IsTool) != 0
-            || (game.Objects[game.ParserVectors.IndirectObject].Flag2 & ObjectFlags2.IsWeapon) != 0)
+            if (game.Objects[game.ParserVectors.IndirectObject].Flag1.HasFlag(ObjectFlags.IsTool) ||
+                game.Objects[game.ParserVectors.IndirectObject].Flag2.HasFlag(ObjectFlags2.IsWeapon))
             {
                 goto L4600;
             }
@@ -486,7 +488,7 @@ namespace Zork.Core
                 goto L4700;
             }
             // !WAS CANARY INSIDE?
-            MessageHandler.Speak(game.Objects[ObjectIds.BadCanary].odesco, game);
+            MessageHandler.Speak(game.Objects[ObjectIds.BadCanary].odescoId, game);
             // !YES, DESCRIBE RESULT.
             game.Objects[ObjectIds.BadCanary].otval = 1;
             return ret_val;
@@ -727,7 +729,7 @@ namespace Zork.Core
 
             // O41--	SHORT POLE
 
-            L10000:
+            SHORTPOLE:
             if (game.ParserVectors.prsa != VerbIds.Raise)
             {
                 goto L10100;
@@ -792,7 +794,7 @@ namespace Zork.Core
 
             // O42--	MIRROR SWITCH
 
-            L11000:
+            MIRRORSWITCH:
             if (game.ParserVectors.prsa != VerbIds.Push)
             {
                 goto L10;
@@ -835,7 +837,7 @@ namespace Zork.Core
 
             // O43--	BEAM FUNCTION
 
-            L12000:
+            BEAMFUNCTION:
             if (game.ParserVectors.prsa != VerbIds.Take ||
                 game.ParserVectors.DirectObject != ObjectIds.rbeam)
             {
@@ -868,7 +870,7 @@ namespace Zork.Core
             // !CARRYING?
             SetNewObjectStatus(i, 0, game.Player.Here, 0, 0, game);
             // !DROP OBJ.
-            MessageHandler.rspsub_(760, game.Objects[i].Description2, game);
+            MessageHandler.rspsub_(760, game.Objects[i].Description2Id, game);
             return ret_val;
 
             L12300:
@@ -879,7 +881,7 @@ namespace Zork.Core
                 i = (ObjectIds)762;
             }
             // !IN ROOM?
-            MessageHandler.rspsub_(j, game.Objects[i].Description2, game);
+            MessageHandler.rspsub_(j, game.Objects[i].Description2Id, game);
             // !DESCRIBE.
             return ret_val;
 
@@ -992,7 +994,7 @@ namespace Zork.Core
             for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 // !RELOCATE OLD TO HYPER.
-                if (RoomHandler.GetRoomThatContainsObject(i, game).Id == RoomIds.Cell && (game.Objects[i].Flag1 & ObjectFlags.DOORBT) == 0)
+                if (RoomHandler.GetRoomThatContainsObject(i, game).Id == RoomIds.Cell && (game.Objects[i].Flag1 & ObjectFlags.IsDoor) == 0)
                 {
                     i__2 = game.Switches.LeftCell * game.hyper_.hfactr;
                     SetNewObjectStatus(i, 0, (RoomIds)i__2, 0, 0, game);
@@ -1171,7 +1173,7 @@ namespace Zork.Core
             }
 
             // !YES, LET IT HANDLE.
-            if (DoObjectSpecialAction(game.Objects[game.ParserVectors.IndirectObject].Action, 0, game))
+            if (DoObjectSpecialAction(game.Objects[game.ParserVectors.IndirectObject], 0, game))
             {
                 return ret_val;
             }
@@ -1184,7 +1186,7 @@ namespace Zork.Core
             }
 
             // !YES, LET IT HANDLE.
-            if (DoObjectSpecialAction(game.Objects[game.ParserVectors.DirectObject].Action, 0, game))
+            if (DoObjectSpecialAction(game.Objects[game.ParserVectors.DirectObject], 0, game))
             {
                 return ret_val;
             }
@@ -1202,7 +1204,7 @@ namespace Zork.Core
         /// <param name="actionId">The Id of the action</param>
         /// <param name="arg"></param>
         /// <returns></returns>
-        public static bool DoObjectSpecialAction(int actionId, int arg, Game game)
+        public static bool DoObjectSpecialAction(Object obj, int arg, Game game)
         {
             const int mxsmp = 99;
 
@@ -1219,13 +1221,13 @@ namespace Zork.Core
             int nloc;
 
             // !ZERO IS FALSE APP.
-            if (actionId == 0)
+            if (obj.Action == 0)
             {
                 goto L10;
             }
 
             // !SIMPLE OBJECT?
-            if (actionId <= mxsmp)
+            if (obj.Action <= mxsmp)
             {
                 goto L100;
             }
@@ -1237,13 +1239,13 @@ namespace Zork.Core
 
             if (game.ParserVectors.DirectObject != ObjectIds.Nothing)
             {
-                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2;
+                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2Id;
             }
 
             L5:
             if (game.ParserVectors.IndirectObject != ObjectIds.Nothing)
             {
-                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2;
+                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2Id;
             }
 
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
@@ -1251,7 +1253,12 @@ namespace Zork.Core
             flobts = (int)(ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT + (int)ObjectFlags.IsOn);
             ret_val = true;
 
-            switch (actionId - mxsmp)
+            if (obj.DoAction != null)
+            {
+                return obj.DoAction(game);
+            }
+
+            switch (obj.Action - mxsmp)
             {
                 case 1: goto L2000;
                 case 2: goto WATER;
@@ -1274,8 +1281,8 @@ namespace Zork.Core
                 case 19: goto L48000;
                 case 20: goto FLASK;
                 case 21: goto BUCKET;
-                case 22: goto L51000;
-                case 23: goto L52000;
+                case 22: goto EATMECAKE;
+                case 23: goto ICINGS;
                 case 24: goto BRICK;
                 case 25: goto MYSELF;
                 case 26: goto L56000;
@@ -1299,13 +1306,13 @@ namespace Zork.Core
             // SIMPLE OBJECTS, PROCESSED EXTERNALLY.
 
             L100:
-            if (actionId < 32)
+            if (obj.Action < 32)
             {
-                ret_val = sobjs_(game, actionId, arg);
+                ret_val = DoSimpleObjectAction(game, obj, arg);
             }
             else
             {
-                ret_val = ObjectHandler.nobjs_(game, actionId, arg);
+                ret_val = ObjectHandler.nobjs_(game, obj, arg);
             }
             return ret_val;
             // OAPPLI, PAGE 3
@@ -1378,7 +1385,7 @@ namespace Zork.Core
             }
 
             // !INSIDE, CLOSED, PUNT.
-            MessageHandler.rspsub_(525, game.Objects[game.Objects[game.ParserVectors.DirectObject].Container].Description2, game);
+            MessageHandler.rspsub_(525, game.Objects[game.Objects[game.ParserVectors.DirectObject].Container].Description2Id, game);
 
             return ret_val;
 
@@ -1464,7 +1471,7 @@ namespace Zork.Core
             // !WATER INTO VEHICLE.
             SetNewObjectStatus(ObjectIds.Water, 0, 0, av, 0, game);
             // !DESCRIBE.
-            MessageHandler.rspsub_(296, game.Objects[av].Description2, game);
+            MessageHandler.rspsub_(296, game.Objects[av].Description2Id, game);
 
             return ret_val;
 
@@ -1583,8 +1590,8 @@ namespace Zork.Core
             SetNewObjectStatus(ObjectIds.Ice, 169, 0, 0, 0, game);
 
             // !MUNG TORCH
-            game.Objects[ObjectIds.Torch].Description1 = 174;
-            game.Objects[ObjectIds.Torch].Description2 = 173;
+            game.Objects[ObjectIds.Torch].Description1Id = 174;
+            game.Objects[ObjectIds.Torch].Description2Id = 173;
             game.Objects[ObjectIds.Torch].Flag1 &= ~(ObjectFlags)flobts;
 
             // !MOVE TORCH.
@@ -1632,9 +1639,9 @@ namespace Zork.Core
             }
 
             // !MUNG TORCH.
-            game.Objects[ObjectIds.Torch].Description1 = 174;
+            game.Objects[ObjectIds.Torch].Description1Id = 174;
 
-            game.Objects[ObjectIds.Torch].Description2 = 173;
+            game.Objects[ObjectIds.Torch].Description2Id = 173;
             game.Objects[ObjectIds.Torch].Flag1 &= ~(ObjectFlags)flobts;
 
             L15700:
@@ -2039,7 +2046,7 @@ namespace Zork.Core
 
             // O121--	EATME CAKE
 
-            L51000:
+            EATMECAKE:
             if (game.ParserVectors.prsa != VerbIds.Eat ||
                 game.ParserVectors.DirectObject != ObjectIds.EatMeCake ||
                 game.Player.Here != RoomIds.Alice)
@@ -2061,7 +2068,7 @@ namespace Zork.Core
 
             // O122--	ICINGS
 
-            L52000:
+            ICINGS:
             if (game.ParserVectors.prsa != VerbIds.Read)
             {
                 goto L52200;
@@ -2150,8 +2157,7 @@ namespace Zork.Core
             //  Do a size change, common loop used also by code at 51000
 
             L52405:
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 // !ENLARGE WORLD.
                 if (RoomHandler.GetRoomThatContainsObject(i, game).Id != io || game.Objects[i].Size == 10000)
@@ -2545,7 +2551,7 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool sobjs_(Game game, int ri, int arg)
+        public static bool DoSimpleObjectAction(Game game, Object obj, int arg)
         {
             int i__1;
             bool ret_val;
@@ -2563,19 +2569,24 @@ namespace Zork.Core
 
             if (game.ParserVectors.DirectObject != 0)
             {
-                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2;
+                odo2 = game.Objects[game.ParserVectors.DirectObject].Description2Id;
             }
             L5:
             if (game.ParserVectors.IndirectObject != 0)
             {
-                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2;
+                odi2 = game.Objects[game.ParserVectors.IndirectObject].Description2Id;
             }
 
             av = game.Adventurers[game.Player.Winner].VehicleId;
 
             ret_val = true;
 
-            switch (ri)
+            if (obj.DoAction != null)
+            {
+                return obj.DoAction(game);
+            }
+
+            switch (obj.Action)
             {
                 case 1: goto GUNK;
                 case 2: goto TROPHYCASE;
@@ -2607,7 +2618,7 @@ namespace Zork.Core
                 case 28: goto L44000;
                 case 29: goto L46000;
                 case 30: goto L53000;
-                case 31: goto L56000;
+                case 31: goto GRUE;
             }
             throw new InvalidOperationException();
             //bug_(6, ri);
@@ -3094,8 +3105,8 @@ namespace Zork.Core
             // !DESTROY PAINTING.
             game.Objects[game.ParserVectors.DirectObject].Value = 0;
             game.Objects[game.ParserVectors.DirectObject].otval  = 0;
-            game.Objects[game.ParserVectors.DirectObject].Description1 = 207;
-            game.Objects[game.ParserVectors.DirectObject].Description2 = 206;
+            game.Objects[game.ParserVectors.DirectObject].Description1Id = 207;
+            game.Objects[game.ParserVectors.DirectObject].Description2Id = 206;
             return ret_val;
             // SOBJS, PAGE 8
 
@@ -3739,7 +3750,7 @@ namespace Zork.Core
 
             // O31-- GRUE
 
-            L56000:
+            GRUE:
             // !EXAMINE?
             if (game.ParserVectors.prsa != VerbIds.Examine)
             {

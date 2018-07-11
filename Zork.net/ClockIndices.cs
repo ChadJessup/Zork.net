@@ -10,7 +10,7 @@ namespace Zork.Core
         cevmnt = 2,
         cevlnt = 3,
         MatchCountdown = 4,
-        cevcnd = 5,
+        CandleClock = 5,
         cevbal = 6,
         cevbrn = 7,
         cevfus = 8,

@@ -68,7 +68,7 @@ namespace Zork.Core
             game.Flags.trollf = true;
             // !PERMIT EXITS.
             game.Objects[ObjectIds.Axe].Flag1 &= ~ObjectFlags.IsVisible;
-            game.Objects[ObjectIds.Troll].Description1 = 435;
+            game.Objects[ObjectIds.Troll].Description1Id = 435;
             // !TROLL OUT.
             return ret_val;
 
@@ -81,7 +81,7 @@ namespace Zork.Core
             game.Flags.trollf = false;
             // !FORBID EXITS.
             game.Objects[ObjectIds.Axe].Flag1 |= ObjectFlags.IsVisible;
-            game.Objects[ObjectIds.Troll].Description1 = 436;
+            game.Objects[ObjectIds.Troll].Description1Id = 436;
             // !TROLL IN.
             if (ObjectHandler.IsObjectInRoom(ObjectIds.Troll, game.Player.Here, game))
             {
@@ -119,7 +119,7 @@ namespace Zork.Core
             // !YES, WAKE HIM.
             game.Objects[ObjectIds.Axe].Flag1 |= ObjectFlags.IsVisible;
             game.Flags.trollf = false;
-            game.Objects[ObjectIds.Troll].Description1 = 436;
+            game.Objects[ObjectIds.Troll].Description1Id = 436;
             MessageHandler.rspsub_(game, 437);
 
             L1550:
@@ -157,7 +157,7 @@ namespace Zork.Core
             }
 
             // !GIVE?
-            MessageHandler.rspsub_(game, i, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, i, game.Objects[game.ParserVectors.DirectObject].Description2Id);
 
             // !TROLL TAKES.
             if (game.ParserVectors.DirectObject == ObjectIds.Knife)
@@ -450,7 +450,7 @@ namespace Zork.Core
 
                 game.Objects[i].Flag1 |= ObjectFlags.IsVisible;
                 // !DESCRIBE.
-                MessageHandler.rspsub_(j, game.Objects[i].Description2, game);
+                MessageHandler.rspsub_(j, game.Objects[i].Description2Id, game);
 
                 j = (ObjectIds)502;
                 goto L150;
@@ -475,7 +475,7 @@ namespace Zork.Core
             return ret_val;
 
             L250:
-            if (game.ParserVectors.prsa != VerbIds.Hello || game.Objects[ObjectIds.Thief].Description1 != 504)
+            if (game.ParserVectors.prsa != VerbIds.Hello || game.Objects[ObjectIds.Thief].Description1Id != 504)
             {
                 goto L300;
             }
@@ -492,7 +492,7 @@ namespace Zork.Core
             // !OUT?
             game.Hack.IsThiefActive = false;
             // !DISABLE DEMON.
-            game.Objects[ObjectIds.Thief].Description1 = 504;
+            game.Objects[ObjectIds.Thief].Description1Id = 504;
             // !CHANGE DESCRIPTION.
             game.Objects[ObjectIds.Stilletto].Flag1 &= ~ObjectFlags.IsVisible;
             game.Objects[ObjectIds.chali].Flag1 |= ObjectFlags.IsTakeable;
@@ -515,7 +515,7 @@ namespace Zork.Core
             game.Hack.IsThiefActive = true;
 
             // !CHANGE DESCRIPTION.
-            game.Objects[ObjectIds.Thief].Description1 = 503;
+            game.Objects[ObjectIds.Thief].Description1Id = 503;
             game.Objects[ObjectIds.Stilletto].Flag1 |= ObjectFlags.IsVisible;
 
             if (game.Player.Here == RoomIds.Treasure && ObjectHandler.IsObjectInRoom(ObjectIds.chali, game.Player.Here, game))
@@ -593,7 +593,7 @@ namespace Zork.Core
             game.Objects[ObjectIds.Thief].Capacity = -game.Objects[ObjectIds.Thief].Capacity;
             game.Hack.IsThiefActive = true;
             game.Objects[ObjectIds.Stilletto].Flag1 |= ObjectFlags.IsVisible;
-            game.Objects[ObjectIds.Thief].Description1 = 503;
+            game.Objects[ObjectIds.Thief].Description1Id = 503;
             MessageHandler.rspeak_(game, 510);
 
             L750:
@@ -619,11 +619,11 @@ namespace Zork.Core
             }
 
             // !A TREASURE?
-            MessageHandler.rspsub_(game, 512, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, 512, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             return ret_val;
 
             L900:
-            MessageHandler.rspsub_(game, 627, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, 627, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             // !THIEF ENGROSSED.
             game.Flags.IsThiefEngrossed = true;
             return ret_val;

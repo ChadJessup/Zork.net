@@ -15,7 +15,7 @@
         Inflate = 102,
         Deflate = 103,
         alarmw = 104,
-        exorcw = 105,
+        Exorcise = 105,
         Plug = 106,
         kickw = 107,
         Wave = 108,

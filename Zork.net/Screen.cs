@@ -4,7 +4,7 @@ namespace Zork.Core
 {
     public class Screen
     {
-        public int fromdr { get; set; } = 0;
+        public int FromDirection { get; set; } = 0;
         public RoomIds scolrm { get; set; } = 0;
         public RoomIds scolac { get; set; } = 0;
         public List<RoomIds> scoldr { get; } = new List<RoomIds>(8)

@@ -20,12 +20,11 @@ namespace Zork.Core
 
             ret_val = 0;
             // !COUNT OBJECTS
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
-                if (game.Objects[i].Adventurer != actorId
-                    || game.Objects[i].otval <= 0
-                    || (game.Objects[i].Flag2 & ObjectFlags2.SCRDBT) != 0)
+                if (game.Objects[i].Adventurer != actorId ||
+                    game.Objects[i].otval <= 0 ||
+                    game.Objects[i].Flag2.HasFlag(ObjectFlags2.SCRDBT))
                 {
                     goto L100;
                 }
@@ -51,22 +50,22 @@ namespace Zork.Core
         /// <returns></returns>
         public static int RobRoom(Game game, RoomIds rm, int pr, RoomIds nr, ObjectIds nc, int na)
         {
-            int ret_val, i__1, i__2;
+            int ret_val, i__2;
             ObjectIds i;
 
             // OBJECTS
             ret_val = 0;
-            // !COUNT OBJECTS
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 // !LOOP ON OBJECTS.
-                if (!ObjectHandler.IsObjectInRoom((ObjectIds)i, rm, game))
+                if (!ObjectHandler.IsObjectInRoom(i, rm, game))
                 {
                     goto L100;
                 }
 
-                if (game.Objects[i].otval <= 0 || (game.Objects[i].Flag2 & ObjectFlags2.SCRDBT) != 0 || (game.Objects[i].Flag1 & ObjectFlags.IsVisible) == 0 || !RoomHandler.prob_(game, pr, pr))
+                if (game.Objects[i].otval <= 0 ||
+                    game.Objects[i].Flag2.HasFlag(ObjectFlags2.SCRDBT) ||
+                    (game.Objects[i].Flag1 & ObjectFlags.IsVisible) == 0 || !RoomHandler.prob_(game, pr, pr))
                 {
                     goto L50;
                 }
@@ -75,8 +74,9 @@ namespace Zork.Core
                 ++ret_val;
                 game.Objects[i].Flag2 |= ObjectFlags2.WasTouched;
                 goto L100;
+
                 L50:
-                if ((game.Objects[i].Flag2 & ObjectFlags2.ACTRBT) != 0)
+                if (game.Objects[i].Flag2.HasFlag(ObjectFlags2.IsActor))
                 {
                     i__2 = (int)ObjectHandler.GetActor(i, game);
                     ret_val += RobAdventurer(game, (ActorIds)i__2, nr, nc, (ActorIds)na);
@@ -84,6 +84,7 @@ namespace Zork.Core
                 L100:
                 ;
             }
+
             return ret_val;
         }
 
@@ -96,16 +97,15 @@ namespace Zork.Core
         /// <returns></returns>
         public static bool IsVillianWinning(Game game, ObjectIds vl, ActorIds hr)
         {
-            // System generated locals
             bool ret_val;
-
-            // Local variables
-            int ps, vs;
+            int ps;
 
             // OBJECTS
-            vs = game.Objects[vl].Capacity;
+            int villianStrength = game.Objects[vl].Capacity;
+
             // !VILLAIN STRENGTH
-            ps = vs - ComputeFightStrength(game, hr, true);
+            ps = villianStrength - ComputeFightStrength(game, hr, true);
+
             // !HIS MARGIN OVER HERO
             ret_val = RoomHandler.prob_(game, 90, 100);
             if (ps > 3)
@@ -129,7 +129,7 @@ namespace Zork.Core
 
             // !=0... 50% WINNING
             ret_val = RoomHandler.prob_(game, 25, 25);
-            if (vs > 1)
+            if (villianStrength > 1)
             {
                 return ret_val;
             }

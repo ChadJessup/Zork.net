@@ -29,7 +29,7 @@ namespace Zork.Core
             // !YES, CANDLES ARE
             game.Switches.orcand = 1;
             // !BURNING WHEN SEEN.
-            game.Clock.Ticks[(int)ClockIndices.cevcnd - 1] = 50;
+            game.Clock.Ticks[(int)ClockIndices.CandleClock - 1] = 50;
 
             L19100:
             if (game.ParserVectors.IndirectObject == ObjectIds.Candle)
@@ -50,7 +50,7 @@ namespace Zork.Core
             }
 
             // !IF ON, DIFFERENT.
-            game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
+            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = false;
             // !DISABLE COUNTDOWN.
 
             game.Objects[ObjectIds.Candle].Flag1 &= ~ObjectFlags.IsOn;
@@ -101,7 +101,7 @@ namespace Zork.Core
             game.Objects[ObjectIds.Candle].Flag1 |= ObjectFlags.IsOn;
 
             // !RESUME COUNTDOWN.
-            game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = true;
+            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = true;
 
             MessageHandler.Speak(i, game);
             return ret_val;

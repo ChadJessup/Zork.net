@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Semver;
+using System;
 using System.Collections.Generic;
 
 namespace Zork.Core
 {
     public class Game
     {
+        public Game() { }
+
         public Game(byte[] bytes)
         {
             this.Random = new Random(this.RandomSeed);
             this.Data = bytes;
-            this.State.ltshft = 10;
-            this.State.MaxScore = this.State.ltshft;
+            this.State.LightShaft = 10;
+            this.State.MaxScore = this.State.LightShaft;
             this.State.egscor = 0;
             this.State.egmxsc = 0;
             this.State.MaxLoad = 100;
@@ -46,14 +50,14 @@ namespace Zork.Core
             this.IsRunning = true;
         }
 
+        public SemVersion Version { get; set; } = new SemVersion(3, 0, 0);
         public int RandomSeed { get; set; } = DateTime.Now.Millisecond;
 
-        public Dictionary<RoomIds, Room> Rooms { get; } = new Dictionary<RoomIds, Room>();
-        public Dictionary<ObjectIds, Object> Objects { get; } = new Dictionary<ObjectIds, Object>();
-        public Dictionary<ActorIds, Adventurer> Adventurers { get; } = new Dictionary<ActorIds, Adventurer>();
-        public Dictionary<ObjectIds, Villian> Villians { get; } = new Dictionary<ObjectIds, Villian>();
+        public Dictionary<RoomIds, Room> Rooms { get; set;  } = new Dictionary<RoomIds, Room>();
+        public Dictionary<ObjectIds, Object> Objects { get; set; } = new Dictionary<ObjectIds, Object>();
+        public Dictionary<ActorIds, Adventurer> Adventurers { get; set; } = new Dictionary<ActorIds, Adventurer>();
+        public Dictionary<ObjectIds, Villian> Villians { get; set; } = new Dictionary<ObjectIds, Villian>();
 
-        //public Villians Villians { get; } = new Villians();
         public ClockEvents Clock { get; } = new ClockEvents();
 
         public Time Time { get; } = new Time();
@@ -78,11 +82,11 @@ namespace Zork.Core
         public ParserVectors ParserVectors { get; } = new ParserVectors();
 
         public pv pv_1 { get; set; } = new pv();
-        public objvec objvec { get; set; } = new objvec();
+        public objvec ObjectVector { get; set; } = new objvec();
         public prpvec prpvec { get; set; } = new prpvec();
 
+        public byte[] Data { get; } = new byte[1];
         public int DataPosition { get; set; }
-        public byte[] Data { get; }
 
         public int astag { get; set; } = 32768;
 
@@ -98,7 +102,7 @@ namespace Zork.Core
 
         public EventHandler<MovedEventArgs> MoveOccurred { get; set; }
 
-        public static Game Initialize() => DataLoader.LoadDataFile();
+        public static Game Initialize(bool useJson = false) => DataLoader.LoadDataFile(useJson: useJson);
 
         public int rnd_(int maxVal) => this.Random.Next(maxVal);
 
@@ -179,7 +183,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here].Action, this);
+                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here], this);
 
                 ENDOFMOVE:
                 // !DO END OF MOVE.
@@ -215,7 +219,8 @@ namespace Zork.Core
 
                 // !KILL THE ECHO.
                 Flags.echof = true;
-                this.Objects[ObjectIds.bar].Flag2 &= ~ObjectFlags2.SCRDBT;
+                this.Objects[ObjectIds.Bar].Flag2 &= ~ObjectFlags2.SCRDBT;
+
                 this.ParserVectors.prswon = true;
                 // !FAKE OUT PARSER.
                 this.ParserVectors.prscon = 1;
@@ -233,6 +238,7 @@ namespace Zork.Core
                 {
                     goto L300;
                 }
+
                 // !VALID EXIT?
 
                 L1400:
@@ -247,7 +253,7 @@ namespace Zork.Core
                 // NOTE THAT WE CANNOT BE IN THE ECHO ROOM.
 
                 L2000:
-                if ((this.Objects[this.ParserVectors.DirectObject].Flag2 & ObjectFlags2.ACTRBT) != 0)
+                if ((this.Objects[this.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsActor) != 0)
                 {
                     goto L2100;
                 }
@@ -313,7 +319,7 @@ namespace Zork.Core
                 }
                 // !VERB HANDLE?
                 // L2350:
-                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here].Action, this);
+                f = RoomHandler.RunRoomAction(this.Rooms[this.Player.Here], this);
 
                 L2400:
                 xendmv_(this.Player.TelFlag);
@@ -384,7 +390,7 @@ namespace Zork.Core
             av = (ObjectIds)this.Adventurers[this.Player.Winner].VehicleId;
             if (av != 0)
             {
-                ret_val = ObjectHandler.DoObjectSpecialAction(this.Objects[av].Action, n, this);
+                ret_val = ObjectHandler.DoObjectSpecialAction(this.Objects[av], n, this);
             }
 
             return ret_val;

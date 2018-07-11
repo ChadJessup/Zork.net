@@ -30,7 +30,7 @@ namespace Zork.Core
             // !NO.
             goto L100;
             L50:
-            MessageHandler.rspsub_(game, 544, game.Objects[(ObjectIds)game.Switches.IsBalloonInflated].Description2);
+            MessageHandler.rspsub_(game, 544, game.Objects[(ObjectIds)game.Switches.IsBalloonInflated].Description2Id);
             // !YES.
             L100:
             if (game.Switches.IsBalloonTiedUp != 0)
@@ -90,7 +90,7 @@ namespace Zork.Core
             {
                 goto L350;
             }
-            MessageHandler.rspsub_(game, 548, game.Objects[(ObjectIds)game.Switches.IsBalloonInflated].Description2);
+            MessageHandler.rspsub_(game, 548, game.Objects[(ObjectIds)game.Switches.IsBalloonInflated].Description2Id);
             // !RECEP CONT TOO HOT.
             return ret_val;
 
@@ -124,7 +124,7 @@ namespace Zork.Core
                 goto L700;
             }
 
-            MessageHandler.rspsub_(game, 550, game.Objects[game.ParserVectors.DirectObject].Description2);
+            MessageHandler.rspsub_(game, 550, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             // !LIGHT FIRE IN RECEP.
             game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = game.Objects[game.ParserVectors.DirectObject].Size * 20;
             game.Objects[game.ParserVectors.DirectObject].Flag1 |= ((int)ObjectFlags.IsOn + ObjectFlags.FLAMBT + (int)ObjectFlags.LITEBT) & ~((int)ObjectFlags.IsTakeable + ObjectFlags.READBT);

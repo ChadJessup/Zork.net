@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Zork.Core
 {
-    public class Object
+    public class Object : IComparable, IComparable<Object>
     {
         public ObjectIds Id { get; set; }
-        public int Description1 { get; set; }
-        public int Description2 { get; set; }
-        public int odesco { get; set; }
+        public int Description1Id { get; set; }
+        public int Description2Id { get; set; }
+
+        public string Description1 { get; set; }
+        public string Description2 { get; set; }
+
+        public int odescoId { get; set; }
+        public string odesco { get; set; }
+
         public int Action { get; set; }
         public ObjectFlags Flag1 { get; set; }
         public ObjectFlags2 Flag2 { get; set; }
@@ -16,10 +23,19 @@ namespace Zork.Core
         public int otval { get; set; }
         public int Size { get; set; }
         public int Capacity { get; set; }
-      //  public RoomIds Room { get; set; }
+
         public ActorIds Adventurer { get; set; }
         public ObjectIds Container { get; set; }
-        public int oread { get; set; }
+
+        public int oreadId { get; set; }
+        public string WrittenText { get; set; }
+
+        /// <summary>
+        /// Unique object action.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <returns></returns>
+        public Func<Game, bool> DoAction { get; set; }
 
         public bool CanSeeInside => this.IsContainer && this.Flag1.HasFlag(ObjectFlags.IsTransparent) || this.Flag2.HasFlag(ObjectFlags2.IsOpen);
         public bool IsContainer => this.Capacity != 0;
@@ -33,5 +49,14 @@ namespace Zork.Core
         public bool IsVisible => this.Flag1.HasFlag(ObjectFlags.IsVisible);
 
         public override string ToString() => $"{this.Id} held by {this.Adventurer}";
+
+        public int CompareTo(Object other) => ((int)this.Id).CompareTo((int)other.Id);
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            Object other = obj as Object;
+            return this.CompareTo(other);
+        }
     }
 }

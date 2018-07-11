@@ -174,7 +174,7 @@ namespace Zork.Core
             // CEV5--	CANDLE.  DESCRIBE GROWING DIMNESS.
 
             CANDLECLOCK:
-            litint_(game, ObjectIds.Candle, game.Switches.orcand, (int)ClockIndices.cevcnd, cndtck, 10);
+            litint_(game, ObjectIds.Candle, game.Switches.orcand, (int)ClockIndices.CandleClock, cndtck, 10);
             // !DO CANDLE INTERRUPT.
             return;
             // CEVAPP, PAGE 3
@@ -440,7 +440,7 @@ namespace Zork.Core
             game.Switches.IsBalloonInflated = 0;
             if (game.Player.Here == game.State.BalloonLocation.Id)
             {
-                MessageHandler.rspsub_(game, 292, game.Objects[i].Description2);
+                MessageHandler.rspsub_(game, 292, game.Objects[i].Description2Id);
             }
             // !DESCRIBE.
             return;
@@ -813,7 +813,7 @@ namespace Zork.Core
             // !MATCHES GONE,
             game.Clock.Flags[(int)ClockIndices.MatchCountdown - 1] = false;
             // !CANDLES GONE.
-            game.Clock.Flags[(int)ClockIndices.cevcnd - 1] = false;
+            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = false;
 
             // !SCORE CRYPT,
             AdventurerHandler.ScoreUpdate(game, game.Rooms[RoomIds.Crypt].Score);
@@ -944,7 +944,7 @@ namespace Zork.Core
             game.Objects[obj].Flag1 &= ~((int)ObjectFlags.LITEBT + (int)ObjectFlags.FLAMBT + ObjectFlags.IsOn);
             if (RoomHandler.GetRoomThatContainsObject(obj, game).Id == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
             {
-                MessageHandler.rspsub_(game, 293, game.Objects[obj].Description2);
+                MessageHandler.rspsub_(game, 293, game.Objects[obj].Description2Id);
             }
             return;
 

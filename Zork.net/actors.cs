@@ -402,7 +402,7 @@ namespace Zork.Core
                     goto L1450;
                 }
 
-                MessageHandler.rspsub_(game, 590, game.Objects[i].Description2);
+                MessageHandler.rspsub_(game, 590, game.Objects[i].Description2Id);
                 // !TAKE OBJECT.
                 if (RoomHandler.prob_(game, 40, 20))
                 {
