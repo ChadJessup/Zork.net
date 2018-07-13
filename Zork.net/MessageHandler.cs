@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Zork.Core
@@ -13,6 +14,8 @@ namespace Zork.Core
 
         public static void more_output(Game game, string output) => game.WriteOutput(output);
         public static void more_input() { }
+
+        private static Dictionary<int, string> messageLookup = new Dictionary<int, string>();
 
         /// <summary>
         /// OUTPUT RANDOM MESSAGE WITH SUBSTITUTABLE ARGUMENT
@@ -38,6 +41,25 @@ namespace Zork.Core
         /// </summary>
         private static string rspsb2nl_(int messageNumber, int y, int z, bool newLine, Game game)
         {
+            return messageNumber == 0 ? "" : game.Messages.text[messageNumber - 1];
+
+            if (MessageHandler.messageLookup.TryGetValue(messageNumber, out string message))
+            {
+                return message;
+            }
+            else
+            {
+                for (int i = 0; i < game.Messages.rtext.Count; i++)
+                {
+                    if (game.Messages.rtext[i] == messageNumber)
+                    {
+                        var output = game.Messages.text[i];
+                        MessageHandler.messageLookup.Add(messageNumber, output);
+                        return output;
+                    }
+                }
+            }
+
             string zkey = "IanLanceTaylorJr";
             int x = messageNumber;
             StringBuilder finalOutput = new StringBuilder();

@@ -23,8 +23,12 @@ namespace Zork.Core.Converters
             {
                 switch (reader.Value)
                 {
-                    case var _ when reader.Path == "game.rtext" && reader.TokenType == JsonToken.StartArray:
-                        game.Messages.rtext = serializer.Deserialize<List<int>>(reader);
+                    case var _ when reader.Path == "game.messages" && reader.TokenType == JsonToken.StartArray:
+                        this.ParseMessages(reader, serializer).ForEach(tuple =>
+                        {
+                            game.Messages.rtext.Add(tuple.Item1);
+                            game.Messages.text.Add(tuple.Item2);
+                        });
                         break;
                     case var _ when reader.Path == "game.actors" && reader.TokenType == JsonToken.StartArray:
                         game.Adventurers = this.ParseAdventurers(reader, serializer);
@@ -46,7 +50,23 @@ namespace Zork.Core.Converters
                 }
             }
 
+            // By now, everything should be parsed. We need to connect some of the dots...
+            game.Adventurers[ActorIds.Player].CurrentRoom = game.Adventurers[1]
+
             return game;
+        }
+
+        private List<(int,string)> ParseMessages(JsonReader reader, JsonSerializer serializer)
+        {
+            var jobj = JObject.ReadFrom(reader);
+            var messages = new List<(int, string)>();
+
+            foreach (var message in jobj)
+            {
+                messages.Add(((int)message["id"], (string)message["message"]));
+            }
+
+            return messages;
         }
 
         private Dictionary<ActorIds, Adventurer> ParseAdventurers(JsonReader reader, JsonSerializer serializer)
