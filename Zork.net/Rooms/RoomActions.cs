@@ -9,7 +9,7 @@ namespace Zork.Rooms
         public static bool BehindHouseAction(Game game)
         {
             // !LOOK?
-            if (game.ParserVectors.prsa != VerbIds.Look)
+            if (game.ParserVectors.prsa != VerbId.Look)
             {
                 return true;
             }
@@ -18,7 +18,7 @@ namespace Zork.Rooms
                 ? 12 // partially ajar
                 : 13; // open
 
-            MessageHandler.rspsub_(11, messageNumber, game);
+            MessageHandler.Speak(11, game.Messages.text[messageNumber - 1], game);
             // !DESCRIBE.
             return true;
         }
@@ -26,7 +26,7 @@ namespace Zork.Rooms
         [RoomAction(RoomIds.Kitchen)]
         public static bool KitchenAction(Game game)
         {
-            if (game.ParserVectors.prsa != VerbIds.Look)
+            if (game.ParserVectors.prsa != VerbId.Look)
             {
                 return true;
             }
@@ -40,62 +40,38 @@ namespace Zork.Rooms
             }
 
             // !DESCRIBE.
-            MessageHandler.rspsub_(14, messageId, game);
+            MessageHandler.Speak(14, game.Messages.text[messageId - 1], game);
             return true;
         }
 
-        // R3--	LIVING ROOM.  DESCRIPTION DEPENDS ON MAGICF (STATE OF
-        // 	DOOR TO CYCLOPS ROOM), RUG (MOVED OR NOT), DOOR (OPEN OR CLOSED)
-        [RoomAction(RoomIds.LivingRoom)]
-        public static bool LivingRoomAction(Game game)
+        // R4--	CELLAR.  SHUT DOOR AND BAR IT IF HE JUST WALKED IN.
+        [RoomAction(RoomIds.Cellar)]
+        public static bool CellarRoomAction(Game game)
         {
-            if (game.ParserVectors.prsa == VerbIds.Look)
+            // !LOOK?
+            if (game.ParserVectors.prsa == VerbId.Look)
             {
-                // !ASSUME NO HOLE.
-                int messageId = 15;
-
-                if (game.Flags.IsDoorToCyclopsRoomOpen)
-                {
-                    messageId = 16;
-                }
-
-                MessageHandler.Speak(messageId, game);
-
-                messageId = game.Switches.IsRugMoved + 17;
-
-                // !DOOR OPEN?
-                if (game.Objects[ObjectIds.TrapDoor].Flag2.HasFlag(ObjectFlags2.IsOpen))
-                {
-                    messageId += 2;
-                }
-
-                // !DESCRIBE.
-                MessageHandler.Speak(messageId, game);
+                // !DESCRIBE CELLAR.
+                MessageHandler.Speak(21, game);
 
                 return true;
             }
 
-            if (game.ParserVectors.prsa != VerbIds.Take &&
-                (game.ParserVectors.prsa != VerbIds.Put || game.ParserVectors.IndirectObject != ObjectIds.TrophyCase))
+            if (game.ParserVectors.prsa != VerbId.WalkIn)
             {
                 return true;
             }
 
-            // !SCORE TROPHY CASE.
-            // !RETAIN RAW SCORE AS WELL.
-            game.Adventurers[game.Player.Winner].Score = game.State.RawScore;
-
-            foreach (var obj in game.Objects[ObjectIds.TrophyCase].ContainedObjects)
+            if ((game.Objects[ObjectIds.TrapDoor].Flag2 & (int)ObjectFlags2.IsOpen + ObjectFlags2.WasTouched) != ObjectFlags2.IsOpen)
             {
-                game.Adventurers[game.Player.Winner].Score += obj.otval;
+                return true;
             }
 
-            // !SEE IF ENDGAME TRIG.
-            AdventurerHandler.ScoreUpdate(game, 0);
+            game.Objects[ObjectIds.TrapDoor].Flag2 = (game.Objects[ObjectIds.TrapDoor].Flag2 | ObjectFlags2.WasTouched) & ~ObjectFlags2.IsOpen;
 
+            // !SLAM AND BOLT DOOR.
+            MessageHandler.Speak(22, game);
             return true;
         }
-
-
     }
 }

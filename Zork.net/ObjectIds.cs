@@ -36,6 +36,7 @@
         Bell = 46,
         Book = 47,
         Candle = 48,
+        Newspaper = 50,
         Match = 51,
         Leaflet = 52,
         Mailbox = 53,

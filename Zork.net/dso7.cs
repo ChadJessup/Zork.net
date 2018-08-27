@@ -94,7 +94,7 @@ namespace Zork.Core
             int i, j, k, l;
             char[] dgm = new char[1 * 8];
 
-            MessageHandler.rspeak_(game, rmk);
+            MessageHandler.Speak(rmk, game);
             for (i = 1; i <= 8; ++i)
             {
                 j = dgmoft[i - 1];
@@ -129,12 +129,12 @@ namespace Zork.Core
 
             if (st == 10)
             {
-                MessageHandler.rspeak_(game, 870);
+                MessageHandler.Speak(870, game);
             }
             // !AT HOLE?
             if (st == 37)
             {
-                MessageHandler.rspeak_(game, 871);
+                MessageHandler.Speak(871, game);
             }
             // !AT NICHE?
             i = 872;
@@ -146,19 +146,19 @@ namespace Zork.Core
 
             if (st == 52)
             {
-                MessageHandler.rspeak_(game, i);
+                MessageHandler.Speak(i, game);
             }
 
             // !AT DOOR?
             if (PuzzleHandler.cpvec[st] == -2)
             {
-                MessageHandler.rspeak_(game, 874);
+                MessageHandler.Speak(874, game);
             }
 
             // !EAST LADDER?
             if (PuzzleHandler.cpvec[st - 2] == -3)
             {
-                MessageHandler.rspeak_(game, 875);
+                MessageHandler.Speak(875, game);
             }
             // !WEST LADDER?
         }

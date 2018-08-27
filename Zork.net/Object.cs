@@ -9,12 +9,11 @@ namespace Zork.Core
         public ObjectIds Id { get; set; }
         public int Description1Id { get; set; }
         public int Description2Id { get; set; }
+        public int LongDescriptionId { get; set; }
 
-        public string Description1 { get; set; }
-        public string Description2 { get; set; }
-
-        public int odescoId { get; set; }
-        public string odesco { get; set; }
+        public string Description { get; set; }
+        public string ShortDescription { get; set; }
+        public string LongDescription { get; set; }
 
         public int Action { get; set; }
         public ObjectFlags Flag1 { get; set; }

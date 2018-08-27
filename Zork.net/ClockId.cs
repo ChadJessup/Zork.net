@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Zork.Core
+﻿namespace Zork.Core
 {
-    public enum ClockIndices
+    public enum ClockId
     {
         cevcur = 1,
         cevmnt = 2,

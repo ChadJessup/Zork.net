@@ -14,7 +14,6 @@ namespace StringExtractor
     {
         private Dictionary<int, string> speaks = new Dictionary<int, string>();
         private Dictionary<int, string> roomDescriptions = new Dictionary<int, string>();
-        private int currentSpeaks = 0;
         private int currentRoomDesc = 0;
         private string currentString = string.Empty;
 
@@ -26,31 +25,39 @@ namespace StringExtractor
 
         public void Go()
         {
-            var game = Game.Initialize();
+            var game = Game.Initialize(useJson: false);
+            Console.WriteLine("Game object initialized...");
+
             game.ReadInput = this.ReadInput;
             game.WriteOutput = this.WriteOutput;
 
             foreach (var strId in game.Messages.rtext)
             {
-                game.Messages.text.Add(MessageHandler.Speak(game, strId).Replace("\r\n", " "));
+                game.Messages.text.Add(MessageHandler.Speak(strId, game).Replace("\r\n", " "));
             }
+
+            Console.WriteLine($"{game.Messages.text.Count} messages parsed...");
 
             for (currentRoomDesc = 0; currentRoomDesc < game.Rooms.Count; currentRoomDesc++)
             {
                 var room = game.Rooms[(RoomIds)currentRoomDesc];
-                room.Description1 = MessageHandler.Speak(game, room.Description1Id).Replace("\r\n", " ");
-                room.Name = MessageHandler.Speak(game, room.Description2Id);
+                room.Description = MessageHandler.Speak(room.Description1Id, game).Replace("\r\n", " ");
+                room.Name = MessageHandler.Speak(room.Description2Id, game);
             }
+
+            Console.WriteLine($"{game.Rooms.Count} rooms parsed...");
 
             for (int objId = 0; objId < game.Objects.Count; objId++)
             {
                 var obj = game.Objects[(ObjectIds)objId];
 
-                obj.Description1 = MessageHandler.Speak(game, obj.Description1Id).Replace("\r\n", " ");
-                obj.Description2 = MessageHandler.Speak(game, obj.Description2Id).Replace("\r\n", " ");
-                obj.odesco = MessageHandler.Speak(game, obj.odescoId).Replace("\r\n", " ");
-                obj.WrittenText = MessageHandler.Speak(game, obj.oreadId);
+                obj.Description = MessageHandler.Speak(obj.Description1Id, game).Replace("\r\n", " ");
+                obj.ShortDescription = MessageHandler.Speak(obj.Description2Id, game).Replace("\r\n", " ");
+                obj.LongDescription = MessageHandler.Speak(obj.LongDescriptionId, game).Replace("\r\n", " ");
+                obj.WrittenText = MessageHandler.Speak(obj.oreadId, game);
             }
+
+            Console.WriteLine($"{game.Objects.Count} objects parsed...");
 
             var settings = new JsonSerializerSettings
             {
@@ -61,18 +68,23 @@ namespace StringExtractor
                 NullValueHandling = NullValueHandling.Ignore,
             };
 
+            var objContainers = new List<(ObjectIds objId, ObjectIds containerId)>();
+
             settings.Converters.Add(new StringEnumConverter());
             settings.Converters.Add(new RoomConverter());
-            settings.Converters.Add(new GameConverter());
+            settings.Converters.Add(new GameConverter(objContainers));
             settings.Converters.Add(new AdventurerConverter());
-            settings.Converters.Add(new ObjectConverter());
+            settings.Converters.Add(new ObjectConverter(objContainers));
             settings.Converters.Add(new VillianConverter());
+            settings.Converters.Add(new ClockEventConverter());
 
             var jsonPath = @"C:\Users\shabu\Desktop\zork.json";
             var json = JsonConvert.SerializeObject(game, settings);
             File.WriteAllText(jsonPath, json);
+            Console.WriteLine($"Json file written to: {jsonPath}");
 
             var newGame = JsonConvert.DeserializeObject<Game>(File.ReadAllText(jsonPath), settings);
+            Console.WriteLine($"Successfully loaded: {jsonPath}");
         }
 
         public void WriteOutput(string output) => this.currentString += output;

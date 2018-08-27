@@ -13,14 +13,11 @@ namespace Zork.Core
         /// <returns></returns>
         public static bool FindExit(Game game, int dir, RoomIds rm)
         {
-            // System generated locals
-            bool ret_val;
+            bool ret_val = true;
 
-            // Local variables
             int i, xi;
             int xxxflg;
 
-            ret_val = true;
             // !ASSUME WINS.
             // !FIND FIRST ENTRY.
             xi = game.Rooms[rm].Exit;
@@ -35,15 +32,15 @@ namespace Zork.Core
             // !GET ENTRY.
             i = game.Exits.Travel[xi - 1];
 
-            game.curxt_.xroom1 = (RoomIds)(i & xpars_.xrmask);
+            game.CurrentExit.xroom1 = (RoomIds)(i & xpars_.ExitRoomMask);
 
             // mask to 16-bits to get rid of sign extension problems with 32-bit ints
             xxxflg = ~xpars_.xlflag & 65535;
 
-            game.curxt_.xtype = ((i & xxxflg) / xpars_.xfshft & xpars_.xfmask) + 1;
+            game.CurrentExit.ExitType = ((i & xxxflg) / xpars_.xfshft & xpars_.xfmask) + 1;
 
             // !BRANCH ON ENTRY.
-            switch (game.curxt_.xtype)
+            switch (game.CurrentExit.ExitType)
             {
                 case 1: goto NEXTENTRY;
                 case 2: goto L120;
@@ -55,16 +52,16 @@ namespace Zork.Core
             //bug_(10, game.curxt_.xtype);
 
             L130:
-            game.curxt_.xobj = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.xrmask);
-            game.curxt_.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
+            game.CurrentExit.xobj = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.ExitRoomMask);
+            game.CurrentExit.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
 
             L120:
             // !DOOR/CEXIT/NEXIT - STRING.
-            game.curxt_.xstrng = game.Exits.Travel[xi];
+            game.CurrentExit.xstrng = game.Exits.Travel[xi];
 
             NEXTENTRY:
             // !ADVANCE TO NEXT ENTRY.
-            xi += xpars_.xelnt[game.curxt_.xtype - 1];
+            xi += xpars_.xelnt[game.CurrentExit.ExitType - 1];
             if ((i & xpars_.xdmask) == dir)
             {
                 return ret_val;

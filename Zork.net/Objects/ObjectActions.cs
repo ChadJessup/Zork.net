@@ -10,7 +10,7 @@ namespace Zork.Core.Objects
         [ObjectAction(ObjectIds.Mailbox)]
         public static bool MailboxAction(Game game)
         {
-            return true;
+            return false;
         }
     }
 }

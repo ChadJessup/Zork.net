@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Zork.Core;
 
 namespace Zork
@@ -19,6 +21,8 @@ namespace Zork
         public void Go()
         {
             var game = Game.Initialize(useJson: true);
+            var gameOld = Game.Initialize(useJson: false);
+
             this.DrawHeader("", 0, 0);
 
             game.MoveOccurred += this.OnMoveOccurred;

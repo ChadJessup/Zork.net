@@ -18,7 +18,7 @@ namespace Zork.Tests
                 wasOutput = true;
             };
 
-            MessageHandler.Speak(game, 662);
+            MessageHandler.Speak(662, game);
             Assert.Equal("\r\nYou are on a wide ledge high into the volcano.  The rim of the\r\nvolcano is about 200 feet above, and there is a precipitous drop\r\nbelow to the floor.\r\n", output);
             Assert.True(wasOutput);
         }

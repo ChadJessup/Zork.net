@@ -2,7 +2,7 @@
 {
     public class ParserVectors
     {
-        public VerbIds prsa { get; set; }
+        public VerbId prsa { get; set; }
         public ObjectIds IndirectObject { get; set; }
         public ObjectIds DirectObject { get; set; }
         public bool prswon { get; set; }

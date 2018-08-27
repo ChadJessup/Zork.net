@@ -11,6 +11,11 @@ namespace Zork.Core
 
         public Game(byte[] bytes)
         {
+            this.Initialize(bytes);
+        }
+
+        private void Initialize(byte[] bytes)
+        {
             this.Random = new Random(this.RandomSeed);
             this.Data = bytes;
             this.State.LightShaft = 10;
@@ -53,26 +58,25 @@ namespace Zork.Core
         public SemVersion Version { get; set; } = new SemVersion(3, 0, 0);
         public int RandomSeed { get; set; } = DateTime.Now.Millisecond;
 
-        public Dictionary<RoomIds, Room> Rooms { get; set;  } = new Dictionary<RoomIds, Room>();
-        public Dictionary<ObjectIds, Object> Objects { get; set; } = new Dictionary<ObjectIds, Object>();
         public Dictionary<ActorIds, Adventurer> Adventurers { get; set; } = new Dictionary<ActorIds, Adventurer>();
         public Dictionary<ObjectIds, Villian> Villians { get; set; } = new Dictionary<ObjectIds, Villian>();
-
-        public ClockEvents Clock { get; } = new ClockEvents();
+        public Dictionary<ClockId, ClockEvent> Clock { get; set; } = new Dictionary<ClockId, ClockEvent>();
+        public Dictionary<ObjectIds, Object> Objects { get; set; } = new Dictionary<ObjectIds, Object>();
+        public Dictionary<RoomIds, Room> Rooms { get; set;  } = new Dictionary<RoomIds, Room>();
 
         public Time Time { get; } = new Time();
         public Star Star { get; } = new Star();
         public Last Last { get; } = new Last();
         public Hack Hack { get; } = new Hack();
         public Flags Flags { get; } = new Flags();
-        public Random Random { get; }
+        public Random Random { get; set; }
         public Exits Exits { get; } = new Exits();
         public Switches Switches { get; } = new Switches();
         public Screen Screen { get; } = new Screen();
         public Rooms2 Rooms2 { get; } = new Rooms2();
         public Player Player { get; } = new Player();
         public Syntax Syntax { get; } = new Syntax();
-        public curxt_ curxt_ { get; } = new curxt_();
+        public CurrentExit CurrentExit { get; } = new CurrentExit();
         public Orphans Orphans { get; } = new Orphans();
         public Messages Messages { get; } = new Messages();
         public PlayerState State { get; } = new PlayerState();
@@ -85,7 +89,7 @@ namespace Zork.Core
         public objvec ObjectVector { get; set; } = new objvec();
         public prpvec prpvec { get; set; } = new prpvec();
 
-        public byte[] Data { get; } = new byte[1];
+        public byte[] Data { get; set; } = new byte[1];
         public int DataPosition { get; set; }
 
         public int astag { get; set; } = 32768;
@@ -112,6 +116,8 @@ namespace Zork.Core
         public int CurrentScore => this.State.RawScore;
         public int MovesCount => this.State.Moves;
 
+        public Queue<string> QueuedCommands = new Queue<string>();
+
         public void Exit()
         {
             this.WriteOutput("The game is over.");
@@ -122,7 +128,7 @@ namespace Zork.Core
         {
             MessageHandler.Speak(1, this);
 
-            bool result = RoomHandler.RoomDescription(3, this);
+            bool result = RoomHandler.RoomDescription(Verbosity.Full, this);
 
             bool f = false;
             int i = 0;
@@ -144,6 +150,12 @@ namespace Zork.Core
                 if (this.ParserVectors.prscon <= 1)
                 {
                     input = Parser.ReadLine(this, 1);
+
+                    if (string.IsNullOrWhiteSpace(input))
+                    {
+                        continue;
+                    }
+
                     this.ParserVectors.prscon = 1;
                 }
 
@@ -160,7 +172,7 @@ namespace Zork.Core
                     goto ENDOFMOVE;
                 }
 
-                if (this.ParserVectors.prsa == VerbIds.Tell)
+                if (this.ParserVectors.prsa == VerbId.Tell)
                 {
                     //goto L2000;
                 }
@@ -197,7 +209,7 @@ namespace Zork.Core
                 goto L100;
 
                 L900:
-                dverb1.valuac_(this, (int)ObjectIds.valua);
+                dverb1.valuac_(this, ObjectIds.valua);
                 goto L350;
                 // GAME, PAGE 3
 
@@ -229,7 +241,7 @@ namespace Zork.Core
 
                 L1300:
                 this.ParserVectors.prswon = Parser.Parse(input, false, this);
-                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != VerbIds.Walk)
+                if (!this.ParserVectors.prswon || this.ParserVectors.prsa != VerbId.Walk)
                 {
                     goto L1400;
                 }
@@ -328,7 +340,7 @@ namespace Zork.Core
                 // !DONE.
 
                 L2900:
-                dverb1.valuac_(this, (int)ObjectIds.valua);
+                dverb1.valuac_(this, ObjectIds.valua);
                 // !ALL OR VALUABLES.
                 goto L350;
             }
@@ -342,7 +354,7 @@ namespace Zork.Core
             // !DEFAULT REMARK.
             if (!(flag))
             {
-                MessageHandler.rspeak_(this, 341);
+                MessageHandler.Speak(341, this);
             }
 
             // !THIEF DEMON.
@@ -402,9 +414,9 @@ namespace Zork.Core
         public int hfactr { get; set; } = 500;
     }
 
-    public class curxt_
+    public class CurrentExit
     {
-        public int xtype { get; set; }
+        public int ExitType { get; set; }
         public RoomIds xroom1 { get; set; }
         public int xstrng { get; set; }
         public int xactio { get; set; }

@@ -1,4 +1,5 @@
-﻿
+﻿using System.Linq;
+
 namespace Zork.Core
 {
     public static class dverb1
@@ -45,11 +46,11 @@ namespace Zork.Core
             }
 
             // !DUMMY.
-            MessageHandler.rspeak_(game, 672);
+            MessageHandler.Speak(672, game);
             return ret_val;
 
             L400:
-            if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) != 0)
+            if (game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.IsTakeable))
             {
                 goto L500;
             }
@@ -57,7 +58,7 @@ namespace Zork.Core
             if (!ObjectHandler.DoObjectSpecialAction(oa, 0, game))
             {
                 i__1 = game.rnd_(5) + 552;
-                MessageHandler.rspeak_(game, i__1);
+                MessageHandler.Speak(i__1, game);
             }
 
             return ret_val;
@@ -73,19 +74,19 @@ namespace Zork.Core
             // !ALREADY GOT IT?
             if (game.Objects[game.ParserVectors.DirectObject].Adventurer == game.Player.Winner)
             {
-                MessageHandler.rspeak_(game, 557);
+                MessageHandler.Speak(557, game);
             }
 
             return ret_val;
 
             L600:
             // !TOO MUCH WEIGHT.
-            if (x != 0 && game.Objects[x].Adventurer == game.Player.Winner || ObjectHandler.GetWeight(0, game.ParserVectors.DirectObject, game.Player.Winner, game) + game.Objects[game.ParserVectors.DirectObject].Size <= game.State.MaxLoad)
+            if (x != 0 && game.Objects[x].Adventurer == game.Player.Winner|| ObjectHandler.GetWeight(0, game.ParserVectors.DirectObject, game.Player.Winner, game) + game.Objects[game.ParserVectors.DirectObject].Size <= game.State.MaxLoad)
             {
                 goto L700;
             }
 
-            MessageHandler.rspeak_(game, 558);
+            MessageHandler.Speak(558, game);
             return ret_val;
 
             L700:
@@ -110,13 +111,13 @@ namespace Zork.Core
             // !TELL TAKEN.
             if (tellUser)
             {
-                MessageHandler.rspeak_(game, 559);
+                MessageHandler.Speak(559, game);
             }
 
             return ret_val;
         }
 
-        // DROP- DROP VERB PROCESSOR
+        // drop_- DROP VERB PROCESSOR
         public static bool drop_(Game game, bool z)
         {
             // System generated locals
@@ -129,21 +130,25 @@ namespace Zork.Core
             ret_val = true;
             // !ASSUME WINS.
             x = game.Objects[game.ParserVectors.DirectObject].Container;
+
             // !GET CONTAINER.
             if (x == 0)
             {
                 goto L200;
             }
+            
             // !IS IT INSIDE?
             if (game.Objects[x].Adventurer != game.Player.Winner)
             {
                 goto L1000;
             }
+            
             // !IS HE CARRYING CON?
             if ((game.Objects[x].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L300;
             }
+
             MessageHandler.rspsub_(game, 525, game.Objects[x].Description2Id);
             // !CANT REACH.
             return ret_val;
@@ -153,12 +158,14 @@ namespace Zork.Core
             {
                 goto L1000;
             }
+            
             // !IS HE CARRYING OBJ?
             L300:
             if (game.Adventurers[game.Player.Winner].VehicleId == 0)
             {
                 goto L400;
             }
+            
             // !IS HE IN VEHICLE?
             game.ParserVectors.IndirectObject = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
             // !YES,
@@ -188,27 +195,31 @@ namespace Zork.Core
             {
                 return ret_val;
             }
+            
             // !DID IT HANDLE?
             i = 0;
+            
             // !ASSUME NOTHING TO SAY.
-            if (game.ParserVectors.prsa == VerbIds.Drop)
+            if (game.ParserVectors.prsa == VerbId.Drop)
             {
                 i = (ObjectIds)528;
             }
 
-            if (game.ParserVectors.prsa == VerbIds.Throw)
+            if (game.ParserVectors.prsa == VerbId.Throw)
             {
                 i = (ObjectIds)529;
             }
+
             if (i != 0 && game.Player.Here == RoomIds.mtree)
             {
                 i = (ObjectIds)659;
             }
+
             MessageHandler.rspsub_(game, (int)i, game.Objects[game.ParserVectors.DirectObject].Description2Id);
             return ret_val;
 
             L1000:
-            MessageHandler.rspeak_(game, 527);
+            MessageHandler.Speak(527, game);
             // !DONT HAVE IT.
             return ret_val;
 
@@ -232,7 +243,7 @@ namespace Zork.Core
             }
             if (!ObjectHandler.ApplyObjectsFromParseVector(game))
             {
-                MessageHandler.rspeak_(game, 560);
+                MessageHandler.Speak(560, game);
             }
             // !STAR
             ret_val = true;
@@ -246,7 +257,7 @@ namespace Zork.Core
                 goto L300;
             }
 
-            MessageHandler.rspeak_(game, 561);
+            MessageHandler.Speak(561, game);
             // !CANT PUT IN THAT.
             return ret_val;
 
@@ -256,7 +267,7 @@ namespace Zork.Core
                 goto L400;
             }
             // !IS IT OPEN?
-            MessageHandler.rspeak_(game, 562);
+            MessageHandler.Speak(562, game);
             // !NO, JOKE
             return ret_val;
 
@@ -266,7 +277,7 @@ namespace Zork.Core
                 goto L500;
             }
             // !INTO ITSELF?
-            MessageHandler.rspeak_(game, 563);
+            MessageHandler.Speak(563, game);
             // !YES, JOKE.
             return ret_val;
 
@@ -276,7 +287,7 @@ namespace Zork.Core
                 goto L600;
             }
             // !ALREADY INSIDE.
-            MessageHandler.rspsb2_(game, 564, game.Objects[game.ParserVectors.DirectObject].Description2Id, game.Objects[game.ParserVectors.IndirectObject].Description2Id);
+            MessageHandler.rspsb2_(564, game.Objects[game.ParserVectors.DirectObject].Description2Id, game.Objects[game.ParserVectors.IndirectObject].Description2Id, game);
             ret_val = true;
             return ret_val;
 
@@ -289,7 +300,7 @@ namespace Zork.Core
                 goto L700;
             }
 
-            MessageHandler.rspeak_(game, 565);
+            MessageHandler.Speak(565, game);
             // !THEN CANT DO IT.
             return ret_val;
 
@@ -319,7 +330,7 @@ namespace Zork.Core
             svo = game.ParserVectors.DirectObject;
             svi = game.ParserVectors.IndirectObject;
 
-            game.ParserVectors.prsa = VerbIds.Take;
+            game.ParserVectors.prsa = VerbId.Take;
             game.ParserVectors.IndirectObject = 0;
 
             // !TAKE OBJECT.
@@ -328,7 +339,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.ParserVectors.prsa = VerbIds.Put;
+            game.ParserVectors.prsa = VerbId.Put;
             game.ParserVectors.DirectObject = svo;
             game.ParserVectors.IndirectObject = svi;
             goto L1000;
@@ -375,21 +386,18 @@ namespace Zork.Core
         }
 
         // VALUAC- HANDLES VALUABLES/EVERYTHING
-        public static void valuac_(Game game, int v)
+        public static void valuac_(Game game, ObjectIds v)
         {
             // System generated locals
             int i__1;
 
             // Local variables
-            bool f;
-            int i;
+            bool f = true;
+            int i = 579;
             bool f1;
-            int savep, saveh;
+            ObjectIds savedObject;
+            RoomIds savedLocation;
 
-            // !ASSUME NO ACTIONS.
-            f = true;
-            // !ASSUME NOT LIT.
-            i = 579;
             // !IF NOT LIT, PUNT.
             if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
@@ -398,81 +406,79 @@ namespace Zork.Core
             // !ASSUME WRONG VERB.
             i = 677;
             // !SAVE PRSO.
-            savep = (int)game.ParserVectors.DirectObject;
+            savedObject = game.ParserVectors.DirectObject;
             // !SAVE HERE.
-            saveh = (int)game.Player.Here;
+            savedLocation = game.Player.Here;
 
             // L100:
             // !TAKE EVERY/VALUA?
-            if (game.ParserVectors.prsa != VerbIds.Take)
+            if (game.ParserVectors.prsa != VerbId.Take)
             {
                 goto L1000;
             }
 
-            i__1 = game.Objects.Count;
-            for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)i__1; ++game.ParserVectors.DirectObject)
+            foreach (var obj in game.Rooms[game.Player.Here].Objects.Where(o => o.CanSeeInside || o.IsVisible))
             {
-                // !LOOP THRU OBJECTS.
-                if (!ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game)
-                    || (game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsVisible) == 0
-                    || (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.IsActor) != 0
-                    || savep == v && game.Objects[game.ParserVectors.DirectObject].otval <= 0)
-                {
-                    goto L500;
-                }
 
-                if ((game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsTakeable) == 0 &&
-                    (game.Objects[game.ParserVectors.DirectObject].Flag2 & ObjectFlags2.CanTry) == 0)
-                {
-                    goto L500;
-                }
+            //}
+
+            //for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)game.Objects.Count; ++game.ParserVectors.DirectObject)
+            //{
+            //    if (!ObjectHandler.IsObjectInRoom(game.ParserVectors.DirectObject, game.Player.Here, game)
+            //        || !game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.IsVisible)
+            //        || game.Objects[game.ParserVectors.DirectObject].Flag2.HasFlag(ObjectFlags2.IsActor)
+            //        || savedObject == v && game.Objects[game.ParserVectors.DirectObject].otval <= 0)
+            //    {
+            //        continue;
+            //    }
+
+            //    if (!game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.IsTakeable) &&
+            //        !game.Objects[game.ParserVectors.DirectObject].Flag2.HasFlag(ObjectFlags2.CanTry))
+            //    {
+            //        continue;
+            //    }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
+                MessageHandler.Speak(580, obj.ShortDescription, game);
 
                 f1 = TakeParsedObject(game, true);
 
-                if (saveh != (int)game.Player.Here)
+                if (savedLocation != game.Player.Here)
                 {
                     return;
                 }
-
-                L500:
-                ;
             }
+
             goto L3000;
 
             L1000:
             // !DROP EVERY/VALUA?
-            if (game.ParserVectors.prsa != VerbIds.Drop)
+            if (game.ParserVectors.prsa != VerbId.Drop)
             {
                 goto L2000;
             }
 
-            i__1 = game.Objects.Count;
-            for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)i__1; ++game.ParserVectors.DirectObject)
+            for (game.ParserVectors.DirectObject = (ObjectIds)1; game.ParserVectors.DirectObject <= (ObjectIds)game.Objects.Count; ++game.ParserVectors.DirectObject)
             {
-                if (game.Objects[game.ParserVectors.DirectObject].Adventurer != game.Player.Winner || savep == v
+                if (game.Objects[game.ParserVectors.DirectObject].Adventurer != game.Player.Winner || savedObject == v
                     && game.Objects[game.ParserVectors.DirectObject].otval <= 0)
                 {
-                    goto L1500;
+                    continue;
                 }
 
                 f = false;
                 MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
                 f1 = drop_(game, true);
 
-                if (saveh != (int)game.Player.Here)
+                if (savedLocation != game.Player.Here)
                 {
                     return;
                 }
-                L1500:
-                ;
             }
             goto L3000;
 
             L2000:
-            if (game.ParserVectors.prsa != VerbIds.Put)
+            if (game.ParserVectors.prsa != VerbId.Put)
             {
                 goto L3000;
             }
@@ -483,7 +489,7 @@ namespace Zork.Core
                 // !LOOP THRU OBJECTS.
                 if (game.Objects[game.ParserVectors.DirectObject].Adventurer != game.Player.Winner
                     || game.ParserVectors.DirectObject == game.ParserVectors.IndirectObject
-                    || savep == v
+                    || savedObject == v
                     && game.Objects[game.ParserVectors.DirectObject].otval <= 0
                     || (game.Objects[game.ParserVectors.DirectObject].Flag1 & ObjectFlags.IsVisible) == 0)
                 {
@@ -491,9 +497,9 @@ namespace Zork.Core
                 }
 
                 f = false;
-                MessageHandler.rspsub_(game, 580, game.Objects[game.ParserVectors.DirectObject].Description2Id);
+                MessageHandler.Speak(580, game.Objects[game.ParserVectors.DirectObject].ShortDescription, game);
                 f1 = put_(game, true);
-                if (saveh != (int)game.Player.Here)
+                if (savedLocation != game.Player.Here)
                 {
                     return;
                 }
@@ -503,7 +509,7 @@ namespace Zork.Core
 
             L3000:
             i = 581;
-            if (savep == v)
+            if (savedObject == v)
             {
                 i = 582;
             }
@@ -512,7 +518,7 @@ namespace Zork.Core
             L4000:
             if (f)
             {
-                MessageHandler.rspeak_(game, i);
+                MessageHandler.Speak(i, game);
             }
             // !IF NOTHING, REPORT.
         }

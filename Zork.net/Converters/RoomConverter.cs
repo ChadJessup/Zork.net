@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Zork.Core.Attributes;
 
 namespace Zork.Core.Converters
 {
@@ -15,6 +18,7 @@ namespace Zork.Core.Converters
         {
             var room = new Room();
             serializer.Populate(reader, room);
+
             return room;
         }
 
@@ -26,13 +30,15 @@ namespace Zork.Core.Converters
             {
                 id = (int)room.Id,
                 room.Name,
-                room.Description1,
-                room.Description2,
+                room.Description,
+                room.ShortDescription,
                 room.Score,
                 room.Flags,
                 actors = room.Adventurers.Any() ? room.Adventurers.Select(a => (int)a.Id) : null,
                 objs = room.Objects.Any() ? room.Objects.Select(o => (int)o.Id) : null,
-                vills = room.Villians.Any() ? room.Villians.Select(v => (int)v.Id) : null
+                vills = room.Villians.Any() ? room.Villians.Select(v => (int)v.Id) : null,
+                exit = room.Exit,
+                actionId = room.Action,
             });
         }
     }

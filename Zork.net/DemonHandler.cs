@@ -63,7 +63,7 @@ namespace Zork.Core
                 }
 
                 // !ANYTHING TO DO?
-                game.ParserVectors.prsa = VerbIds.inxw;
+                game.ParserVectors.prsa = VerbId.inxw;
                 // !YES, WAKE HIM UP.
                 f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
                 // !NOTHING ELSE HAPPENS.
@@ -92,7 +92,7 @@ namespace Zork.Core
                 }
 
                 // !NOT FIGHTING,
-                game.ParserVectors.prsa = VerbIds.frstqw;
+                game.ParserVectors.prsa = VerbId.frstqw;
                 // !SET UP PROBABILITY
                 if (!ObjectHandler.DoObjectSpecialAction(ra, 0, game))
                 {
@@ -113,7 +113,7 @@ namespace Zork.Core
                 }
 
                 // !HAVE A FIGHT.
-                game.ParserVectors.prsa = VerbIds.Fight;
+                game.ParserVectors.prsa = VerbId.Fight;
 
                 f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
 
@@ -132,7 +132,7 @@ namespace Zork.Core
                     continue;
                 }
 
-                game.ParserVectors.prsa = VerbIds.inxw;
+                game.ParserVectors.prsa = VerbId.inxw;
                 // !WAKE HIM UP.
                 f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
                 i__2 = game.Objects[obj].Capacity;
@@ -166,7 +166,7 @@ namespace Zork.Core
                 }
 
                 // !SEE IF
-                game.ParserVectors.prsa = VerbIds.Fight;
+                game.ParserVectors.prsa = VerbId.Fight;
 
                 // !SPECIAL ACTION.
                 if (ObjectHandler.DoObjectSpecialAction(ra, 0, game))
@@ -260,7 +260,7 @@ namespace Zork.Core
                 goto L100;
             }
 
-            MessageHandler.Speak(game, 591);
+            MessageHandler.Speak(591, game);
             // !YES, CANT FIGHT.
             game.Adventurers[adventurer].Flag &= ~game.astag;
             return ret_val;
@@ -547,7 +547,7 @@ namespace Zork.Core
             }
 
             // !IF NX TO DO, EXIT.
-            game.ParserVectors.prsa = VerbIds.Dead;
+            game.ParserVectors.prsa = VerbId.Dead;
             // !LET HIM KNOW.
             f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
@@ -558,7 +558,7 @@ namespace Zork.Core
                 return ret_val;
             }
 
-            game.ParserVectors.prsa = VerbIds.OutCold;
+            game.ParserVectors.prsa = VerbId.OutCold;
             // !LET HIM BE OUT.
             f = ObjectHandler.DoObjectSpecialAction(ra, 0, game);
             return ret_val;
@@ -576,8 +576,8 @@ namespace Zork.Core
                 goto L4600;
             }
 
-            game.Clock.Ticks[(int)ClockIndices.cevcur - 1] = 30;
-            game.Clock.Flags[(int)ClockIndices.cevcur - 1] = true;
+            game.Clock[ClockId.cevcur].Ticks = 30;
+            game.Clock[ClockId.cevcur].Flags = true;
 
             L4600:
             if (dso4.ComputeFightStrength(game, adventurer, true) > 0)
@@ -629,7 +629,7 @@ namespace Zork.Core
                 }
 
                 // !ROOM THAT WAY?
-                switch (game.curxt_.xtype)
+                switch (game.CurrentExit.ExitType)
                 {
                     case 1: goto L50;
                     case 2: goto L200;
@@ -639,7 +639,7 @@ namespace Zork.Core
 
                 // !SEE IF ROOM AT ALL.
                 L50:
-                if (infest_(game, game.curxt_.xroom1))
+                if (infest_(game, game.CurrentExit.xroom1))
                 {
                     goto L300;
                 }
@@ -659,7 +659,7 @@ namespace Zork.Core
 
             i__2 = ng + 495;
             // !YES, TELL NEW STATE.
-            MessageHandler.Speak(game, i__2);
+            MessageHandler.Speak(i__2, game);
 
             game.Hack.SwordStatus = ng;
             return;

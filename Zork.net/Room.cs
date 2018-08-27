@@ -7,12 +7,31 @@ namespace Zork.Core
 {
     public class Room : IComparable, IComparable<Room>
     {
+        public Room() { }
+        public Room(Room room)
+        {
+            this.Id = room.Id;
+            this.Name = room.Name;
+            this.Description = room.Description;
+            this.ShortDescription = room.ShortDescription;
+            this.Exit = room.Exit;
+            this.Action = room.Action;
+            this.Score = room.Score;
+            this.Flags = room.Flags;
+            this.Travel = room.Travel;
+            this.Villians = room.Villians;
+            this.Adventurers = room.Adventurers;
+            this.Objects = room.Objects;
+
+            this.DoAction = room.DoAction;
+        }
+
         public RoomIds Id { get; set; }
         public string Name { get; set; }
         public int Description1Id { get; set; }
         public int Description2Id { get; set; }
-        public string Description1 { get; set; }
-        public string Description2 { get; set; }
+        public string Description { get; set; }
+        public string ShortDescription { get; set; }
         public int Exit { get; set; }
         public int Action { get; set; }
         public int Score { get; set; }
@@ -45,6 +64,8 @@ namespace Zork.Core
         /// <param name="game"></param>
         /// <returns></returns>
         public Func<Game, bool> DoAction { get; set; }
+
+        public virtual bool RoomAction(Game game) => false;
 
         public bool HasObject(ObjectIds objId) => this.Objects.Any(o => o.IsOrHasObject(objId)) || this.Adventurers.Any(a => a.HasObject(objId));
         public Object GetObject(ObjectIds objId) => this.Objects.FirstOrDefault(o => o.Id == objId);

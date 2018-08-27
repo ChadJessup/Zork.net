@@ -5,6 +5,6 @@ namespace Zork.Core
     public class Exits
     {
         public int Count { get; set; }
-        public List<int> Travel { get; } = new List<int>(900);
+        public List<int> Travel { get; set; } = new List<int>(900);
     }
 }

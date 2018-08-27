@@ -1,18 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Zork.Core
 {
+    public static class MessageConstants
+    {
+        public const int CANTREACH = 566;
+        public const int TOOBIG = 588;
+    }
+
     public static class MessageHandler
     {
-        public static string rspeak_(Game game, ObjectIds objectId) => MessageHandler.Speak(game, (int)objectId);
-        public static string rspeak_(Game game, int messageNumber) => MessageHandler.Speak(game, messageNumber);
-        public static string Speak(ObjectIds objectId, Game game) => MessageHandler.Speak(game, (int)objectId);
-        public static string Speak(Game game, int messageNumber) => MessageHandler.Speak(messageNumber, game);
+        // TODO: chadj - 8/6/18 - clean this all up once moved to JSON data file.
         public static string Speak(int messageNumber, Game game) => MessageHandler.rspsb2nl_(messageNumber, 0, 0, true, game);
+        public static string Speak(ObjectIds objectId, Game game) => MessageHandler.Speak((int)objectId, "", game);
+        public static string Speak(int messageNumber, string description, Game game) => Speak(game.Messages.text[messageNumber - 1], description, ObjectIds.Nothing, game);
+        public static string Speak(int messageNumber, string description, ObjectIds objId, Game game) => Speak(game.Messages.text[messageNumber - 1], description, objId, game);
+        public static string Speak(string message, Game game) => Speak(message, string.Empty, ObjectIds.Nothing, game);
+        public static string Speak(string message, string description = "", ObjectIds objId = ObjectIds.Nothing, Game game = null)
+        {
+            if (message.Contains('#') && !string.IsNullOrWhiteSpace(description))
+            {
+                message = message.Replace("#", description);
+            }
 
-        public static void more_output(Game game, string output) => game.WriteOutput(output);
+            game.WriteOutput?.Invoke(message + Environment.NewLine);
+            game.Player.TelFlag = true;
+
+            return message;
+        }
+
+        public static void more_output(Game game, string output) => game.WriteOutput?.Invoke(output);
         public static void more_input() { }
 
         private static Dictionary<int, string> messageLookup = new Dictionary<int, string>();
@@ -26,6 +46,7 @@ namespace Zork.Core
         public static string rspsub_(Game game, int messageNumber, int s1 = 0) => rspsub_(messageNumber, s1, game);
         public static string rspsub_(int messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_(messageNumber, s1, 0, true, game);
         public static string rspsub_(ObjectIds messageNumber, int s1, Game game) => MessageHandler.rspsb2nl_((int)messageNumber, s1, 0, true, game);
+
         /// <summary>
         /// rspsb2_ - Output random message with up to two substitutable arguments.
         /// </summary>
@@ -33,7 +54,6 @@ namespace Zork.Core
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <param name="game"></param>
-        public static string rspsb2_(Game game, int n, int s1, int s2) => rspsb2_(n, s1, s2, game);
         public static string rspsb2_(int n, int s1, int s2, Game game) => rspsb2nl_(n, s1, s2, true, game);
 
         /// <summary>
@@ -41,24 +61,36 @@ namespace Zork.Core
         /// </summary>
         private static string rspsb2nl_(int messageNumber, int y, int z, bool newLine, Game game)
         {
-            return messageNumber == 0 ? "" : game.Messages.text[messageNumber - 1];
+            // Try/Catch is here until data file fully converted to json
+            try
+            {
+                if (game.Messages.text.Any() && game.Messages.text.Count >= messageNumber - 1)
+                {
+                    string outputMessage = messageNumber == 0 ? "" : game.Messages.text[messageNumber - 1];
+
+                    game.Player.TelFlag = true;
+                    game.WriteOutput?.Invoke(outputMessage + Environment.NewLine);
+                    return outputMessage;
+                }
+            }
+            catch { }
 
             if (MessageHandler.messageLookup.TryGetValue(messageNumber, out string message))
             {
                 return message;
             }
-            else
-            {
-                for (int i = 0; i < game.Messages.rtext.Count; i++)
-                {
-                    if (game.Messages.rtext[i] == messageNumber)
-                    {
-                        var output = game.Messages.text[i];
-                        MessageHandler.messageLookup.Add(messageNumber, output);
-                        return output;
-                    }
-                }
-            }
+            //else
+            //{
+            //    for (int i = 0; i < game.Messages.rtext.Count; i++)
+            //    {
+            //        if (game.Messages.rtext[i] == messageNumber)
+            //        {
+            //            var output = game.Messages.text[i];
+            //            MessageHandler.messageLookup.Add(messageNumber, output);
+            //            return output;
+            //        }
+            //    }
+            //}
 
             string zkey = "IanLanceTaylorJr";
             int x = messageNumber;
@@ -172,7 +204,7 @@ namespace Zork.Core
 
             L100:
             // !ASK
-            MessageHandler.rspeak_(game, questionStringId);
+            MessageHandler.Speak(questionStringId, game);
 
             ans = game.ReadInput();
             MessageHandler.more_input();
@@ -193,7 +225,7 @@ namespace Zork.Core
                 goto L300;
             }
 
-            MessageHandler.rspeak_(game, 6);
+            MessageHandler.Speak(6, game);
             // !SCOLD.
             goto L100;
 
@@ -201,14 +233,14 @@ namespace Zork.Core
             // !YES,
             ret_val = true;
             // !OUT WITH IT.
-            MessageHandler.rspeak_(game, yesStringId);
+            MessageHandler.Speak(yesStringId, game);
             return ret_val;
 
             L300:
             // !NO,
             ret_val = false;
             // !LIKEWISE.
-            MessageHandler.rspeak_(game, noStringId);
+            MessageHandler.Speak(noStringId, game);
             return ret_val;
         }
     }

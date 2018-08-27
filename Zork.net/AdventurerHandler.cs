@@ -11,46 +11,35 @@ namespace Zork.Core
         /// <param name="game"></param>
         public static void PrintContents(ActorIds adventurerId, Game game)
         {
-            ObjectIds i__1;
+            int i = 575;
 
-            // Local variables
-            int i;
-            ObjectIds j;
-
-            i = 575;
             // !FIRST LINE.
             if (adventurerId != ActorIds.Player)
             {
                 i = 576;
             }
 
-            // !IF NOT ME.
-            foreach (var obj in game.Adventurers[adventurerId].HeldObjects.Where(obj => obj.IsVisible))
-            {
-                MessageHandler.rspsub_(i, game.Objects[game.Adventurers[adventurerId].ObjectId].Description2Id, game);
-                i = 0;
+            var adventurer = game.Adventurers[adventurerId];
 
-                MessageHandler.rspsub_(502, obj.Description2Id, game);
-            }
-
-            if (i == 0)
-            {
-                goto L25;
-            }
-
-            // !ANY OBJECTS?
-            if (adventurerId == ActorIds.Player)
+            if (!adventurer.HeldObjects.Any())
             {
                 MessageHandler.Speak(578, game);
+                return;
             }
 
-            // !NO, TELL HIM.
-            return;
+            // 'You are carrying:'
+            MessageHandler.Speak(i, game.Objects[adventurer.ObjectId].ShortDescription, game);
 
-            L25:
-            foreach(var obj in game.Adventurers[adventurerId].HeldObjects.Where(o => o.CanSeeInside))
+            // List of objects...
+            foreach (var obj in adventurer.HeldObjects.Where(obj => obj.IsVisible))
             {
-                    ObjectHandler.PrintDescription(obj.Id, 573, game);
+                MessageHandler.Speak(502, obj.ShortDescription, game);
+            }
+
+            // Inside of objects if can see in there.
+            foreach (var obj in game.Adventurers[adventurerId].HeldObjects.Where(o => o.CanSeeInside))
+            {
+                ObjectHandler.PrintDescription(obj.Id, 573, game);
             }
         }
 
@@ -128,8 +117,7 @@ namespace Zork.Core
             }
             // !CONTINUE?
 
-            i__1 = game.Objects.Count;
-            for (j = (ObjectIds)1; j <= (ObjectIds)i__1; ++j)
+            for (j = (ObjectIds)1; j <= (ObjectIds)game.Objects.Count; ++j)
             {
                 // !TURN OFF FIGHTING.
                 if (ObjectHandler.IsObjectInRoom((ObjectIds)j, game.Player.Here, game))
@@ -143,7 +131,7 @@ namespace Zork.Core
             // !CHARGE TEN POINTS.
             AdventurerHandler.ScoreUpdate(game, -10);
             // !REPOSITION HIM.
-            f = AdventurerHandler.moveto_(game, RoomIds.Forest1, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, RoomIds.Forest1, game.Player.Winner);
             // !RESTORE COFFIN.
             game.Flags.egyptf = true;
             if (game.Objects[ObjectIds.Coffin].Adventurer == game.Player.Winner)
@@ -167,8 +155,7 @@ namespace Zork.Core
             // REMAINING NON-VALUABLES ARE PLACED AT THE END OF THE MAZE.
 
             i = (RoomIds)1;
-            i__1 = game.Objects.Count;
-            for (j = (ObjectIds)1; j <= (ObjectIds)i__1; ++j)
+            for (j = (ObjectIds)1; j <= (ObjectIds)game.Objects.Count; ++j)
             {
                 // !LOOP THRU OBJECTS.
                 if (game.Objects[j].Adventurer != game.Player.Winner || game.Objects[j].otval != 0)
@@ -194,8 +181,7 @@ namespace Zork.Core
             // !NOW MOVE VALUABLES.
             nonofl = (int)(RoomFlags.AIR + (int)RoomFlags.WATER + (int)RoomFlags.SACRED + (int)RoomFlags.REND);
             // !DONT MOVE HERE.
-            i__1 = game.Objects.Count;
-            for (j = (ObjectIds)1; j <= (ObjectIds)i__1; ++j)
+            for (j = (ObjectIds)1; j <= (ObjectIds)game.Objects.Count; ++j)
             {
                 if (game.Objects[j].Adventurer != game.Player.Winner || game.Objects[j].otval == 0)
                 {
@@ -256,7 +242,7 @@ namespace Zork.Core
             game.Exit();
         }
 
-        public static bool moveto_(Game game, RoomIds newRoom, ActorIds who)
+        public static bool MoveToNewRoom(Game game, RoomIds newRoom, ActorIds who)
         {
             bool ret_val = false;
 
@@ -462,9 +448,9 @@ namespace Zork.Core
             }
 
             // !TURN ON END GAME
-            game.Clock.Flags[(int)ClockIndices.cevegh - 1] = true;
+            game.Clock[ClockId.cevegh].Flags = true;
 
-            game.Clock.Ticks[(int)ClockIndices.cevegh - 1] = 15;
+            game.Clock[ClockId.cevegh].Ticks = 15;
             return;
 
             L100:

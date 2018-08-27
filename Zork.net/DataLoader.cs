@@ -25,47 +25,51 @@ namespace Zork.Core
                 throw new FileNotFoundException("Unable to find data file: " + filename);
             }
 
+            Game game = null;
+
             if (useJson)
             {
-                return LoadFromJson(@"C:\Users\shabu\Desktop\zork.json");
+                game = LoadFromJson(@"C:\Users\shabu\Desktop\zork.json");
             }
-
-            var bytes = File.ReadAllBytes(filename);
-            var game = new Game(bytes);
-
-            // Order matters of everything below!
-
-            int major = DataLoader.ReadInt(bytes, game);
-            int minor = DataLoader.ReadInt(bytes, game);
-            int revision = DataLoader.ReadInt(bytes, game);
-
-            if (major != 2 || minor != 7)
+            else
             {
-                throw new InvalidOperationException("Bad version on data file");
+                var bytes = File.ReadAllBytes(filename);
+                game = new Game(bytes);
+
+                // Order matters of everything below!
+
+                int major = DataLoader.ReadInt(bytes, game);
+                int minor = DataLoader.ReadInt(bytes, game);
+                int revision = DataLoader.ReadInt(bytes, game);
+
+                if (major != 2 || minor != 7)
+                {
+                    throw new InvalidOperationException("Bad version on data file");
+                }
+
+                LoadStars(bytes, game);
+
+                LoadRooms(bytes, game);
+
+                LoadExits(bytes, game);
+
+                LoadObjects(bytes, game);
+
+                LoadRoom2(bytes, game);
+
+                LoadClockEvents(bytes, game);
+
+                LoadVillians(bytes, game);
+
+                LoadAdventurers(bytes, game);
+
+                game.Star.mbase = DataLoader.ReadInt(bytes, game);
+                game.Messages.Count = DataLoader.ReadInt(bytes, game);
+                DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
+
+                // Location of beginning of message text
+                game.Messages.mrloc = game.DataPosition;
             }
-
-            LoadStars(bytes, game);
-
-            LoadRooms(bytes, game);
-
-            LoadExits(bytes, game);
-
-            LoadObjects(bytes, game);
-
-            LoadRoom2(bytes, game);
-
-            LoadClockEvents(bytes, game);
-
-            LoadVillians(bytes, game);
-
-            LoadAdventurers(bytes, game);
-
-            game.Star.mbase = DataLoader.ReadInt(bytes, game);
-            game.Messages.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Messages.Count, game.Messages.rtext, bytes, game);
-
-            // Location of beginning of message text
-            game.Messages.mrloc = game.DataPosition;
 
             // TODO: See if we can just store the DateTime object, not sure how all this is used currently.
             var now = DateTime.Now;
@@ -96,12 +100,19 @@ namespace Zork.Core
                 NullValueHandling = NullValueHandling.Ignore,
             };
 
+            // To avoid polluting our game models as much as possible,
+            // some of the metadata in our json is stored during parsing
+            // in these temporary collections to help connect some of
+            // the models together...
+            var objContainers = new List<(ObjectIds objId, ObjectIds containerId)>();
+
             settings.Converters.Add(new StringEnumConverter());
             settings.Converters.Add(new RoomConverter());
-            settings.Converters.Add(new GameConverter());
+            settings.Converters.Add(new GameConverter(objContainers));
             settings.Converters.Add(new AdventurerConverter());
-            settings.Converters.Add(new ObjectConverter());
+            settings.Converters.Add(new ObjectConverter(objContainers));
             settings.Converters.Add(new VillianConverter());
+            settings.Converters.Add(new ClockEventConverter());
 
             return JsonConvert.DeserializeObject<Game>(File.ReadAllText(path), settings);
         }
@@ -148,7 +159,7 @@ namespace Zork.Core
         {
             foreach (var room in rooms.Values)
             {
-                room.Name = MessageHandler.rspeak_(game, room.Description2Id);
+                room.Name = MessageHandler.Speak(room.Description2Id, game);
             }
         }
 
@@ -174,10 +185,25 @@ namespace Zork.Core
 
         private static void LoadClockEvents(byte[] bytes, Game game)
         {
-            game.Clock.Count = DataLoader.ReadInt(bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Ticks, bytes, game);
-            DataLoader.ReadInts(game.Clock.Count, game.Clock.Actions, bytes, game);
-            DataLoader.ReadFlags(game.Clock.Count, game.Clock.Flags, bytes, game);
+            var count = DataLoader.ReadInt(bytes, game);
+            var ticks = new List<int>();
+            var actions = new List<int>();
+            var flags = new List<bool>();
+
+            DataLoader.ReadInts(count, ticks, bytes, game);
+            DataLoader.ReadInts(count, actions, bytes, game);
+            DataLoader.ReadFlags(count, flags, bytes, game);
+
+            for (int i = 1; i <= count; i++)
+            {
+                game.Clock.Add((ClockId)i, new ClockEvent
+                {
+                    Id = (ClockId)i,
+                    Ticks = ticks[i - 1],
+                    Actions = actions[i - 1],
+                    Flags = flags[i - 1],
+                });
+            }
         }
 
         private static void LoadVillians(byte[] bytes, Game game)
@@ -199,11 +225,11 @@ namespace Zork.Core
             {
                 var newVillian = new Villian
                 {
+                    Melee = vmelee[i - 1],
                     Id = (ObjectIds)villns[i - 1],
                     WakeupProbability = vprob[i - 1],
                     Opponent = (ObjectIds)vopps[i - 1],
                     BestWeapon = (ObjectIds)vbest[i - 1],
-                    Melee = vmelee[i - 1]
                 };
 
                 game.Villians.Add(newVillian.Id, newVillian);
@@ -307,7 +333,7 @@ namespace Zork.Core
                     Id = (ObjectIds)objIdx,
                     Description1Id = odesc1[objIdx - 1],
                     Description2Id = odesc2[objIdx - 1],
-                    odescoId = odesco[objIdx - 1],
+                    LongDescriptionId = odesco[objIdx - 1],
                     Action = oactio[objIdx - 1],
                     Value = ofval[objIdx - 1],
                     otval = otval[objIdx - 1],

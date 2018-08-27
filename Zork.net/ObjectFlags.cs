@@ -6,7 +6,7 @@ namespace Zork.Core
     public enum ObjectFlags : int
     {
         IsVisible = 32768,
-        READBT = 16384,
+        IsReadable = 16384,
         IsTakeable = 8192,
         IsDoor = 4096,
         IsTransparent = 2048,

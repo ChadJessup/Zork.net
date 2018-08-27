@@ -29,7 +29,7 @@ namespace Zork.Core
             // !YES, CANDLES ARE
             game.Switches.orcand = 1;
             // !BURNING WHEN SEEN.
-            game.Clock.Ticks[(int)ClockIndices.CandleClock - 1] = 50;
+            game.Clock[ClockId.CandleClock].Ticks = 50;
 
             L19100:
             if (game.ParserVectors.IndirectObject == ObjectIds.Candle)
@@ -37,7 +37,7 @@ namespace Zork.Core
                 goto L10;
             }
             // !IGNORE IND REFS.
-            if (game.ParserVectors.prsa != VerbIds.TurnOff)
+            if (game.ParserVectors.prsa != VerbId.TurnOff)
             {
                 goto L19200;
             }
@@ -50,7 +50,7 @@ namespace Zork.Core
             }
 
             // !IF ON, DIFFERENT.
-            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = false;
+            game.Clock[ClockId.CandleClock].Flags = false;
             // !DISABLE COUNTDOWN.
 
             game.Objects[ObjectIds.Candle].Flag1 &= ~ObjectFlags.IsOn;
@@ -58,7 +58,7 @@ namespace Zork.Core
             return ret_val;
 
             L19200:
-            if (game.ParserVectors.prsa != VerbIds.Burn && game.ParserVectors.prsa != VerbIds.TurnOn)
+            if (game.ParserVectors.prsa != VerbId.Burn && game.ParserVectors.prsa != VerbId.TurnOn)
             {
                 goto L10;
             }
@@ -69,7 +69,7 @@ namespace Zork.Core
                 goto L19300;
             }
 
-            MessageHandler.Speak(game, 515);
+            MessageHandler.Speak(515, game);
             return ret_val;
 
             L19300:
@@ -79,7 +79,7 @@ namespace Zork.Core
             }
 
             // !ANY FLAME?
-            MessageHandler.Speak(game, 516);
+            MessageHandler.Speak(516, game);
             // !NO, LOSE.
             game.ParserVectors.prswon = false;
             return ret_val;
@@ -101,7 +101,7 @@ namespace Zork.Core
             game.Objects[ObjectIds.Candle].Flag1 |= ObjectFlags.IsOn;
 
             // !RESUME COUNTDOWN.
-            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = true;
+            game.Clock[ClockId.CandleClock].Flags = true;
 
             MessageHandler.Speak(i, game);
             return ret_val;
@@ -125,12 +125,12 @@ namespace Zork.Core
 
             L19600:
             // !CANT LIGHT WITH THAT.
-            MessageHandler.Speak(game, 519);
+            MessageHandler.Speak(519, game);
 
             return ret_val;
 
             L19700:
-            MessageHandler.Speak(game, 520);
+            MessageHandler.Speak(520, game);
             // !ALREADY ON.
             return ret_val;
 
@@ -141,7 +141,7 @@ namespace Zork.Core
                 //bug_(6, obj);
             }
 
-            if (game.ParserVectors.prsa != VerbIds.TurnOn || game.ParserVectors.DirectObject != ObjectIds.Match)
+            if (game.ParserVectors.prsa != VerbId.TurnOn || game.ParserVectors.DirectObject != ObjectIds.Match)
             {
                 goto L20500;
             }
@@ -162,19 +162,19 @@ namespace Zork.Core
 
             game.Objects[ObjectIds.Match].Flag1 |= flobts;
             // !COUNTDOWN.
-            game.Clock.Ticks[(int)ClockIndices.MatchCountdown - 1] = 2;
+            game.Clock[ClockId.MatchCountdown].Ticks = 2;
 
             MessageHandler.Speak(184, game);
             return ret_val;
 
             L20500:
-            if (game.ParserVectors.prsa != VerbIds.TurnOff || (game.Objects[ObjectIds.Match].Flag1 & ObjectFlags.IsOn) == 0)
+            if (game.ParserVectors.prsa != VerbId.TurnOff || (game.Objects[ObjectIds.Match].Flag1 & ObjectFlags.IsOn) == 0)
             {
                 goto L10;
             }
 
             game.Objects[ObjectIds.Match].Flag1 &= ~flobts;
-            game.Clock.Ticks[(int)ClockIndices.MatchCountdown - 1] = 0;
+            game.Clock[ClockId.MatchCountdown].Ticks = 0;
             MessageHandler.Speak(185, game);
             return ret_val;
 

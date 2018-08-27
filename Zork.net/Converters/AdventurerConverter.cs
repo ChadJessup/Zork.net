@@ -14,6 +14,7 @@ namespace Zork.Core.Converters
         {
             var actor = new Adventurer();
             serializer.Populate(reader, actor);
+
             return actor;
         }
 

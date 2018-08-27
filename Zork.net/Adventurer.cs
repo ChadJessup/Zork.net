@@ -39,5 +39,7 @@ namespace Zork.Core
             Adventurer other = obj as Adventurer;
             return this.CompareTo(other);
         }
+
+        public override string ToString() => $"{this.Id} in {this.CurrentRoom.Id}";
     }
 }

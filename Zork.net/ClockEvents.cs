@@ -5,10 +5,11 @@ namespace Zork.Core
 {
     public class ClockEvents
     {
-        public int Count { get; set; }
-        public List<int> Ticks { get; } = new List<int>(25);
-        public List<int> Actions { get; } = new List<int>(25);
-        public List<bool> Flags { get; } = new List<bool>(25);
+        public Dictionary<ClockId, ClockEvent> Events { get; set; } = new Dictionary<ClockId, ClockEvent>();
+
+        //public List<int> Ticks { get; } = new List<int>(25);
+        //public List<int> Actions { get; } = new List<int>(25);
+        //public List<bool> Flags { get; } = new List<bool>(25);
 
         /// <summary>
         /// clockd_ - Clock demon for intermove clock events.
@@ -16,48 +17,42 @@ namespace Zork.Core
         /// <returns></returns>
         public static bool clockd_(Game game)
         {
-            // System generated locals
-            int i__1;
-            bool ret_val;
+            bool ret_val = false;
 
-            // Local variables
-            int i;
-
-            ret_val = false;
             // !ASSUME NO ACTION.
-            i__1 = game.Clock.Count;
-            for (i = 1; i <= i__1; ++i)
+            foreach (var clockEvent in game.Clock.Values)
             {
-                if (!game.Clock.Flags[i - 1] || game.Clock.Ticks[i - 1] == 0)
+                if (!clockEvent.Flags || clockEvent.Ticks == 0)
                 {
                     goto L100;
                 }
 
-                if (game.Clock.Ticks[i - 1] < 0)
+                if (clockEvent.Ticks < 0)
                 {
                     goto L50;
                 }
 
                 // !PERMANENT ENTRY?
-                --game.Clock.Ticks[i - 1];
-                if (game.Clock.Ticks[i - 1] != 0)
+                --clockEvent.Ticks;
+                if (clockEvent.Ticks!= 0)
                 {
                     goto L100;
                 }
+
                 // !TIMER EXPIRED?
                 L50:
                 ret_val = true;
-                cevapp_(game, game.Clock.Actions[i - 1]);
+                ClockEventRoutines(game, clockEvent.Actions);
                 // !DO ACTION.
                 L100:
                 ;
             }
-            return ret_val;
 
+            return ret_val;
         }
 
         // CEVAPP- CLOCK EVENT APPLICABLES
-        public static void cevapp_(Game game, int ri)
+        public static void ClockEventRoutines(Game game, int ri)
         {
             int[] cndtck = { 50, 20, 10, 5, 0, 156, 156, 156, 157, 0 };
             int[] lmptck = { 50, 30, 20, 10, 4, 0, 154, 154, 154, 154, 155, 0 };
@@ -120,7 +115,7 @@ namespace Zork.Core
             }
 
             // !FULLY RECOVERED?
-            game.Clock.Ticks[(int)ClockIndices.cevcur - 1] = 30;
+            game.Clock[ClockId.cevcur].Ticks = 30;
             // !NO, WAIT SOME MORE.
             return;
 
@@ -130,7 +125,7 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Maintenance)
             {
                 i__1 = game.Switches.IsReservoirLeaking / 2 + 71;
-                MessageHandler.rspeak_(game, i__1);
+                MessageHandler.Speak(i__1, game);
             }
 
             // !DESCRIBE.
@@ -142,7 +137,7 @@ namespace Zork.Core
             }
 
             // !IF NOT FULL, EXIT.
-            game.Clock.Ticks[(int)ClockIndices.cevmnt - 1] = 0;
+            game.Clock[ClockId.cevmnt].Ticks = 0;
             // !FULL, DISABLE CLOCK.
             game.Rooms[RoomIds.Maintenance].Flags |= RoomFlags.RMUNG;
             game.Rooms[RoomIds.Maintenance].Action = 80;
@@ -159,14 +154,14 @@ namespace Zork.Core
             // CEV3--	LANTERN.  DESCRIBE GROWING DIMNESS.
 
             LANTERNCLOCK:
-            litint_(game, ObjectIds.Lamp, game.Switches.orlamp, (int)ClockIndices.cevlnt, lmptck, 12);
+            LightInterruptProcessor(game, ObjectIds.Lamp, game.Switches.orlamp, (int)ClockId.cevlnt, lmptck, 12);
             // !DO LIGHT INTERRUPT.
             return;
 
             // CEV4--	MATCH.  OUT IT GOES.
 
             MATCHCLOCK:
-            MessageHandler.rspeak_(game, 153);
+            MessageHandler.Speak(153, game);
             // !MATCH IS OUT.
             game.Objects[ObjectIds.Match].Flag1 &= ~ObjectFlags.IsOn;
             return;
@@ -174,7 +169,7 @@ namespace Zork.Core
             // CEV5--	CANDLE.  DESCRIBE GROWING DIMNESS.
 
             CANDLECLOCK:
-            litint_(game, ObjectIds.Candle, game.Switches.orcand, (int)ClockIndices.CandleClock, cndtck, 10);
+            LightInterruptProcessor(game, ObjectIds.Candle, game.Switches.orcand, (int)ClockId.CandleClock, cndtck, 10);
             // !DO CANDLE INTERRUPT.
             return;
             // CEVAPP, PAGE 3
@@ -182,7 +177,7 @@ namespace Zork.Core
             // CEV6--	BALLOON
 
             BALLOONCLOCK:
-            game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 3;
+            game.Clock[ClockId.cevbal].Ticks = 3;
             // !RESCHEDULE INTERRUPT.
             f = game.Adventurers[game.Player.Winner].VehicleId == (int)ObjectIds.Balloon;
 
@@ -224,20 +219,20 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 530);
+                MessageHandler.Speak(530, game);
             }
 
             // !ON LEDGE, DESCRIBE.
             return;
 
             L6200:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE HIM.
             if (game.Switches.IsBalloonInflated == 0) {
                 goto L6250;
             }
             // !IN BALLOON.  INFLATED?
-            MessageHandler.rspeak_(game, 531);
+            MessageHandler.Speak(531, game);
             // !YES, LANDED.
             f = RoomHandler.RoomDescription(0, game);
             // !DESCRIBE.
@@ -251,9 +246,9 @@ namespace Zork.Core
             game.Adventurers[game.Player.Winner].VehicleId = 0;
 
             // !NOT IN VEHICLE.
-            game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
+            game.Clock[ClockId.cevbal].Flags = false;
             // !DISABLE INTERRUPTS.
-            game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
+            game.Clock[ClockId.cevbrn].Flags = false;
             game.Switches.IsBalloonInflated = 0;
             game.Switches.IsBalloonTiedUp = 0;
             return;
@@ -270,15 +265,15 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 533);
+                MessageHandler.Speak(533, game);
             }
             // !IF ON LEDGE, DESCRIBE.
             return;
 
             L6400:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !IN BALLOON, MOVE HIM.
-            MessageHandler.rspeak_(game, 534);
+            MessageHandler.Speak(534, game);
             // !DESCRIBE.
             f = RoomHandler.RoomDescription(0, game);
             return;
@@ -293,8 +288,8 @@ namespace Zork.Core
             }
 
             // !AT VAIR4?
-            game.Clock.Ticks[(int)ClockIndices.cevbrn - 1] = 0;
-            game.Clock.Ticks[(int)ClockIndices.cevbal - 1] = 0;
+            game.Clock[ClockId.cevbrn].Ticks = 0;
+            game.Clock[ClockId.cevbal].Ticks = 0;
             game.Switches.IsBalloonInflated = 0;
             game.Switches.IsBalloonTiedUp = 0;
             game.State.BalloonLocation.Id = RoomIds.vlbot;
@@ -312,7 +307,7 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 535);
+                MessageHandler.Speak(535, game);
             }
 
             // !IF HE CAN SEE, DESCRIBE.
@@ -337,15 +332,15 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 537);
+                MessageHandler.Speak(537, game);
             }
             // !CAN HE SEE IT?
             return;
 
             L6650:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE PLAYER.
-            MessageHandler.rspeak_(game, 538);
+            MessageHandler.Speak(538, game);
             // !DESCRIBE.
             f = RoomHandler.RoomDescription(0, game);
             return;
@@ -365,18 +360,18 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 539);
+                MessageHandler.Speak(539, game);
             }
 
             // !NO, STRANDED.
-            game.Clock.Ticks[(int)ClockIndices.cevvlg - 1] = 10;
+            game.Clock[ClockId.cevvlg].Ticks = 10;
             // !MATERIALIZE GNOME.
             return;
 
             L6750:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE TO NEW ROOM.
-            MessageHandler.rspeak_(game, 540);
+            MessageHandler.Speak(540, game);
             // !DESCRIBE.
             f = RoomHandler.RoomDescription(0, game);
             return;
@@ -402,16 +397,16 @@ namespace Zork.Core
             if (game.Player.Here == RoomIds.Ledge2 || game.Player.Here == RoomIds.Ledge3 ||
                 game.Player.Here == RoomIds.Ledge4 || game.Player.Here == RoomIds.vlbot)
             {
-                MessageHandler.rspeak_(game, 541);
+                MessageHandler.Speak(541, game);
             }
 
             // !IF CAN SEE, DESCRIBE.
             return;
 
             L6850:
-            f = AdventurerHandler.moveto_(game, game.State.BalloonLocation.Id, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, game.State.BalloonLocation.Id, game.Player.Winner);
             // !MOVE PLAYER.
-            MessageHandler.rspeak_(game, 542);
+            MessageHandler.Speak(542, game);
             f = RoomHandler.RoomDescription(0, game);
             return;
             // CEVAPP, PAGE 4
@@ -485,12 +480,12 @@ namespace Zork.Core
 
             L8100:
             // !BOOM.
-            MessageHandler.rspeak_(game, 151);
+            MessageHandler.Speak(151, game);
 
             // !SAVE ROOM THAT BLEW.
             game.State.mungrm.Id = br;
             // !SET SAFE INTERRUPT.
-            game.Clock.Ticks[(int)ClockIndices.cevsaf - 1] = 5;
+            game.Clock[ClockId.cevsaf].Ticks = 5;
 
             // !BLEW SAFE ROOM?
             if (br != RoomIds.Safe)
@@ -546,7 +541,7 @@ namespace Zork.Core
             L8500:
             if (ObjectHandler.IsObjectInRoom(ObjectIds.Fuse, game.Player.Here, game) || game.Objects[ObjectIds.Fuse].Adventurer == game.Player.Winner)
             {
-                MessageHandler.rspeak_(game, 152);
+                MessageHandler.Speak(152, game);
             }
 
             ObjectHandler.SetNewObjectStatus(ObjectIds.Fuse, 0, 0, 0, 0, game);
@@ -565,7 +560,7 @@ namespace Zork.Core
             }
 
             // !WAS HE THERE?
-            MessageHandler.rspeak_(game, 110);
+            MessageHandler.Speak(110, game);
             // !NO, NARROW ESCAPE.
             return;
 
@@ -586,7 +581,7 @@ namespace Zork.Core
                 goto L9300;
             }
             // !TIED TO LEDGE?
-            MessageHandler.rspeak_(game, 112);
+            MessageHandler.Speak(112, game);
             // !NO, NO PLACE TO LAND.
             return;
 
@@ -599,8 +594,8 @@ namespace Zork.Core
             // !INSERT DEAD BALLOON.
             game.Switches.IsBalloonTiedUp = 0;
             game.Switches.IsBalloonInflated = 0;
-            game.Clock.Flags[(int)ClockIndices.cevbal - 1] = false;
-            game.Clock.Flags[(int)ClockIndices.cevbrn - 1] = false;
+            game.Clock[ClockId.cevbal].Flags = false;
+            game.Clock[ClockId.cevbrn].Flags = false;
             AdventurerHandler.jigsup_(game, 113);
             // !DEAD
             return;
@@ -616,11 +611,11 @@ namespace Zork.Core
             }
 
             // !IS HE PRESENT?
-            MessageHandler.rspeak_(game, 115);
+            MessageHandler.Speak(115, game);
             // !LET HIM KNOW.
             if (game.State.mungrm.Id == RoomIds.Safe)
             {
-                game.Clock.Ticks[(int)ClockIndices.cevled - 1] = 8;
+                game.Clock[ClockId.cevled].Ticks = 8;
             }
             // !START LEDGE CLOCK.
             return;
@@ -648,7 +643,7 @@ namespace Zork.Core
             }
 
             // !IS HE ON LEDGE?
-            game.Clock.Ticks[(int)ClockIndices.cevvlg - 1] = 1;
+            game.Clock[ClockId.cevvlg].Ticks = 1;
             // !NO, WAIT A WHILE.
             return;
 
@@ -689,19 +684,19 @@ namespace Zork.Core
             // !WE'RE IN ENDGAME.
             game.Flags.IsEndGame = true;
             // !INFORM OF ENDGAME.
-            MessageHandler.rspeak_(game, 119);
+            MessageHandler.Speak(119, game);
             return;
             // CEVAPP, PAGE 7
 
             // CEV16--	FOREST MURMURS
 
             FORESTMURMURSCLOCK:
-            game.Clock.Flags[(int)ClockIndices.cevfor - 1] = game.Player.Here == RoomIds.mtree
+            game.Clock[ClockId.cevfor].Flags = game.Player.Here == RoomIds.mtree
                 || game.Player.Here >= RoomIds.Forest1 && game.Player.Here < RoomIds.ForestClearing;
 
-            if (game.Clock.Flags[(int)ClockIndices.cevfor - 1] && RoomHandler.prob_(game, 10, 10))
+            if (game.Clock[ClockId.cevfor].Flags && RoomHandler.prob_(game, 10, 10))
             {
-                MessageHandler.rspeak_(game, 635);
+                MessageHandler.Speak(635, game);
             }
 
             return;
@@ -712,7 +707,7 @@ namespace Zork.Core
             // !IF IN TWI, GNOME.
             if (game.Player.Here == RoomIds.bktwi)
             {
-                game.Clock.Flags[(int)ClockIndices.cevzgi - 1] = true;
+                game.Clock[ClockId.cevzgi].Flags = true;
             }
 
             // !IF IN VAU, DEAD.
@@ -727,14 +722,14 @@ namespace Zork.Core
 
             GNOMEOFZURICHCLOCK:
             // !EXITS, TOO.
-            game.Clock.Flags[(int)ClockIndices.cevzgo - 1] = true;
+            game.Clock[ClockId.cevzgo].Flags = true;
             // !PLACE IN TWI.
             ObjectHandler.SetNewObjectStatus(ObjectIds.zgnom, 0, RoomIds.bktwi, 0, 0, game);
 
             // !ANNOUNCE.
             if (game.Player.Here == RoomIds.bktwi)
             {
-                MessageHandler.rspeak_(game, 637);
+                MessageHandler.Speak(637, game);
             }
 
             return;
@@ -746,7 +741,7 @@ namespace Zork.Core
             // !VANISH.
             if (game.Player.Here == RoomIds.bktwi)
             {
-                MessageHandler.rspeak_(game, 638);
+                MessageHandler.Speak(638, game);
             }
 
             // !ANNOUNCE.
@@ -774,12 +769,12 @@ namespace Zork.Core
             }
 
             // !LIGHTS OFF?
-            game.Clock.Ticks[(int)ClockIndices.cevste - 1] = 3;
+            game.Clock[ClockId.cevste].Ticks = 3;
             // !RESCHEDULE.
             return;
 
             L20100:
-            MessageHandler.rspeak_(game, 727);
+            MessageHandler.Speak(727, game);
             // !ANNOUNCE.
             L20200:
             i__1 = game.Objects.Count;
@@ -798,9 +793,9 @@ namespace Zork.Core
             game.Objects[ObjectIds.Lamp].Flag1 = (game.Objects[ObjectIds.Lamp].Flag1 | ObjectFlags.LITEBT) & ~ObjectFlags.IsOn;
             game.Objects[ObjectIds.Lamp].Flag2 |= ObjectFlags2.WasTouched;
             // !LAMP IS GOOD AS NEW.
-            game.Clock.Flags[(int)ClockIndices.cevlnt - 1] = false;
+            game.Clock[ClockId.cevlnt].Flags = false;
 
-            game.Clock.Ticks[(int)ClockIndices.cevlnt - 1] = 350;
+            game.Clock[ClockId.cevlnt].Ticks = 350;
             game.Switches.orlamp = 0;
             game.Objects[ObjectIds.Sword].Flag2 |= ObjectFlags2.WasTouched;
             game.Hack.IsSwordActive = true;
@@ -811,18 +806,18 @@ namespace Zork.Core
             // !ENDGAME RUNNING.
             game.Flags.IsEndGame = true;
             // !MATCHES GONE,
-            game.Clock.Flags[(int)ClockIndices.MatchCountdown - 1] = false;
+            game.Clock[ClockId.MatchCountdown].Flags = false;
             // !CANDLES GONE.
-            game.Clock.Flags[(int)ClockIndices.CandleClock - 1] = false;
+            game.Clock[ClockId.CandleClock].Flags = false;
 
             // !SCORE CRYPT,
             AdventurerHandler.ScoreUpdate(game, game.Rooms[RoomIds.Crypt].Score);
             // !BUT ONLY ONCE.
             game.Rooms[RoomIds.Crypt].Score = 0;
             // !TO TOP OF STAIRS,
-            f = AdventurerHandler.moveto_(game, RoomIds.tstrs, game.Player.Winner);
+            f = AdventurerHandler.MoveToNewRoom(game, RoomIds.tstrs, game.Player.Winner);
             // !AND DESCRIBE.
-            f = RoomHandler.RoomDescription(3, game);
+            f = RoomHandler.RoomDescription(Verbosity.Full, game);
             return;
             // !BAM
             // !
@@ -836,13 +831,13 @@ namespace Zork.Core
             // !MIRROR IS CLOSED.
             if (game.Player.Here == RoomIds.mrant)
             {
-                MessageHandler.rspeak_(game, 728);
+                MessageHandler.Speak(728, game);
             }
 
             // !DESCRIBE BUTTON.
             if (game.Player.Here == RoomIds.inmir || RoomHandler.IsMirrorHere(game, game.Player.Here) == 1)
             {
-                MessageHandler.rspeak_(game, 729);
+                MessageHandler.Speak(729, game);
             }
             return;
             // CEVAPP, PAGE 9
@@ -852,7 +847,7 @@ namespace Zork.Core
             L22000:
             if (game.Flags.wdopnf)
             {
-                MessageHandler.rspeak_(game, 730);
+                MessageHandler.Speak(730, game);
             }
 
             // !DESCRIBE.
@@ -869,10 +864,10 @@ namespace Zork.Core
             }
 
             // !IF PLAYER LEFT, DIE.
-            MessageHandler.rspeak_(game, 769);
+            MessageHandler.Speak(769, game);
             i__1 = game.Switches.quesno + 770;
-            MessageHandler.rspeak_(game, i__1);
-            game.Clock.Ticks[(int)ClockIndices.cevinq - 1] = 2;
+            MessageHandler.Speak(i__1, game);
+            game.Clock[ClockId.cevinq].Ticks = 2;
             return;
 
             // CEV24--	MASTER FOLLOWS
@@ -891,7 +886,7 @@ namespace Zork.Core
 
             if (game.Flags.follwf)
             {
-                MessageHandler.rspeak_(game, 811);
+                MessageHandler.Speak(811, game);
             }
 
             // !WONT GO TO CELLS.
@@ -908,14 +903,14 @@ namespace Zork.Core
 
             for (j = (int)XSearch.xmin; i__2 < 0 ? j >= i__1 : j <= i__1; j += i__2)
             {
-                if (dso3.FindExit(game, j, game.Adventurers[ActorIds.Master].CurrentRoom.Id) && game.curxt_.xroom1 == game.Player.Here)
+                if (dso3.FindExit(game, j, game.Adventurers[ActorIds.Master].CurrentRoom.Id) && game.CurrentExit.xroom1 == game.Player.Here)
                 {
                     i = (ObjectIds)813;
                 }
                 // L24200:
             }
 
-            MessageHandler.rspeak_(game, i);
+            MessageHandler.Speak(i, game);
             ObjectHandler.SetNewObjectStatus(ObjectIds.Master, 0, game.Player.Here, 0, 0, game);
             // !MOVE MASTER OBJECT.
             game.Adventurers[ActorIds.Master].CurrentRoom.Id = game.Player.Here;
@@ -925,7 +920,7 @@ namespace Zork.Core
         }
 
         // LITINT-	LIGHT INTERRUPT PROCESSOR
-        public static void litint_(Game game, ObjectIds obj, int ctr, int cev, int[] ticks, int tickln)
+        public static void LightInterruptProcessor(Game game, ObjectIds obj, int ctr, int cev, int[] ticks, int tickln)
         {
             // Parameter adjustments
             //--ticks;
@@ -933,9 +928,9 @@ namespace Zork.Core
             // Function Body
             ++(ctr);
             // !ADVANCE STATE CNTR.
-            game.Clock.Ticks[cev - 1] = ticks[ctr];
+            game.Clock[(ClockId)cev].Ticks = ticks[ctr];
             // !RESET INTERRUPT.
-            if (game.Clock.Ticks[cev - 1] != 0)
+            if (game.Clock[(ClockId)cev].Ticks != 0)
             {
                 goto L100;
             }
@@ -951,10 +946,19 @@ namespace Zork.Core
             L100:
             if (RoomHandler.GetRoomThatContainsObject(obj, game).Id == game.Player.Here || game.Objects[obj].Adventurer == game.Player.Winner)
             {
-                MessageHandler.rspeak_(game, ticks[ctr + tickln / 2]);
+                MessageHandler.Speak(ticks[ctr + tickln / 2], game);
             }
 
             return;
         }
+    }
+
+    public class ClockEvent
+    {
+        public ClockId Id { get; set; }
+        public int Ticks { get; set; }
+        public int Actions { get; set; }
+        public bool Flags { get; set; }
+        public string Name { get; set; }
     }
 }

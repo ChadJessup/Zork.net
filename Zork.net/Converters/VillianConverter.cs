@@ -25,7 +25,7 @@ namespace Zork.Core.Converters
                 id = (int)villian.Id,
                 name = villian.Id,
                 bestWeapon = (int)villian.BestWeapon,
-                strength = villian.Melee
+                strength = villian.Melee,
             });
         }
     }
