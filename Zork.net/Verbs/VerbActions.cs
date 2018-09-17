@@ -10,17 +10,14 @@ namespace Zork.Core.Verbs
         [VerbAction(VerbId.Read)]
         public static bool Read(Game game)
         {
-            if (RoomHandler.IsRoomLit(game.Player.Here, game))
+            if (!RoomHandler.IsRoomLit(game.Player.Here, game))
             {
-                goto L18100;
+                // !ROOM LIT?
+                MessageHandler.Speak(356, game);
+                // !NO, CANT READ.
+                return true;
             }
 
-            // !ROOM LIT?
-            MessageHandler.Speak(356, game);
-            // !NO, CANT READ.
-            return true;
-
-        L18100:
             if (game.ParserVectors.IndirectObject == ObjectIds.Nothing)
             {
                 goto L18200;
@@ -55,6 +52,47 @@ namespace Zork.Core.Verbs
             }
 
             return true;
+        }
+
+        [VerbAction(VerbId.Look)]
+        public static bool Look(Game game)
+        {
+            bool ret_val = true;
+
+            if (game.ParserVectors.DirectObject != 0)
+            {
+                goto L41500;
+            }
+
+            // !SOMETHING TO LOOK AT?
+            ret_val = RoomHandler.RoomDescription(Verbosity.Full, game);
+            // !HANDLED BY RMDESC.
+            return ret_val;
+
+        L41500:
+            if (ObjectHandler.ApplyObjectsFromParseVector(game))
+            {
+                return ret_val;
+            }
+
+
+            ObjectIds i = (ObjectIds)game.Objects[game.ParserVectors.DirectObject].oreadId;
+            // !GET READING MATERIAL.
+            if (i != 0)
+            {
+                MessageHandler.Speak(i, game);
+            }
+
+            // !OUTPUT IF THERE,
+            if (i == 0)
+            {
+                MessageHandler.Speak(429, game.Objects[game.ParserVectors.DirectObject].ShortDescription, game);
+            }
+
+            // !OTHERWISE DEFAULT.
+            game.ParserVectors.prsa = VerbId.foow;
+            // !DEFUSE ROOM PROCESSORS.
+            return ret_val;
         }
 
         [VerbAction(VerbId.SaveGame)]
@@ -149,6 +187,9 @@ namespace Zork.Core.Verbs
 
             return true;
         }
+
+        [VerbAction(VerbId.Walk)]
+        public static bool Walk(Game game) => dverb2.walk_(game);
 
         [VerbAction(VerbId.RestoreGame)]
         public static bool RestoreGame(Game game)

@@ -1800,7 +1800,6 @@ namespace Zork.Core
             // !SIMPLE VERB?
             switch (verbId - mxsmp)
             {
-                case 01: goto READ;
                 case 02: goto MELT;
                 case 03: goto INFLATE;
                 case 04: goto DEFLATE;
@@ -1819,7 +1818,6 @@ namespace Zork.Core
                 case 17: goto TURN;
                 case 18: goto BREATHE;
                 case 19: goto KNOCK;
-                case 20: goto LOOK;
                 case 21: goto EXAMINE;
                 case 22: goto SHAKE;
                 case 23: goto MOVE;
@@ -1842,7 +1840,6 @@ namespace Zork.Core
                 case 40: goto KILL;
                 case 41: goto SWING;
                 case 42: goto ATTACK;
-                case 43: return dverb2.walk_(game);
                 case 44: goto TELL;
                 case 45: goto PUT;
                 case 46: goto DROP;
@@ -1874,53 +1871,6 @@ namespace Zork.Core
             ret_val = SimpleVerbActions(game, input, verbId);
             return ret_val;
             // VAPPLI, PAGE 3
-
-            // V100--	READ.  OUR FIRST REAL VERB.
-
-            READ:
-            if (RoomHandler.IsRoomLit(game.Player.Here, game))
-            {
-                goto L18100;
-            }
-
-            // !ROOM LIT?
-            MessageHandler.Speak(356, game);
-            // !NO, CANT READ.
-            return ret_val;
-
-            L18100:
-            if (game.ParserVectors.IndirectObject == 0)
-            {
-                goto L18200;
-            }
-
-            // !READ THROUGH OBJ?
-            if (game.Objects[game.ParserVectors.IndirectObject].Flag1.HasFlag(ObjectFlags.IsTransparent))
-            {
-                goto L18200;
-            }
-
-            MessageHandler.Speak(357, indirectObjDescription2, game);
-            // !NOT TRANSPARENT.
-            return ret_val;
-
-            L18200:
-            if (game.Objects[game.ParserVectors.DirectObject].Flag1.HasFlag(ObjectFlags.IsReadable))
-            {
-                goto L18300;
-            }
-
-            MessageHandler.Speak(358, objDescription2, game);
-            // !NOT READABLE.
-            return ret_val;
-
-            L18300:
-            if (!ObjectHandler.ApplyObjectsFromParseVector(game))
-            {
-                MessageHandler.Speak(game.Objects[game.ParserVectors.DirectObject].WrittenText, game);
-            }
-
-            return ret_val;
 
             // V101--	MELT.  UNLESS OBJECT HANDLES, JOKE.
 
@@ -2163,17 +2113,6 @@ namespace Zork.Core
             return ret_val;
 
             // V119--	LOOK.
-
-            LOOK:
-            if (game.ParserVectors.DirectObject != 0)
-            {
-                goto L41500;
-            }
-
-            // !SOMETHING TO LOOK AT?
-            ret_val = RoomHandler.RoomDescription(Verbosity.Full, game);
-            // !HANDLED BY RMDESC.
-            return ret_val;
 
             // V120--	EXAMINE.
 
