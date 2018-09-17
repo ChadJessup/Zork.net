@@ -69,6 +69,7 @@ namespace Zork.Core
         public Last Last { get; } = new Last();
         public Hack Hack { get; } = new Hack();
         public Flags Flags { get; } = new Flags();
+        public Parser Parser { get; } = new Parser();
         public Random Random { get; set; }
         public Exits Exits { get; } = new Exits();
         public Switches Switches { get; } = new Switches();
@@ -419,7 +420,7 @@ namespace Zork.Core
         public int ExitType { get; set; }
         public RoomIds xroom1 { get; set; }
         public int xstrng { get; set; }
-        public int xactio { get; set; }
-        public ObjectIds xobj { get; set; }
+        public int Action { get; set; }
+        public ObjectIds Object { get; set; }
     }
 }

@@ -52,8 +52,8 @@ namespace Zork.Core
             //bug_(10, game.curxt_.xtype);
 
             L130:
-            game.CurrentExit.xobj = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.ExitRoomMask);
-            game.CurrentExit.xactio = game.Exits.Travel[xi + 1] / xpars_.xashft;
+            game.CurrentExit.Object = (ObjectIds)(int)(game.Exits.Travel[xi + 1] & xpars_.ExitRoomMask);
+            game.CurrentExit.Action = game.Exits.Travel[xi + 1] / xpars_.ExitActionShift;
 
             L120:
             // !DOOR/CEXIT/NEXIT - STRING.
@@ -62,7 +62,7 @@ namespace Zork.Core
             NEXTENTRY:
             // !ADVANCE TO NEXT ENTRY.
             xi += xpars_.xelnt[game.CurrentExit.ExitType - 1];
-            if ((i & xpars_.xdmask) == dir)
+            if ((i & xpars_.ExitDirectionMask) == dir)
             {
                 return ret_val;
             }
@@ -74,8 +74,7 @@ namespace Zork.Core
 
             L1000:
             // !YES, LOSE.
-            ret_val = false;
-            return ret_val;
+            return false;
         }
 
         /// <summary>
@@ -96,8 +95,7 @@ namespace Zork.Core
             ret_val = 0;
 
             // !ASSUME NOTHING.
-            i__1 = game.Objects.Count;
-            for (i = (ObjectIds)1; i <= (ObjectIds)i__1; ++i)
+            for (i = (ObjectIds)1; i <= (ObjectIds)game.Objects.Count; ++i)
             {
                 // !LOOP
                 if ((rm == 0 || RoomHandler.GetRoomThatContainsObject(i, game).Id != rm)
@@ -128,8 +126,7 @@ namespace Zork.Core
 
                 // !ALREADY GOT SOMETHING?
                 // !YES, AMBIGUOUS.
-                ret_val = -ret_val;
-                return ret_val;
+                return -ret_val;
 
                 L400:
                 ret_val = (int)i;
@@ -143,8 +140,7 @@ namespace Zork.Core
                     goto L1000;
                 }
 
-                i__2 = game.Objects.Count;
-                for (j = (ObjectIds)1; j <= (ObjectIds)i__2; ++j)
+                for (j = (ObjectIds)1; j <= (ObjectIds)game.Objects.Count; ++j)
                 {
                     // !NO, SEARCH CONTENTS.
                     if (game.Objects[j].Container != i
@@ -160,8 +156,7 @@ namespace Zork.Core
                         goto L600;
                     }
 
-                    ret_val = -ret_val;
-                    return ret_val;
+                    return -ret_val;
 
                     L600:
                     ret_val = (int)j;

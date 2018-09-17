@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Zork.Core.Attributes;
 
 namespace Zork.Core
 {
-    public static class Parser
+    public class Parser
     {
-        public static string ReadLine(Game game, int who)
+        public Dictionary<VerbId, (VerbActionAttribute attrib, Func<Game, bool> action)> Verbs { get; internal set; }
+
+        public string ReadLine(Game game, int who)
         {
             string buffer;
 
@@ -49,7 +53,7 @@ namespace Zork.Core
         /// </summary>
         /// <param name="input"></param>
         /// <param name="vbflag"></param>
-        public static bool Parse(string input, bool vbflag, Game game)
+        public bool Parse(string input, bool vbflag, Game game)
         {
             int i__1;
             // !ASSUME FAILS.
@@ -63,7 +67,7 @@ namespace Zork.Core
             game.ParserVectors.IndirectObject = ObjectIds.Nothing;
             game.ParserVectors.DirectObject = ObjectIds.Nothing;
 
-            if (!Parser.Lex(input, outbuf, out int outlnt, vbflag, game))
+            if (!this.Lex(input, outbuf, out int outlnt, vbflag, game))
             {
                 goto L100;
             }
@@ -128,7 +132,7 @@ namespace Zork.Core
         /// <param name="outputPointer"></param>
         /// <param name="vbflag"></param>
         /// <returns></returns>
-        public static bool Lex(string inbuf, int[] outbuf, out int outputPointer, bool vbflag, Game game)
+        public bool Lex(string inbuf, int[] outbuf, out int outputPointer, bool vbflag, Game game)
         {
             char[] dlimit = new char[9] { 'A', 'Z', (char)('A' - 1), '1', '9', (char)('1' - 31), '-', '-', (char)('-' - 27) };
             bool ret_val = false;
@@ -267,7 +271,7 @@ namespace Zork.Core
         /// <summary>
         /// THIS ROUTINE DETAILS ON BIT 4 OF PRSFLG
         /// </summary>
-        private static bool MatchSyntax(Game game)
+        private bool MatchSyntax(Game game)
         {
             //  THE FOLLOWING DATA STATEMENT WAS ORIGINALLY:
             // 	DATA R50MIN/1RA/
@@ -493,7 +497,7 @@ namespace Zork.Core
         /// <param name="sfw1"></param>
         /// <param name="sfw2"></param>
         /// <returns></returns>
-        private static int GetWhatIMean(SyntaxObjectFlags sflag, int sfw1, int sfw2, Game game)
+        private int GetWhatIMean(SyntaxObjectFlags sflag, int sfw1, int sfw2, Game game)
         {
             // System generated locals
             int ret_val;
@@ -590,7 +594,7 @@ namespace Zork.Core
         /// <param name="nocare"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static int FindWhatIMean(int f1, ObjectFlags2 f2, RoomIds rm, ObjectIds con, ActorIds actorId, bool nocare, Game game)
+        public int FindWhatIMean(int f1, ObjectFlags2 f2, RoomIds rm, ObjectIds con, ActorIds actorId, bool nocare, Game game)
         {
             int ret_val, i__2;
 
@@ -679,7 +683,7 @@ namespace Zork.Core
         /// <param name=""></param>
         /// <param name=""></param>
         /// <returns></returns>
-        private static bool TakeObject(ObjectIds obj, SyntaxObjectFlags sflag, Game game)
+        private bool TakeObject(ObjectIds obj, SyntaxObjectFlags sflag, Game game)
         {
             // !ASSUME LOSES.
             bool ret_val = false;
@@ -818,7 +822,7 @@ namespace Zork.Core
         /// <param name="sfl2"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static bool IsSyntaxEqual(int prep, ObjectIds obj, SyntaxObjectFlags sprep, int sfl1, int sfl2, Game game)
+        public bool IsSyntaxEqual(int prep, ObjectIds obj, SyntaxObjectFlags sprep, int sfl1, int sfl2, Game game)
         {
             bool ret_val;
 
@@ -842,7 +846,7 @@ namespace Zork.Core
         /// <param name="oldj"></param>
         /// <param name="j"></param>
         /// <param name="game"></param>
-        private static void UnpackSyntax(int oldj, out int j, Game game)
+        private void UnpackSyntax(int oldj, out int j, Game game)
         {
             // !CLEAR SYNTAX.
             game.Syntax.DirectObject = 0;
@@ -931,7 +935,7 @@ namespace Zork.Core
         /// <param name="spcobj"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static Object SearchForObject(int oidx, int aidx, RoomIds roomId, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
+        private Object SearchForObject(int oidx, int aidx, RoomIds roomId, ObjectIds container, ActorIds actorId, ObjectIds spcobj, Game game)
         {
             var objs = game.Objects.Where(o => ValidateObject(oidx, aidx, o.Value.Id, spcobj, game));
 
@@ -975,7 +979,7 @@ namespace Zork.Core
         /// <param name="spcobj"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static bool ValidateObject(int oidx, int aidx, ObjectIds obj, ObjectIds spcobj, Game game)
+        private bool ValidateObject(int oidx, int aidx, ObjectIds obj, ObjectIds spcobj, Game game)
         {
             // THE FOLLOWING DATA STATEMENT USED RADIX-50 NOTATION (R50MIN/1RA/)
 
@@ -1045,7 +1049,7 @@ namespace Zork.Core
         /// <param name="vbflag"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static int ParseStart(int[] lbuf, int tokenCount, bool vbflag, Game game)
+        private int ParseStart(int[] lbuf, int tokenCount, bool vbflag, Game game)
         {
             // DATA R50MIN/1RA/,R50WAL/3RWAL/
             const int r50min = 1600;
@@ -1556,7 +1560,7 @@ namespace Zork.Core
         /// <param name="spcobj"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        private static int FindObjectDescribed(int oidx, int aidx, ObjectIds spcobj, Game game)
+        private int FindObjectDescribed(int oidx, int aidx, ObjectIds spcobj, Game game)
         {
             int ret_val;
 
@@ -1734,7 +1738,7 @@ namespace Zork.Core
         /// <param name="verbId"></param>
         /// <param name="game"></param>
         /// <returns></returns>
-        public static bool ProcessVerb(string input, VerbId verbId, Game game)
+        public bool ProcessVerb(string input, VerbId verbId, Game game)
         {
             const VerbId mxnop = (VerbId)39;
             const VerbId mxsmp = (VerbId)99;
@@ -1747,7 +1751,7 @@ namespace Zork.Core
             ObjectIds av;
             ObjectIds i, j;
             int remark;
-            string odi2 = string.Empty;
+            string indirectObjDescription2 = string.Empty;
             string objDescription2 = string.Empty;
 
             if (game.ParserVectors.DirectObject > (ObjectIds)220)
@@ -1755,25 +1759,30 @@ namespace Zork.Core
                 goto L5;
             }
 
-            if (game.ParserVectors.DirectObject != 0)
+            if (game.ParserVectors.DirectObject != ObjectIds.Nothing)
             {
                 objDescription2 = game.Objects[game.ParserVectors.DirectObject].ShortDescription;
             }
 
             // !SET UP DESCRIPTORS.
             L5:
-            if (game.ParserVectors.IndirectObject != 0)
+            if (game.ParserVectors.IndirectObject != ObjectIds.Nothing)
             {
-                odi2 = game.Objects[game.ParserVectors.IndirectObject].ShortDescription;
+                indirectObjDescription2 = game.Objects[game.ParserVectors.IndirectObject].ShortDescription;
             }
 
             av = (ObjectIds)game.Adventurers[game.Player.Winner].VehicleId;
             remark = game.rnd_(6) + 372;
             // !REMARK FOR HACK-HACKS.
 
-            if (verbId == 0)
+            if (verbId == VerbId.Unknown)
             {
                 goto L10;
+            }
+
+            if (this.Verbs.TryGetValue(verbId, out var method))
+            {
+                return method.action.Invoke(game);
             }
 
             // !ZERO IS FALSE.
@@ -1791,15 +1800,15 @@ namespace Zork.Core
             // !SIMPLE VERB?
             switch (verbId - mxsmp)
             {
-                case 1: goto READ;
-                case 2: goto MELT;
-                case 3: goto INFLATE;
-                case 4: goto DEFLATE;
-                case 5: goto ALARM;
-                case 6: goto EXORCISE;
-                case 7: goto PLUG;
-                case 8: goto KICK;
-                case 9: goto WAVE;
+                case 01: goto READ;
+                case 02: goto MELT;
+                case 03: goto INFLATE;
+                case 04: goto DEFLATE;
+                case 05: goto ALARM;
+                case 06: goto EXORCISE;
+                case 07: goto PLUG;
+                case 08: goto KICK;
+                case 09: goto WAVE;
                 case 10: goto RAISE;
                 case 11: goto LOWER;
                 case 12: goto RUB;
@@ -1840,8 +1849,6 @@ namespace Zork.Core
                 case 47: goto GIVE;
                 case 48: goto POUR;
                 case 49: goto THROW;
-                case 50: goto SAVE;
-                case 51: goto RESTORE;
                 case 52: goto HELLO;
                 case 53: goto LOOKINTO;
                 case 54: goto LOOKUNDER;
@@ -1858,9 +1865,8 @@ namespace Zork.Core
             // ALL VERB PROCESSORS RETURN HERE TO DECLARE FAILURE.
 
             L10:
-            ret_val = false;
             // !LOSE.
-            return ret_val;
+            return false;
 
             // SIMPLE VERBS ARE HANDLED EXTERNALLY.
 
@@ -1894,7 +1900,7 @@ namespace Zork.Core
                 goto L18200;
             }
 
-            MessageHandler.Speak(357, odi2, game);
+            MessageHandler.Speak(357, indirectObjDescription2, game);
             // !NOT TRANSPARENT.
             return ret_val;
 
@@ -2119,7 +2125,7 @@ namespace Zork.Core
                 goto L36200;
             }
 
-            MessageHandler.Speak(391, odi2, game);
+            MessageHandler.Speak(391, indirectObjDescription2, game);
             // !NOT A TOOL.
             return ret_val;
 
@@ -2894,7 +2900,7 @@ namespace Zork.Core
             return ret_val;
 
             L60400:
-            MessageHandler.Speak(301, odi2, game);
+            MessageHandler.Speak(301, indirectObjDescription2, game);
             // !CANT BURN IT WITH THAT.
             return ret_val;
             // VAPPLI, PAGE 9
@@ -3029,37 +3035,6 @@ namespace Zork.Core
             ret_val = dverb1.drop_(game, false);
             return ret_val;
 
-            // V149--	SAVE
-
-            SAVE:
-            if ((game.Rooms[RoomIds.tstrs].Flags & RoomFlags.SEEN) == 0)
-            {
-                goto L77100;
-            }
-
-            // !NO SAVES IN ENDGAME.
-            MessageHandler.Speak(828, game);
-            return ret_val;
-
-            L77100:
-            //savegm_();
-            return ret_val;
-
-            // V150--	RESTORE
-
-            RESTORE:
-            if ((game.Rooms[RoomIds.tstrs].Flags & RoomFlags.SEEN) == 0)
-            {
-                goto L78100;
-            }
-
-            // !NO RESTORES IN ENDGAME.
-            MessageHandler.Speak(829, game);
-            return ret_val;
-
-            L78100:
-            //rstrgm_();
-            return ret_val;
             // VAPPLI, PAGE 11
 
             // V151--	HELLO
@@ -3302,7 +3277,7 @@ namespace Zork.Core
             return ret_val;
         }
 
-        public static bool SimpleVerbActions(Game game, string input, VerbId ri)
+        public bool SimpleVerbActions(Game game, string input, VerbId ri)
         {
             VerbId mxnop = (VerbId)39;
             VerbId mxjoke = (VerbId)64;

@@ -333,7 +333,7 @@ namespace Zork.Core
             // !DONT ALLOW DEAD DEF.
             od = dso4.ComputeFightStrength(game, adventurer, false);
             // !FIND A WEAPON.
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
+            i__1 = game.Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
 
             dweap = (ObjectIds)Math.Abs(i__1);
             // BLOW, PAGE 4
@@ -512,11 +512,11 @@ namespace Zork.Core
             }
 
             // !GET NEW.
-            i__1 = Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
+            i__1 = game.Parser.FindWhatIMean(0, ObjectFlags2.IsWeapon, 0, 0, adventurer, true, game);
             dweap = (ObjectIds)Math.Abs(i__1);
             if (dweap != 0)
             {
-                MessageHandler.rspsub_(605, game.Objects[(ObjectIds)dweap].Description2Id, game);
+                MessageHandler.rspsub_(605, game.Objects[dweap].Description2Id, game);
             }
             // BLOW, PAGE 6
 
@@ -524,7 +524,7 @@ namespace Zork.Core
             ret_val = res;
             // !RETURN RESULT.
             // !HERO?
-            if (!(isHeroAttacking))
+            if (!isHeroAttacking)
             {
                 goto L4500;
             }
@@ -535,6 +535,7 @@ namespace Zork.Core
             {
                 goto L4100;
             }
+
             game.Objects[villian].Flag2 &= ~ObjectFlags2.IsFighting;
             // !HE DIES.
             MessageHandler.rspsub_(game, 572, dv);

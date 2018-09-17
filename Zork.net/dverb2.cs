@@ -4,181 +4,6 @@ namespace Zork.Core
 {
     public static class dverb2
     {
-        // SAVE- SAVE GAME STATE
-        public static void savegm_(Game game)
-        {
-            game.ParserVectors.prswon = false;
-            // !DISABLE GAME.
-            // Note: save file format is different for PDP vs. non-PDP versions
-
-            //if ((e = fopen("dsave.dat", BINWRITE)) == NULL)
-            //    goto L100;
-
-            //gttime_(&i);
-            // !GET TIME.
-
-//#define do_uio(i, zbuf, cbytes) \
-            //(void)fwrite((const char*)(zbuf), (cbytes), (i), e)
-
-            //do_uio(1, &vers_1.vmaj, sizeof(int));
-            //do_uio(1, &vers_1.vmin, sizeof(int));
-            //do_uio(1, &vers_1.vedit, sizeof(int));
-            //
-            //do_uio(1, &game.Player.Winner, sizeof(int));
-            //do_uio(1, &game.Player.Here, sizeof(int));
-            //do_uio(1, &game.Hack.thfpos, sizeof(int));
-            //do_uio(1, &game.Player.TelFlag, sizeof(bool));
-            //do_uio(1, &game.Hack.thfflg, sizeof(bool));
-            //do_uio(1, &game.Hack.thfact, sizeof(bool));
-            //do_uio(1, &game.Hack.swdact, sizeof(bool));
-            //do_uio(1, &game.Hack.swdsta, sizeof(int));
-            //do_uio(64, &PuzzleHandler.cpvec[0], sizeof(int));
-            //
-            //do_uio(1, &i, sizeof(int));
-            //do_uio(1, &game.State.moves, sizeof(int));
-            //do_uio(1, &game.State.Deaths, sizeof(int));
-            //do_uio(1, &game.State.rwscor, sizeof(int));
-            //do_uio(1, &game.State.egscor, sizeof(int));
-            //do_uio(1, &game.State.mxload, sizeof(int));
-            //do_uio(1, &game.State.ltshft, sizeof(int));
-            //do_uio(1, &game.State.bloc, sizeof(int));
-            //do_uio(1, &game.State.mungrm, sizeof(int));
-            //do_uio(1, &game.State.hs, sizeof(int));
-            //do_uio(1, &game.Screen.fromdr, sizeof(int));
-            //do_uio(1, &game.Screen.scolrm, sizeof(int));
-            //do_uio(1, &game.Screen.scolac, sizeof(int));
-            //
-            //do_uio(220, &game.Objects[0].odesc1, sizeof(int));
-            //do_uio(220, &game.Objects[0].odesc2, sizeof(int));
-            //do_uio(220, &game.Objects[0].oflag1, sizeof(int));
-            //do_uio(220, &game.Objects[0].oflag2, sizeof(int));
-            //do_uio(220, &game.Objects[0].ofval, sizeof(int));
-            //do_uio(220, &game.Objects[0].otval, sizeof(int));
-            //do_uio(220, &game.Objects[0].osize, sizeof(int));
-            //do_uio(220, &game.Objects[0].ocapac, sizeof(int));
-            //do_uio(220, &game.Objects[0].oroom, sizeof(int));
-            //do_uio(220, &game.Objects[0].oadv, sizeof(int));
-            //do_uio(220, &game.Objects[0].ocan, sizeof(int));
-            //
-            //do_uio(200, &game.NewRooms.rval[0], sizeof(int));
-            //do_uio(200, &game.NewRooms.RoomFlags[0], sizeof(int));
-            //
-            //do_uio(4, &game.Adventurers.aroom[0], sizeof(int));
-            //do_uio(4, &game.Adventurers.ascore[0], sizeof(int));
-            //do_uio(4, &game.Adventurers.avehic[0], sizeof(int));
-            //do_uio(4, &game.Adventurers.astren[0], sizeof(int));
-            //do_uio(4, &game.Adventurers.aflag[0], sizeof(int));
-            //
-            //do_uio(46, &game.Flags[0], sizeof(bool));
-            //do_uio(22, &switch_[0], sizeof(int));
-            //do_uio(4, &game.Villians.vprob[0], sizeof(int));
-            //do_uio(25, &game.Clock[0].Flags, sizeof(bool));
-            //do_uio(25, &game.Clock[0].Ticks, sizeof(int));
-
-            //if (fclose(e) == EOF)
-            {
-            //    goto L100;
-            }
-
-            MessageHandler.Speak(597, game);
-            return;
-
-            L100:
-            MessageHandler.Speak(598, game);
-            // !CANT DO IT.
-        } // savegm_
-
-        // RESTORE- RESTORE GAME STATE
-        public static void rstrgm_(Game game)
-        {
-            game.ParserVectors.prswon = false;
-            // !DISABLE GAME.
-            // Note: save file format is different for PDP vs. non-PDP versions
-
-//            if ((e = fopen("dsave.dat", BINREAD)) == NULL)
-            {
-//                goto L100;
-            }
-
-//#define do_uio(i, zbuf, cbytes) \
-            //(void)fread((char*)(zbuf), (cbytes), (i), e)
-
-            //do_uio(1, &i, sizeof(int));
-            //do_uio(1, &j, sizeof(int));
-            //do_uio(1, &k, sizeof(int));
-
-            //if (i != vers_1.vmaj | j != vers_1.vmin)
-            {
-            //    goto L200;
-            }
-
-            //do_uio(1, game.Player.Winner, sizeof(int));
-            //do_uio(1, game.Player.Here, sizeof(int));
-            //do_uio(1, game.Hack.thfpos, sizeof(int));
-            //do_uio(1, game.Player.TelFlag, sizeof(bool));
-            //do_uio(1, game.Hack.thfflg, sizeof(bool));
-            //do_uio(1, game.Hack.thfact, sizeof(bool));
-            //do_uio(1, game.Hack.swdact, sizeof(bool));
-            //do_uio(1, game.Hack.swdsta, sizeof(int));
-            //do_uio(64, PuzzleHandler.cpvec[0], sizeof(int));
-            //
-            //do_uio(1, time_1.pltime, sizeof(int));
-            //do_uio(1, game.State.moves, sizeof(int));
-            //do_uio(1, game.State.Deaths, sizeof(int));
-            //do_uio(1, game.State.rwscor, sizeof(int));
-            //do_uio(1, game.State.egscor, sizeof(int));
-            //do_uio(1, game.State.mxload, sizeof(int));
-            //do_uio(1, game.State.ltshft, sizeof(int));
-            //do_uio(1, game.State.bloc, sizeof(int));
-            //do_uio(1, game.State.mungrm, sizeof(int));
-            //do_uio(1, game.State.hs, sizeof(int));
-            //do_uio(1, game.Screen.fromdr, sizeof(int));
-            //do_uio(1, game.Screen.scolrm, sizeof(int));
-            //do_uio(1, game.Screen.scolac, sizeof(int));
-            //
-            //do_uio(220, game.Objects[0].odesc1, sizeof(int));
-            //do_uio(220, game.Objects[0].odesc2, sizeof(int));
-            //do_uio(220, game.Objects[0].oflag1, sizeof(int));
-            //do_uio(220, game.Objects[0].oflag2, sizeof(int));
-            //do_uio(220, game.Objects[0].ofval, sizeof(int));
-            //do_uio(220, game.Objects[0].otval, sizeof(int));
-            //do_uio(220, game.Objects[0].osize, sizeof(int));
-            //do_uio(220, game.Objects[0].ocapac, sizeof(int));
-            //do_uio(220, game.Objects[0].oroom, sizeof(int));
-            //do_uio(220, game.Objects[0].oadv, sizeof(int));
-            //do_uio(220, game.Objects[0].ocan, sizeof(int));
-            //
-            //do_uio(200, game.NewRooms.rval[0], sizeof(int));
-            //do_uio(200, game.NewRooms.RoomFlags[0], sizeof(int));
-
-            //do_uio(4, game.Adventurers.aroom[0], sizeof(int));
-            //do_uio(4, game.Adventurers.ascore[0], sizeof(int));
-            //do_uio(4, game.Adventurers.avehic[0], sizeof(int));
-            //do_uio(4, game.Adventurers.astren[0], sizeof(int));
-            //do_uio(4, game.Adventurers.aflag[0], sizeof(int));
-            //
-            //do_uio(46, game.Flags[0], sizeof(bool));
-            //do_uio(22, switch_[0], sizeof(int));
-            //do_uio(4, game.Villians.vprob[0], sizeof(int));
-            //do_uio(25, game.Clock[0].Flags, sizeof(bool));
-            //do_uio(25, game.Clock[0].Ticks, sizeof(int));
-
-            //(void)fclose(e);
-
-            MessageHandler.Speak(599, game);
-            return;
-
-            L100:
-            MessageHandler.Speak(598, game);
-            // !CANT DO IT.
-            return;
-
-            L200:
-            MessageHandler.Speak(600, game);
-            // !OBSOLETE VERSION
-            //(void)fclose(e);
-        }
-
         // WALK- MOVE IN SPECIFIED DIRECTION
         public static bool walk_(Game game)
         {
@@ -210,7 +35,7 @@ namespace Zork.Core
             //bug_(9, game.curxt_.xtype);
 
             L100:
-            if (HandleConditionalExit(game, game.CurrentExit.xactio) != 0)
+            if (HandleConditionalExit(game, game.CurrentExit.Action) != 0)
             {
                 goto L400;
             }
@@ -229,12 +54,12 @@ namespace Zork.Core
 
             L300:
             // !DOOR... RETURNED ROOM?
-            if (HandleConditionalExit(game, game.CurrentExit.xactio) != 0)
+            if (HandleConditionalExit(game, game.CurrentExit.Action) != 0)
             {
                 goto L400;
             }
             // !NO, DOOR OPEN?
-            if ((game.Objects[game.CurrentExit.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.CurrentExit.Object].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto L400;
             }
@@ -302,7 +127,7 @@ namespace Zork.Core
             //bug_(9, curxt_.xtype);
 
             L700:
-            if (HandleConditionalExit(game, game.CurrentExit.xactio) != 0)
+            if (HandleConditionalExit(game, game.CurrentExit.Action) != 0)
             {
                 goto MOVETOROOM;
             }
@@ -329,13 +154,13 @@ namespace Zork.Core
             return ret_val;
 
             CONDITIONALEXIT:
-            if (HandleConditionalExit(game, game.CurrentExit.xactio) != 0)
+            if (HandleConditionalExit(game, game.CurrentExit.Action) != 0)
             {
                 goto MOVETOROOM;
             }
 
             // !DOOR... RETURNED ROOM?
-            if ((game.Objects[game.CurrentExit.xobj].Flag2 & ObjectFlags2.IsOpen) != 0)
+            if ((game.Objects[game.CurrentExit.Object].Flag2 & ObjectFlags2.IsOpen) != 0)
             {
                 goto MOVETOROOM;
             }
@@ -347,7 +172,7 @@ namespace Zork.Core
             }
 
             // !IF NO REASON, USE STD.
-            MessageHandler.Speak(game.CurrentExit.xstrng, game.Objects[game.CurrentExit.xobj].ShortDescription, game);
+            MessageHandler.Speak(game.CurrentExit.xstrng, game.Objects[game.CurrentExit.Object].ShortDescription, game);
             game.ParserVectors.prscon = 1;
             // !STOP CMD STREAM.
             return ret_val;

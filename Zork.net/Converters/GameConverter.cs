@@ -17,6 +17,7 @@ namespace Zork.Core.Converters
     {
         private List<(ObjectIds objId, ObjectIds containerId)> containers = null;
         private Dictionary<RoomIds, (RoomActionAttribute attrib, Func<Game, bool> action)> roomActions;
+        private Dictionary<VerbId, (VerbActionAttribute attrib, Func<Game, bool> action)> verbActions;
         private Dictionary<RoomIds, Type> customRooms;
 
         public GameConverter(List<(ObjectIds objId, ObjectIds containerId)> containers)
@@ -24,6 +25,7 @@ namespace Zork.Core.Converters
             this.containers = containers;
             this.roomActions = LoadRoomActions();
             this.customRooms = LoadCustomRooms();
+            this.verbActions = LoadVerbs();
         }
 
         public override bool CanConvert(Type objectType) => objectType == typeof(Game);
@@ -141,6 +143,8 @@ namespace Zork.Core.Converters
                 game.Random = new Random(game.RandomSeed);
             }
 
+            game.Parser.Verbs = this.verbActions;
+
             return game;
         }
 
@@ -235,6 +239,25 @@ namespace Zork.Core.Converters
                 )));
 
             serializer.Serialize(writer, head);
+        }
+
+        private Dictionary<VerbId, (VerbActionAttribute attrib, Func<Game, bool>)> LoadVerbs()
+        {
+            var verbs = new Dictionary<VerbId, (VerbActionAttribute, Func<Game, bool>)>();
+
+            foreach (var type in Assembly.GetCallingAssembly().GetTypes())
+            {
+                foreach (var method in type.GetMethods())
+                {
+                    foreach (var attrib in method.GetCustomAttributes<VerbActionAttribute>(inherit: true))
+                    {
+                        var func = (Func<Game, bool>)Delegate.CreateDelegate(typeof(Func<Game, bool>), null, method);
+                        verbs.Add(attrib.VerbId, (attrib, func));
+                    }
+                }
+            }
+
+            return verbs;
         }
 
         private static Dictionary<RoomIds, Type> LoadCustomRooms()

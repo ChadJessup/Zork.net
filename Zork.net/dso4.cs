@@ -15,7 +15,7 @@ namespace Zork.Core
         /// <returns></returns>
         public static int RobAdventurer(Game game, ActorIds actorId, RoomIds nr, ObjectIds nc, ActorIds na)
         {
-            int ret_val, i__1;
+            int ret_val;
             ObjectIds i;
 
             ret_val = 0;

@@ -7,10 +7,10 @@ namespace Zork.Core
     public static class xpars_
     {
         public static int ExitRoomMask { get; set; } = 255;
-        public static int xdmask { get; set; } = 31744;
+        public static int ExitDirectionMask { get; set; } = 31744;
         public static int xfmask { get; set; } = 3;
         public static int xfshft { get; set; } = 256;
-        public static int xashft { get; set; } = 256;
+        public static int ExitActionShift { get; set; } = 256;
         public static int[] xelnt = { 1, 2, 3, 3 };
         public static int xnorm { get; set; } = 1;
         public static int xno { get; set; } = 2;

@@ -2,6 +2,7 @@
 {
     public enum VerbId
     {
+        Unknown = 0,
         cintw = 1,
         Dead = 2,
         frstqw = 3,
@@ -10,6 +11,8 @@
         WalkIn = 6,
         Fight = 7,
         foow = 8,
+        SaveGame = 149,
+        RestoreGame = 150,
         Melt = 101,
         Read = 100,
         Inflate = 102,
